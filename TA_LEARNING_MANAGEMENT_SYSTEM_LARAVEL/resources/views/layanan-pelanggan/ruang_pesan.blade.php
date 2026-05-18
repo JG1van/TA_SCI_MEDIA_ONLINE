@@ -332,45 +332,55 @@
                         @endphp
 
                         <!-- ══ CHAT HEADER TOOLBAR — REDESIGNED ══ -->
-                        <div class="chat-header">
-                            <!-- Left: Hubungi Admin -->
-                            <div class="chat-header-left">
+                        <div class="chat-header" style="flex-direction: column; gap: 10px; align-items: stretch;">
+
+                            <!-- Baris 1: Hubungi Admin (kiri) + Selesai (kanan) -->
+                            <div class="d-flex justify-content-between align-items-center">
                                 <button id="panggilLagiBtn">
                                     <i class="bi bi-telephone-fill"></i>
                                     Hubungi Admin
                                 </button>
-                            </div>
-
-                            <!-- Center: Room Info -->
-                            <div class="chat-header-center">
-                                <div class="chat-room-label">Kode Ruangan</div>
-                                <div class="chat-room-code-wrap">
-                                    <div class="chat-room-code">{{ $room->room_code }}</div>
-                                    <button class="btn-copy-code" id="btnCopyCode" title="Salin kode">
-                                        <i class="bi bi-clipboard"></i>
-                                    </button>
-                                </div>
-                                <div class="status-wrap">
-                                    <span id="statusBadge" class="status-badge {{ $badgeClass }}"
-                                        style="cursor:pointer">
-                                        <span class="status-dot"></span>
-                                        Login: {{ $statusLogin }}
-                                    </span>
-                                    @if ($room->chat_status === 'ChatBot')
-                                        <span class="mode-badge bot"><i class="bi bi-robot"></i> Chatbot</span>
-                                    @elseif($room->chat_status === 'Admin')
-                                        <span class="mode-badge admin"><i class="bi bi-headset"></i> Admin</span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <!-- Right: Selesai -->
-                            <div class="chat-header-right">
                                 <button type="button" class="btn-selesai" data-bs-toggle="modal"
                                     data-bs-target="#finishModal">
                                     <i class="bi bi-check-circle"></i> Selesai
                                 </button>
                             </div>
+
+                            <!-- Baris 2: Kode Ruangan + Status -->
+                            <div class="text-center">
+                                <div class="chat-room-label">Kode Ruangan</div>
+                                <div class="chat-room-code-wrap" style="justify-content: center;">
+                                    <div class="chat-room-code">{{ $room->room_code }}</div>
+                                    <button class="btn-copy-code" id="btnCopyCode" title="Salin kode">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Status vertikal -->
+                                <div class="status-wrap"
+                                    style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 6px;">
+
+                                    <!-- Login Badge -->
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <small style="color: #888; font-size: 11px;">Klik untuk login akun Anda</small>
+                                        <span id="statusBadge" class="status-badge {{ $badgeClass }}"
+                                            style="cursor:pointer">
+                                            <span class="status-dot"></span>
+                                            Login: {{ $statusLogin }}
+                                        </span>
+
+                                    </div>
+
+                                    <!-- ChatBot / Admin Badge -->
+                                    @if ($room->chat_status === 'ChatBot')
+                                        <span class="mode-badge bot"><i class="bi bi-robot"></i> Chatbot</span>
+                                    @elseif($room->chat_status === 'Admin')
+                                        <span class="mode-badge admin"><i class="bi bi-headset"></i> Admin</span>
+                                    @endif
+
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- ══ PETUNJUK COLLAPSIBLE — REDESIGNED ══ -->

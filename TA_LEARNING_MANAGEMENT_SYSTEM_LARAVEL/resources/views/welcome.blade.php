@@ -311,7 +311,7 @@
                 <h2 class="section-title light mb-3">Semua yang Anda Butuhkan</h2>
                 <p class="section-subtitle light">Lengkap, terintegrasi, dan siap mendukung pembelajaran digital</p>
             </div>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-3 g-3">
+            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-2 px-1">
 
                 <div class="col" data-aos="fade-up" data-aos-delay="50">
                     <div class="feature-card">
@@ -325,7 +325,7 @@
                 <div class="col" data-aos="fade-up" data-aos-delay="100">
                     <div class="feature-card">
                         <div class="feature-icon-wrap"><i class="bi bi-book-half"></i></div>
-                        <div class="feature-title">Materi Pembelajaran</div>
+                        <div class="feature-title">Bank Materi</div>
                         <div class="feature-desc">Gunakan paket materi bawaan atau unggah materi sendiri sesuai
                             kebutuhan kurikulum.</div>
                     </div>
@@ -334,7 +334,7 @@
                 <div class="col" data-aos="fade-up" data-aos-delay="150">
                     <div class="feature-card">
                         <div class="feature-icon-wrap"><i class="bi bi-pencil-square"></i></div>
-                        <div class="feature-title">Bank & Manajemen Soal</div>
+                        <div class="feature-title">Bank Soal</div>
                         <div class="feature-desc">Bank soal lengkap, buat soal sendiri, atau generate otomatis dengan
                             bantuan AI.</div>
                     </div>
@@ -527,9 +527,9 @@
                         <p class="testi-text">SCI Media Online sangat membantu saya mengelola pembelajaran jarak jauh.
                             Fitur-fiturnya lengkap dan mudah digunakan!</p>
                         <div class="testi-author">
-                            <div class="testi-avatar">IS</div>
+                            <div class="testi-avatar">JO</div>
                             <div>
-                                <div class="testi-name">Ibu Sari</div>
+                                <div class="testi-name">Jojo</div>
                                 <div class="testi-role">Guru SD · Jawa Barat</div>
                             </div>
                         </div>
@@ -544,9 +544,9 @@
                         <p class="testi-text">Dengan SCI Media Online, saya bisa memantau perkembangan siswa secara
                             real-time. Rekap nilai otomatis sangat menghemat waktu.</p>
                         <div class="testi-author">
-                            <div class="testi-avatar">PB</div>
+                            <div class="testi-avatar">FA</div>
                             <div>
-                                <div class="testi-name">Pak Budi</div>
+                                <div class="testi-name">Fahri</div>
                                 <div class="testi-role">Guru SD · Jawa Tengah</div>
                             </div>
                         </div>
@@ -561,9 +561,9 @@
                         <p class="testi-text">Materi video bernarasi dan bank soal yang tersedia membuat persiapan
                             mengajar jadi lebih efisien. Sangat direkomendasikan!</p>
                         <div class="testi-author">
-                            <div class="testi-avatar">ID</div>
+                            <div class="testi-avatar">FS</div>
                             <div>
-                                <div class="testi-name">Ibu Dewi</div>
+                                <div class="testi-name">Faisal</div>
                                 <div class="testi-role">Guru SD · DKI Jakarta</div>
                             </div>
                         </div>
@@ -591,8 +591,8 @@
                             menu layanan sesuai kebutuhan Anda.
                         </p>
                         <a href="{{ route('layanan-pelanggan.index') }}" class="btn-primary-sci"
-                            style="margin:0 auto;">
-                            <i class="bi bi-chat-dots-fill"></i> Pergi ke Pusat Layanan Pelanggan
+                            style="display:inline-flex; width:auto; margin:0 auto;">
+                            <i class="bi bi-chat-dots-fill"></i> Pergi
                         </a>
                     </div>
                 </div>

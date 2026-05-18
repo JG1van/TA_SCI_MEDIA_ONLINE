@@ -843,15 +843,48 @@ body.sidebar-collapsed .layout-page {
 }
 
 /* ── Feature Card ── */
+/* Ganti bagian feature-card */
 .feature-card {
-    background: #c1afdf2b;
-    border: 5px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.08);
+    /* lebih terang dari sebelumnya */
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-md);
     padding: 1.75rem;
     height: 100%;
     position: relative;
     overflow: hidden;
     transition: all var(--transition);
+}
+
+.feature-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-white);
+    /* tetap putih penuh */
+    margin-bottom: 0.6rem;
+}
+
+.feature-desc {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.80);
+    /* naik dari 0.5 ke 0.8 */
+    line-height: 1.65;
+}
+
+.feature-icon-wrap {
+    width: 48px;
+    height: 48px;
+    background: rgba(35, 201, 195, 0.2);
+    /* sedikit lebih terang */
+    border: 1px solid rgba(35, 201, 195, 0.35);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1.25rem;
+    color: var(--c-teal);
 }
 
 .feature-card::before {
@@ -877,38 +910,12 @@ body.sidebar-collapsed .layout-page {
     opacity: 1;
 }
 
-.feature-icon-wrap {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, rgba(30, 79, 216, 0.25), rgba(35, 201, 195, 0.15));
-    border: 1px solid rgba(35, 201, 195, 0.2);
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    margin-bottom: 1.25rem;
-    color: var(--c-teal);
-}
 
-.feature-title {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--c-white);
-    margin-bottom: 0.6rem;
-}
 
-.feature-desc {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.65;
-}
-
-/* ── Testimonial Card ── */
 .testi-card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    /* naik dari 0.08 ke 0.20 */
     border-radius: var(--radius-md);
     padding: 2rem;
     height: 100%;
@@ -917,8 +924,9 @@ body.sidebar-collapsed .layout-page {
 }
 
 .testi-card:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(35, 201, 195, 0.50);
+    /* hover jadi warna teal */
     transform: translateY(-4px);
 }
 
@@ -1195,6 +1203,13 @@ body.sidebar-collapsed .layout-page {
     padding: 3rem;
     box-shadow: var(--shadow-card);
     text-align: center;
+}
+
+/* Fix tombol help section agar tidak full width */
+.help-card .btn-primary-sci {
+    display: inline-flex;
+    width: auto;
+    margin: 0 auto;
 }
 
 .help-icon {
@@ -2782,7 +2797,7 @@ body.sidebar-collapsed .layout-page {
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     scroll-behavior: smooth;
-    color: var();
+    color: var(--text-main);
 }
 
 #chatBox::-webkit-scrollbar {
@@ -3473,9 +3488,10 @@ body.sidebar-collapsed .layout-page {
    FOOTER
 ═══════════════════════════════════════════════ */
 footer {
-    color: rgba(255, 255, 255, .6);
+    background: var(--c-navy);
+    color: rgba(255, 255, 255, 0.6);
     padding: 64px 0 32px;
-    border-top: 1px solid rgba(255, 255, 255, .06);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .footer-brand {
@@ -3493,7 +3509,7 @@ footer {
 .footer-desc {
     font-size: 0.875rem;
     line-height: 1.7;
-    color: rgba(255, 255, 255, .45);
+    color: rgba(255, 255, 255, 0.45);
     max-width: 340px;
 }
 
@@ -3503,7 +3519,7 @@ footer {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, .35);
+    color: rgba(255, 255, 255, 0.35);
     margin-bottom: 1.25rem;
 }
 
@@ -3512,7 +3528,7 @@ footer {
     align-items: center;
     gap: 0.5rem;
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, .55);
+    color: rgba(255, 255, 255, 0.55);
     text-decoration: none;
     margin-bottom: 0.75rem;
     transition: color var(--transition);
@@ -3529,13 +3545,13 @@ footer {
 }
 
 .footer-divider {
-    border-color: rgba(255, 255, 255, .06);
+    border-color: rgba(255, 255, 255, 0.06);
     margin: 3rem 0 1.5rem;
 }
 
 .footer-bottom {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, .3);
+    color: rgba(255, 255, 255, 0.3);
 }
 
 /* ═══════════════════════════════════════════════
@@ -3680,5 +3696,100 @@ footer {
     .envelopes-row {
         flex-direction: column;
         align-items: center;
+    }
+}
+
+
+@media (max-width: 580px) {
+
+    /* ── Page wrapper ── */
+    .page-wrapper {
+        padding: 20px 12px 60px;
+    }
+
+    /* ── Main card ── */
+    .main-card {
+        padding: 24px 16px 40px;
+        border-radius: 20px;
+    }
+
+    /* ── Envelope row ── */
+    .envelopes-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    /* ── Envelope ukuran ── */
+    .envelope {
+        width: 280px;
+        height: 192px;
+    }
+
+    .env-bottom,
+    .env-left,
+    .env-right {
+        height: 136px;
+    }
+
+    .env-flap {
+        height: 122px;
+    }
+
+    .env-paper {
+        left: 16px;
+        right: 16px;
+        height: 106px;
+    }
+
+    .envelope:hover .env-paper {
+        transform: translateY(-38px);
+    }
+
+    .env-seal {
+        top: 106px;
+        width: 52px;
+        height: 52px;
+        font-size: 18px;
+    }
+
+    .envelope:hover .env-seal {
+        transform: translate(-50%, calc(-50% - 88px)) scale(1.15);
+    }
+
+    /* ── Info card bawah envelope ── */
+    .env-info {
+        max-width: 280px;
+        padding: 16px 20px;
+    }
+
+    /* ── Subtitle pill ── */
+    .subtitle-pill {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        font-size: 11px;
+        padding: 5px 14px;
+    }
+
+    /* ── Kode note ── */
+    .kode-note {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+
+    /* ── Timeline ── */
+    .tl-icon-wrap {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+    }
+
+    .timeline-connector {
+        left: 24px;
+    }
+
+    .tl-card {
+        padding: 16px 18px;
     }
 }
