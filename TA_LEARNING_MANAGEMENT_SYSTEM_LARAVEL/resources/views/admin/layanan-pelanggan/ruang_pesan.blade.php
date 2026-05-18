@@ -15,7 +15,7 @@
         <div class="row mt-4 mx-2" id="chatUI">
 
             <div class="col-12 d-flex">
-                <div class=" flex-fill" style="height: 65vh; overflow: hidden;">
+                <div class=" flex-fill" style="height: 85vh; overflow: hidden;">
                     <div class="d-flex flex-column h-100">
 
                         <!-- HEADER -->
