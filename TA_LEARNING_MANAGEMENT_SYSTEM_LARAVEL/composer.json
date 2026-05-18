@@ -8,6 +8,8 @@
     ],
     "license": "MIT",
     "require": {
+        "ext-gd": "*",
+"ext-exif": "*",
         "php": "^8.4",
         "guzzlehttp/guzzle": "^7.10",
         "kreait/firebase-php": "^6.9",
