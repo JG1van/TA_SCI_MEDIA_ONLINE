@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Database;
 
+use Illuminate\Support\Facades\URL;
 
 
 use App\Observers\GlobalObserver;
@@ -72,6 +73,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        // Force HTTPS di production
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+
         Admin::observe(GlobalObserver::class);
         AdminActivityLog::observe(GlobalObserver::class);
         Classroom::observe(GlobalObserver::class);

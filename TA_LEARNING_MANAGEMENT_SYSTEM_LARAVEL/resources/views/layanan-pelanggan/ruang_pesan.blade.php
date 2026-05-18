@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 
-<body style="zoom: 75%;">
+<body>
 
     {{-- ═══════════════════════════════════════════════
          NOTIFIKASI SWEETALERT — UNCHANGED
@@ -88,7 +88,7 @@
         @endif
     </div>
 
-    <main>
+    <main style="zoom: 75%;">
         @if ($requireLogin)
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
