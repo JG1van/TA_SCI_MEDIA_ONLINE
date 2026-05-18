@@ -7,21 +7,21 @@
         "framework"
     ],
     "license": "MIT",
-    "require": {
-        "ext-gd": "*",
-"ext-exif": "*",
-        "php": "^8.4",
-        "guzzlehttp/guzzle": "^7.10",
-        "kreait/firebase-php": "^6.9",
-        "laravel/framework": "^10.10",
-        "laravel/sanctum": "^3.3",
-        "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.6",
-        "phpoffice/phpspreadsheet": "^5.2",
-        "spatie/laravel-activitylog": "^4.10",
-        "spatie/laravel-medialibrary": "^10.15",
-        "spatie/laravel-permission": "^6.21"
-    },
+   "require": {
+    "ext-gd": "*",
+    "ext-exif": "*",
+    "php": "^8.4",
+    "guzzlehttp/guzzle": "^7.10",
+    "kreait/firebase-php": "^6.9",
+    "laravel/framework": "^10.10",
+    "laravel/sanctum": "^3.3",
+    "laravel/tinker": "^2.8",
+    "laravel/ui": "^4.6",
+    "phpoffice/phpspreadsheet": "^5.2",
+    "spatie/laravel-activitylog": "^4.10",
+    "spatie/laravel-medialibrary": "^10.15",
+    "spatie/laravel-permission": "^6.21"
+},
     "audit": {
         "block-insecure": true,
         "ignore": [
