@@ -1,5 +1,5 @@
 {
   "php": {
-    "extensions": ["gd", "exif", "pdo", "pdo_mysql", "mbstring", "tokenizer", "xml", "ctype", "fileinfo", "bcmath", "curl", "zip"]
+    "extensions": ["gd", "exif", "pdo", "pdo_mysql", "mbstring", "tokenizer", "xml", "ctype", "fileinfo", "bcmath", "curl", "zip", "redis"]
   }
 }
