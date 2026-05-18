@@ -1,7 +1,17 @@
 <?php
 return [
 
-    'credentials' => storage_path('firebase/service-account.json'),
+    'credentials' => (function () {
+        $env = env('FIREBASE_CREDENTIALS');
+        
+        // Kalau isinya JSON string (Railway)
+        if ($env && str_starts_with(trim($env), '{')) {
+            return json_decode($env, true);
+        }
+        
+        // Kalau isinya file path (lokal)
+        return storage_path('firebase/service-account.json');
+    })(),
 
     'database_url' => env('FIREBASE_DATABASE_URL'),
 
