@@ -519,7 +519,7 @@
                 roomId: "{{ $room->id }}",
                 status: "{{ $room->chat_status }}",
                 webhook: {
-                    url: "http://localhost:5678/webhook/d3336480-e428-478c-ba84-56c28938d66d/chat",
+                    url: "https://n8n-production-a2cf.up.railway.app/webhook/d3336480-e428-478c-ba84-56c28938d66d/chat",
                     route: "general",
                 },
             };
