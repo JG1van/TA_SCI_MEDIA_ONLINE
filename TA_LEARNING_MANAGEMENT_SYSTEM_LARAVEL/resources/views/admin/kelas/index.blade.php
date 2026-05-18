@@ -1,0 +1,471 @@
+@extends('admin.layouts.app')
+
+@section('title', 'Manajemen Kelas')
+@section('page_title', 'Manajemen Kelas')
+
+@section('content')
+    {{-- ⚠️ PERINGATAN SERIAL --}}
+    @if (!empty($warningSerials))
+        <div class="alert alert-danger border-0 shadow">
+            <h5 class="fw-bold text-white bg-danger p-2 rounded-top">
+                ⚠️ PERINGATAN SISTEM: SERIAL MELEBIHI BATAS KELAS YANG DIIZINKAN
+            </h5>
+            <div class="bg-light text-dark p-3 rounded-bottom">
+                <p class="mb-2">
+                    Ditemukan beberapa <strong>Serial</strong> yang memiliki jumlah kelas
+                    <strong>melebihi batas paket</strong>. Mohon segera periksa dan sesuaikan.
+                </p>
+                <ul class="mb-0">
+                    @foreach ($warningSerials as $warn)
+                        <li class="mb-3 p-2 border-start border-3 border-danger bg-light rounded">
+                            <strong>Kode Serial:</strong> <span class="text-danger">{{ $warn['kode_serial'] }}</span><br>
+                            <strong>Nama Pengguna:</strong> {{ $warn['username'] }}<br>
+                            <strong>Batas Paket:</strong> {{ $warn['paket'] }} kelas<br>
+                            <strong>Jumlah Saat Ini:</strong> {{ $warn['kelas'] }} kelas<br>
+                            <strong>Daftar Kelas:</strong>
+                            <span class="text-muted">{{ implode(', ', $warn['daftar_kelas']) }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+                <hr>
+                <small class="text-danger fw-semibold">
+                    * Disarankan untuk menghapus atau memindahkan kelas yang berlebih agar sesuai dengan paket serial.
+                </small>
+            </div>
+        </div>
+    @endif
+
+    {{--   Pencarian & Tambah --}}
+    <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-8">
+            <label class="form-label">Pencarian</label>
+            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="searchInput"
+                type="text" class="form-control" placeholder="Cari Nama Kelas / Guru..." autocomplete="off">
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalTambah">
+                <i class="fas fa-plus me-2"></i>Tambah Kelas
+            </button>
+        </div>
+    </div>
+
+    {{-- 📋 TABEL DATA --}}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover align-middle text-center">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Kelas</th>
+                    <th>Nama Guru</th>
+                    <th>Kelas</th>
+                    <th>Jumlah Siswa</th>
+                    <th style="width:200px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($data as $i => $c)
+                    <tr id="row{{ $c->id }}">
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $c->name }}</td>
+                        <td>{{ $c->serial && $c->serial->user ? $c->serial->user->name : 'Belum Ditentukan' }}</td>
+                        <td>{{ $c->grade }}</td>
+                        <td>{{ $c->students_count ?? 0 }}</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ url('admin/siswa/create?classroom_id=' . $c->id) }}"
+                                    class="btn btn-primary btn-sm">Siswa</a>
+                                <button class="btn btn-warning btn-sm"
+                                    onclick="editKelas({{ $c->id }})">Edit</button>
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="hapusKelas({{ $c->id }}, '{{ $c->name }}')">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center text-muted ">Belum ada data kelas.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="6"></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    {{--   MODAL TAMBAH KELAS --}}
+    <div class="modal fade p-5" id="modalTambah" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md mt-5 custom-modal">
+            <form id="formTambah" class="modal-content">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Kelas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Nama Kelas</label>
+                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+                            name="name" class="form-control" required autocomplete="off">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Kelas</label>
+                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+                            name="grade" class="form-control" required autocomplete="off">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Serial / Guru</label>
+                        <div class="input-group">
+                            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                                type="hidden" name="serial_id" id="tambahSerialId">
+                            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                                type="text" id="tambahSerialText" class="form-control" placeholder="Belum dipilih"
+                                readonly>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openPilihSerial('tambah')">
+                                Pilih Serial
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{--   MODAL EDIT KELAS --}}
+    <div class="modal fade p-5" id="modalEdit" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md mt-5 custom-modal">
+            <form id="formEdit" class="modal-content">
+                @csrf
+                @method('PUT')
+                <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="hidden"
+                    id="editId" name="id">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Kelas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Nama Kelas</label>
+                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                            type="text" id="editName" name="name" class="form-control" required
+                            autocomplete="off">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Kelas</label>
+                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                            type="text" id="editGrade" name="grade" class="form-control" required
+                            autocomplete="off">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Serial / Guru</label>
+                        <div class="input-group">
+                            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                                type="hidden" name="serial_id" id="editSerialId">
+                            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                                type="text" id="editSerialText" class="form-control" placeholder="Belum dipilih"
+                                readonly>
+                            <button type="button" class="btn btn-warning btn-sm" onclick="openPilihSerial('edit')">
+                                Pilih Serial
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary w-100">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{--   POPUP PILIH SERIAL --}}
+    <div class="modal fade p-5" id="modalPilihSerial" tabindex="-1" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog modal-md mt-5">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pilih Serial / Guru</h5>
+                    <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+                        id="searchSerial" class="form-control mb-3" placeholder="Cari serial atau guru...">
+                    <div class="table-responsive  table-wrapper">
+                        <table class="table table-bordered table-hover text-center align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Kode Serial</th>
+                                    <th>Nama Guru</th>
+                                    <th>Paket</th>
+                                    <th>Pilih</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serialTableBody">
+                                @forelse ($serials as $s)
+                                    <tr>
+                                        <td>{{ $s->serial }}</td>
+                                        <td>{{ $s->user->name ?? 'Belum Ditentukan' }}</td>
+                                        <td>{{ $s->paket ?? '-' }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary"
+                                                onclick="pilihSerial('{{ $s->id }}', '{{ $s->serial }}', '{{ $s->user->name ?? 'Belum Ditentukan' }}')">
+                                                Pilih
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-muted text-center">Tidak ada data serial.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3"></th>
+                                    <th colspan="3"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('js')
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            let currentTarget = null; // 'tambah' atau 'edit'
+
+            // ========================== POP SERIAL ==========================
+            function openPilihSerial(target) {
+                currentTarget = target;
+                bootstrap.Modal.getOrCreateInstance(
+                    document.getElementById('modalPilihSerial')
+                ).show();
+            }
+
+            function pilihSerial(id, serial, guru) {
+                const value = serial + ' - ' + guru;
+
+                if (currentTarget === 'tambah') {
+                    document.getElementById('tambahSerialId').value = id;
+                    document.getElementById('tambahSerialText').value = value;
+                } else {
+                    document.getElementById('editSerialId').value = id;
+                    document.getElementById('editSerialText').value = value;
+                }
+
+                bootstrap.Modal.getOrCreateInstance(
+                    document.getElementById('modalPilihSerial')
+                ).hide();
+
+                currentTarget = null;
+            }
+
+            // Expose function (karena dipanggil dari HTML)
+            window.openPilihSerial = openPilihSerial;
+            window.pilihSerial = pilihSerial;
+
+            // ========================== FILTER SERIAL ==========================
+            const searchSerial = document.getElementById('searchSerial');
+            if (searchSerial) {
+                searchSerial.addEventListener('keyup', function() {
+                    const keyword = this.value.toLowerCase();
+                    document.querySelectorAll('#serialTableBody tr').forEach(tr => {
+                        tr.style.display = tr.innerText.toLowerCase().includes(keyword) ? '' :
+                            'none';
+                    });
+                });
+            }
+
+            // ========================== SWEETALERT NOTIF ==========================
+            const notifSuccess = (msg) =>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: msg,
+                    timer: 1600,
+                    showConfirmButton: false
+                });
+
+            const notifError = (msg) =>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: msg,
+                    confirmButtonText: 'Tutup'
+                });
+
+            // ========================== SEARCH KELAS ==========================
+            const searchInput = document.getElementById("searchInput");
+            if (searchInput) {
+                searchInput.addEventListener("keyup", function() {
+                    const keyword = this.value.toLowerCase();
+                    document.querySelectorAll("tbody tr").forEach(row => {
+                        row.style.display = row.innerText.toLowerCase().includes(keyword) ? "" :
+                            "none";
+                    });
+                });
+            }
+
+            // ========================== FORM TAMBAH ==========================
+            const formTambah = document.getElementById("formTambah");
+            if (formTambah) {
+                formTambah.addEventListener("submit", async function(e) {
+                    e.preventDefault();
+                    const btn = this.querySelector("button[type='submit']");
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+
+                    try {
+                        const res = await fetch("{{ route('admin.kelas.store') }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: new FormData(this)
+                        });
+
+                        const result = await res.json();
+                        if (result.success) {
+                            bootstrap.Modal.getOrCreateInstance(
+                                document.getElementById("modalTambah")
+                            ).hide();
+
+                            notifSuccess(result.message);
+                            setTimeout(() => location.reload(), 700);
+                        } else notifError(result.message);
+
+                    } catch (err) {
+                        notifError(err.message || "Terjadi kesalahan.");
+                    }
+
+                    btn.disabled = false;
+                    btn.innerHTML = 'Simpan';
+                });
+            }
+
+            // ========================== EDIT KELAS ==========================
+            async function editKelas(id) {
+                try {
+                    const res = await fetch(`/admin/kelas/${id}/edit`);
+                    const result = await res.json();
+
+                    if (result.success) {
+                        const c = result.data;
+
+                        document.getElementById("editId").value = c.id;
+                        document.getElementById("editName").value = c.name;
+                        document.getElementById("editGrade").value = c.grade;
+
+                        if (c.serial) {
+                            document.getElementById("editSerialId").value = c.serial.id;
+                            document.getElementById("editSerialText").value =
+                                c.serial.serial + ' - ' + (c.serial.user?.name ?? 'Belum Ditentukan');
+                        }
+
+                        bootstrap.Modal.getOrCreateInstance(
+                            document.getElementById("modalEdit")
+                        ).show();
+
+                    } else notifError(result.message);
+                } catch (err) {
+                    notifError("Terjadi kesalahan.");
+                }
+            }
+            window.editKelas = editKelas;
+
+            // ========================== FORM EDIT ==========================
+            const formEdit = document.getElementById("formEdit");
+            if (formEdit) {
+                formEdit.addEventListener("submit", async function(e) {
+                    e.preventDefault();
+                    const id = document.getElementById("editId").value;
+
+                    const btn = this.querySelector("button[type='submit']");
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+
+                    try {
+                        const res = await fetch(`/admin/kelas/${id}`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "X-HTTP-Method-Override": "PUT"
+                            },
+                            body: new FormData(this)
+                        });
+
+                        const result = await res.json();
+                        if (result.success) {
+                            bootstrap.Modal.getOrCreateInstance(
+                                document.getElementById("modalEdit")
+                            ).hide();
+
+                            notifSuccess(result.message);
+                            setTimeout(() => location.reload(), 700);
+                        } else notifError(result.message);
+
+                    } catch (err) {
+                        notifError(err.message || "Terjadi kesalahan.");
+                    }
+
+                    btn.disabled = false;
+                    btn.innerHTML = 'Simpan Perubahan';
+                });
+            }
+
+            // ========================== HAPUS ==========================
+            window.hapusKelas = function(id, name) {
+                Swal.fire({
+                    title: 'Hapus Kelas?',
+                    text: `Yakin ingin menghapus "${name}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#696CFF',
+                    cancelButtonColor: '#8592A3',
+                    reverseButtons: true
+                }).then(async (result) => {
+                    if (!result.isConfirmed) return;
+
+                    try {
+                        const res = await fetch(`/admin/kelas/${id}`, {
+                            method: "DELETE",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            }
+                        });
+
+                        let out;
+                        try {
+                            out = await res.json();
+                        } catch {
+                            out = {
+                                success: false,
+                                message: `Terjadi kesalahan: ${res.status} ${res.statusText}`
+                            };
+                        }
+
+                        if (out.success) {
+                            notifSuccess(out.message);
+                            document.getElementById(`row${id}`)?.remove();
+                        } else notifError(out.message);
+
+                    } catch (err) {
+                        notifError('Terjadi kesalahan: ' + err.message);
+                    }
+                });
+            };
+
+        });
+    </script>
+@endsection

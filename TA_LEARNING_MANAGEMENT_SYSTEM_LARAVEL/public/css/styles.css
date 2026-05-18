@@ -1,0 +1,1182 @@
+:root {
+    --warna0: white;
+    --warna1: black;
+    --warna2: #753422;
+    --warna3: #B05B3B;
+    --warna4: #D79771;
+    --warna5: #FFF4E0;
+    --warna6: #FFEBC9;
+    --warna7: #ffd87a;
+
+    /* --bs-primary: var(--warna3);
+    --bs-primary-rgb: 94, 147, 108;
+
+    --bs-success: var(--warna4);
+    --bs-success-rgb: 147, 218, 151;
+
+    --bs-info: var(--warna6);
+    --bs-warning: var(--warna5);
+    --bs-dark: var(--warna2);
+    --bs-light: var(--warna6);
+
+    --bs-body-bg: var(--warna6);
+    --bs-body-color: #1a1a1a;
+
+
+    --bs-btn-bg: var(--warna3);
+    --bs-btn-border-color: var(--warna3);
+    --bs-btn-hover-bg: var(--warna3);
+    --bs-btn-hover-border-color: var(--warna2);
+    --bs-btn-active-bg: var(--warna2); */
+
+}
+
+.form-check-input {
+    accent-color: var(--warna3) !important;
+
+    width: 22px;
+    height: 22px;
+    margin: 0 8px;
+    cursor: pointer;
+}
+
+/* Kalau ingin versi lebih tua dari browser tetap bisa */
+.form-check-input:checked {
+    background-color: var(--warna3) !important;
+    border-color: var(--warna3) !important;
+}
+
+/* Fokus ring saat aktif (outline biru default) diganti juga */
+.form-check-input:focus {
+    box-shadow: none !important;
+    border-color: var(--warna3) !important;
+}
+
+/* Navbar */
+.navbar.bg-primary {
+    background-color: var(--warna2) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--warna6) !important;
+    font-weight: 600;
+}
+
+.navbar-dark .navbar-brand {
+    color: var(--warna6) !important;
+}
+
+/* Footer */
+footer.bg-dark {
+    background-color: var(--warna2) !important;
+}
+
+/* Tombol utama */
+.btn-primary {
+    background-color: var(--warna3) !important;
+    border-color: var(--warna3) !important;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--warna2) !important;
+    border-color: var(--warna2) !important;
+}
+
+/* Tabel */
+.table th {
+    background-color: var(--warna3);
+    color: white;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: var(--warna6);
+}
+
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: var(--warna5);
+}
+
+/* Latar belakang umum */
+body {
+    background:
+        linear-gradient(rgba(255, 244, 227, 0.55),
+            rgba(255, 244, 227, 0.55)),
+        var(--bg-image) center center / cover no-repeat;
+    background-color: var(--warna6) !important;
+}
+
+
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', serif;
+    font-size: 17px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+
+.btn-close {
+    transition: all 0.2s ease;
+}
+
+.btn-close:hover,
+.btn-close:focus,
+.btn-close:active {
+    background-color: var(--warna5) !important;
+    color: var(--warna1) !important;
+    --bs-btn-close-focus-shadow: none;
+}
+
+html {
+    background-color: var(--warna6);
+    font-size: 80%;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+i,
+.fa,
+.bi {
+    vertical-align: middle;
+    line-height: 1;
+    display: inline-block;
+}
+
+.main-content .custom-alert-1 {
+    background-color: var(--warna3);
+    color: white;
+    border: 4px solid var(--warna2);
+}
+
+.main-content .custom-alert-2 {
+    background-color: var(--warna4);
+    color: white;
+    border: 4px solid var(--warna2);
+
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+.offcanvas.offcanvas-start {
+    background: linear-gradient(180deg, var(--warna2), var(--warna3)) !important;
+    color: var(--warna0) !important;
+    padding: 20px;
+}
+
+.offcanvas.offcanvas-start .offcanvas-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.offcanvas.offcanvas-start .offcanvas-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.offcanvas.offcanvas-start .offcanvas-body {
+    padding: 0;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.offcanvas.offcanvas-start .offcanvas-body ::-webkit-scrollbar {
+    display: none;
+}
+
+.offcanvas.offcanvas-start ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.offcanvas.offcanvas-start ul li {
+    margin: 10px 0;
+}
+
+.offcanvas.offcanvas-start ul li a {
+    color: var(--warna0);
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.3s;
+    font-size: 16px;
+}
+
+.offcanvas.offcanvas-start ul li a:hover,
+.offcanvas.offcanvas-start ul li.active a {
+    background-color: var(--warna3);
+    color: var(--warna0);
+}
+
+.offcanvas.offcanvas-start i {
+    margin-right: 10px;
+}
+
+
+.ribbon-container {
+    pointer-events: none;
+    z-index: 1030;
+    perspective: 1200px;
+    margin-left: 120px;
+    overflow: hidden;
+}
+
+.ribbon-wrapper {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    pointer-events: auto;
+    margin: 0 20px;
+    width: 70%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.ribbon-main {
+    background-color: var(--warna3);
+    color: #fff;
+    border: 1px solid var(--warna7);
+    padding: 12px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 10;
+    /* Top layer */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    /* Subtle texture */
+    min-width: 100%;
+    background-size: 4px 4px;
+    margin-top: 10px;
+}
+
+.ribbon-main::before {
+    content: "";
+    position: absolute;
+    top: 2.5px;
+    left: 2.5px;
+    right: 2.5px;
+    bottom: 2.5px;
+    border: 2px solid var(--warna7);
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.ribbon-tail-left,
+.ribbon-tail-right {
+    position: fixed;
+    top: 20px;
+    height: 80%;
+    width: 100px;
+    background-color: var(--warna7);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ribbon-tail-inner::before,
+.ribbon-tail-inner::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border: 2px solid var(--warna7);
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.ribbon-tail-left {
+    left: 140px;
+    clip-path: polygon(0 0,
+            100% 0,
+            100% 100%,
+            0 100%,
+            25% 50%);
+
+}
+
+.ribbon-tail-right {
+    right: 130px;
+    clip-path: polygon(0 0,
+            100% 0,
+            75% 50%,
+            100% 100%,
+            0 100%);
+}
+
+.ribbon-tail-inner {
+    width: calc(100% - 6px);
+    height: calc(100% - 6px);
+    background-color: var(--warna4);
+}
+
+.ribbon-tail-left .ribbon-tail-inner {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 25% 50%);
+}
+
+.ribbon-tail-right .ribbon-tail-inner {
+    clip-path: polygon(0 0, 100% 0, 75% 50%, 100% 100%, 0 100%);
+}
+
+.ribbon-main h5 {
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.ribbon-main .btn {
+    font-size: 0.8rem;
+}
+
+.ribbon-main i {
+    font-size: 1.2rem;
+}
+
+.welcome-illustration img {
+    height: 100px;
+    max-width: 200px;
+}
+
+/* MATIKAN SEMUA EFEK HOVER UNTUK MENU DISABLED */
+.sidebar ul li.disabled-li,
+.sidebar ul li.disabled-li:hover {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    transform: none !important;
+    clip-path: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* STYLE LINK DISABLED */
+.sidebar ul li.disabled-li a.disabled-menu {
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    color: #bdbdbd !important;
+    background: none !important;
+    transform: none !important;
+    clip-path: none !important;
+    border: none !important;
+}
+
+/* HILANGKAN PSEUDO BORDER */
+.sidebar ul li.disabled-li a.disabled-menu::before {
+    content: none !important;
+}
+
+
+.sidebar {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    width: 230px;
+    height: 95%;
+    background: var(--warna4);
+
+    /* --- Tekstur Kayu --- */
+    background-image:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='300'><path d='M40 0 C0 75 80 225 40 300' stroke='rgba(0,0,0,0.12)' stroke-width='3' fill='none'/><path d='M90 0 C50 75 130 225 90 300' stroke='rgba(0,0,0,0.12)' stroke-width='3' fill='none'/><path d='M140 0 C100 75 180 225 140 300' stroke='rgba(0,0,0,0.12)' stroke-width='3' fill='none'/></svg>"),
+        repeating-linear-gradient(90deg,
+            rgba(0, 0, 0, 0.06) 0px,
+            rgba(0, 0, 0, 0.06) 1px,
+            transparent 1px,
+            transparent 4px),
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.35),
+            transparent,
+            rgba(0, 0, 0, 0.5));
+
+    background-size: 150px 300px, 100% 100%, 100% 100%;
+    background-repeat: repeat, repeat, no-repeat;
+
+    border-radius: 20px;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 1000;
+    margin: auto;
+
+    overflow: hidden;
+    border: 2px solid var(--warna7);
+
+}
+
+/* Logo */
+.sidebar .logo-container {
+    text-align: center;
+}
+
+.sidebar .logo-container img {
+    width: 80px;
+    height: auto;
+    border-radius: 100%;
+    border: 4px solid var(--warna4);
+}
+
+/* Menu */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    margin: 8px 10px;
+    transition: margin 0.2s ease;
+    overflow: hidden;
+}
+
+/* Hover dan Active */
+.sidebar ul li:hover,
+.sidebar ul li.active {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+.sidebar ul li a {
+    color: #bdbdbd;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.sidebar ul li a i {
+    width: 22px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* Hover & Active */
+.sidebar ul li a:hover,
+.sidebar ul li.active a {
+    background: var(--warna3);
+    color: #fff;
+    transform: translateX(20px);
+    clip-path: polygon(0 0,
+            100% 0,
+            100% 100%,
+            0 100%,
+            20% 50%);
+    border: 2px solid var(--warna7);
+}
+
+.sidebar ul li.hover i::before,
+.sidebar ul li.active i::before {
+    display: none;
+}
+
+.sidebar ul li a:hover ::before,
+.sidebar ul li.active a::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border: 2px solid var(--warna7);
+    opacity: 0.3;
+    pointer-events: none;
+
+}
+
+/* Footer / user info (kalau ada di bawah) */
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-footer img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sidebar-footer .user-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.sidebar-footer .user-info small {
+    color: #aaa;
+}
+
+
+
+.tu-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.tu-info i {
+    font-size: 20px;
+    color: var(--warna1);
+}
+
+.main-content {
+    min-height: 100vh;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+
+.main h1 {
+    font-size: 28px;
+    color: var(--dark-color);
+    margin-left: 10px;
+}
+
+main .card {
+    background: var(--warna0);
+    box-shadow: none;
+    box-shadow:
+        inset 0 0 0 1px var(--warna7);
+    padding: 10px;
+    border-bottom: 10px solid var(--warna2);
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 0;
+    border-radius: 16px;
+}
+
+.card-custom {
+    min-height: 290px;
+}
+
+.size-card {
+    min-height: 300px;
+}
+
+
+
+.table-wrapper {
+    border: 2px solid var(--warna2);
+    /* warna tepi */
+    border-radius: 10px;
+    overflow: hidden;
+    /* jaga radius tetap halus */
+    background: var(--warna2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-bordered {
+    border: 2px solid #7a3e1d !important;
+    /* Warna utama border */
+    border-radius: 10px !important;
+    overflow: hidden;
+    /* Supaya radius tidak terpotong */
+}
+
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    /* ubah dari collapse ke separate */
+    border-spacing: 0;
+    /* hilangkan jarak antar sel */
+}
+
+th,
+td {
+    border: 1px solid #7a3e1d;
+    padding: 8px 12px;
+}
+
+/* Hilangkan border ganda di sisi luar */
+th:first-child,
+td:first-child {
+    border-left: none;
+}
+
+th:last-child,
+td:last-child {
+    border-right: none;
+}
+
+tr:first-child th {
+    border-top: none;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+
+thead {
+    background-color: var(--warna2);
+    padding: 20px;
+    box-shadow: none;
+    width: 100%;
+    margin: auto;
+    color: var(--warna0);
+
+}
+
+tbody {
+    background-color: var(--warna0);
+}
+
+tfoot {
+    background-color: var(--warna2);
+    color: var(--warna0);
+}
+
+
+main .btn-ukuran {
+    max-width: 200px;
+}
+
+input.form-control,
+select.form-select,
+textarea.form-control {
+    border: 4px solid var(--warna2);
+    margin-bottom: 10px;
+    box-shadow:
+        0 4px 0 rgba(0, 0, 0, 0.35),
+        0 5px 10px rgba(0, 0, 0, 0.25);
+
+}
+
+input.form-control:focus,
+select.form-select:focus,
+textarea.form-control:focus,
+input.form-control:active,
+select.form-select:active,
+textarea.form-control:active {
+    border-color: var(--warna2);
+    outline: none;
+    transform: translateY(2px);
+    box-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.35),
+        0 3px 5px rgba(0, 0, 0, 0.25);
+
+}
+
+input[readonly] {
+    background-color: var(--warna4);
+}
+
+select[disabled] {
+    background-color: var(--warna4) !important;
+    color: var(--warna1) !important;
+    cursor: not-allowed;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
+}
+
+
+input[readonly]:focus,
+input[readonly]:hover {
+    border-color: var(--warna2);
+    background-color: var(--warna4);
+    box-shadow: none;
+    outline: none;
+    cursor: default;
+
+}
+
+
+/* Style dasar tombol "Pilih File" */
+input[type="file"]::file-selector-button,
+input[type="file"]::-webkit-file-upload-button {
+    background-color: var(--warna2);
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Hover, focus, active efek */
+input[type="file"]:hover::file-selector-button,
+input[type="file"]:focus::file-selector-button,
+input[type="file"]:active::file-selector-button,
+input[type="file"]:hover::-webkit-file-upload-button,
+input[type="file"]:focus::-webkit-file-upload-button,
+input[type="file"]:active::-webkit-file-upload-button {
+    background-color: var(--warna5) !important;
+    border-color: var(--warna2) !important;
+    color: var(--warna1) !important;
+    outline: none;
+    box-shadow: none;
+}
+
+
+.alas {
+    margin-top: 90px;
+    background: linear-gradient(180deg, var(--warna5), var(--warna6));
+    border-radius: 20px;
+
+    border: 2px solid var(--warna7);
+
+    padding: 10px;
+}
+
+
+
+/* ================================
+   TOMBOL UTAMA (btn-add)
+================================ */
+main .btn-add {
+    margin-bottom: 10px;
+    background-color: var(--warna2);
+    border: 4px solid var(--warna2);
+    color: var(--warna0);
+
+    /* efek baru */
+    box-shadow:
+        0 4px 0 rgba(0, 0, 0, 0.35),
+        0 5px 10px rgba(0, 0, 0, 0.25);
+
+    transition: all 0.25s ease;
+    cursor: pointer;
+    overflow-y: visible;
+}
+
+main .btn-add:hover,
+main .btn-add:focus {
+    transform: translateY(2px);
+    background-color: var(--warna5);
+    border-color: var(--warna2);
+    color: var(--warna1);
+    box-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.35),
+        0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+main .btn-add:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+
+
+main .btn-alt-1,
+main .btn-alt-2 {
+    margin-bottom: 10px;
+    color: var(--warna0);
+    /* efek baru */
+    box-shadow:
+        0 4px 0 rgba(0, 0, 0, 0.35),
+        0 5px 10px rgba(0, 0, 0, 0.25);
+    transition: all 0.25s ease;
+    cursor: pointer;
+    overflow-y: visible;
+}
+
+/* warna default masing-masing */
+main .btn-alt-1 {
+    background-color: var(--warna3);
+    border: 4px solid var(--warna3);
+}
+
+main .btn-alt-2 {
+    background-color: var(--warna4);
+    border: 4px solid var(--warna4);
+}
+
+
+/* Efek hover / focus */
+main .btn-alt-1:hover,
+main .btn-alt-1:focus,
+main .btn-alt-2:hover,
+main .btn-alt-2:focus {
+    transform: translateY(2px);
+    background-color: var(--warna5);
+    border-color: var(--warna2);
+    color: var(--warna1);
+    box-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.35),
+        0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Efek active */
+main .btn-alt-1:active,
+main .btn-alt-2:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.aksi-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.aksi-buttons a {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-box {
+    max-width: 400px;
+    width: 100%;
+}
+
+.video-frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    /* Membuat video berbentuk kotak */
+    object-fit: cover;
+    /* Supaya gambar tetap bagus */
+}
+
+.baris-terisi {
+    background-color: var(--warna4) !important;
+}
+
+.baris-merah {
+    background-color: #ffcccc !important;
+    color: #990000 !important;
+}
+
+/* Area daftar isi biar bisa discroll */
+#lessonTree.scroll-area {
+    max-height: 65vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c59a6d #f7f7f7;
+}
+
+/* Scrollbar style (untuk Chrome/Edge) */
+#lessonTree.scroll-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+#lessonTree.scroll-area::-webkit-scrollbar-thumb {
+    background-color: #c59a6d;
+    border-radius: 4px;
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    /* rasio 16:9 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Kecilkan semua box di dalam lessonTree */
+#lessonTree .border {
+    padding: 6px 10px !important;
+}
+
+#lessonTree .p-2 {
+    padding: 6px !important;
+}
+
+#lessonTree .mb-2,
+#lessonTree .mb-1 {
+    margin-bottom: 4px !important;
+}
+
+/* Kecilkan font judul Materi/Bab/Subbab */
+#lessonTree span,
+#lessonTree strong {
+    font-size: 13px !important;
+}
+
+/* Kecilkan font informasi admin & tanggal */
+#lessonTree small {
+    font-size: 11px !important;
+}
+
+/* Kecilkan tombol */
+#lessonTree .btn-sm,
+#lessonTree .btn-alt-1,
+#lessonTree .btn-alt-2 {
+    padding: 2px 6px !important;
+    font-size: 11px !important;
+}
+
+/* Kurangi indentasi */
+#lessonTree .ms-4 {
+    margin-left: 1rem !important;
+}
+
+#lessonTree .ps-3 {
+    padding-left: 0.8rem !important;
+}
+
+/* Border lebih tipis */
+#lessonTree .border-start {
+    border-width: 1px !important;
+}
+
+#main-content {
+    margin-bottom: 80px;
+}
+
+#adminButtonContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    background: #fff;
+    border-top: 1px solid #e9ecef;
+    z-index: 1050;
+}
+
+#chatUI {
+    margin-top: 1rem;
+}
+
+
+#chatBox {
+    height: 300px;
+    overflow-y: auto;
+    background: #e5ddd5;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+/* Pesan saya → hijau kanan */
+.bubble-me {
+    background: #d4f8c4;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 6px 0;
+    max-width: 75%;
+    margin-left: auto !important;
+}
+
+/* Pesan lawan bicara → putih kiri */
+.bubble-other {
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 6px 0;
+    max-width: 75%;
+    margin-right: auto !important;
+}
+
+/* Sistem */
+.bubble-system {
+    background: #dfc9b3;
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: fit-content;
+    margin: 15px auto;
+    text-align: center;
+    font-size: 14px;
+}
+
+
+/* Nama pengirim */
+.sender-name {
+    font-size: 8px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* Jam kecil di bawah */
+.bubble-time {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 4px;
+    text-align: right;
+}
+
+
+
+.swal2-container {
+    position: fixed !important;
+}
+
+
+@media (max-width: 768px) {
+
+    .ribbon-container {
+        margin-left: 0;
+    }
+
+    .ribbon-wrapper {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .ribbon-tail-left,
+    .ribbon-tail-right {
+        width: 40px;
+        top: 5px;
+    }
+
+    .ribbon-tail-left {
+        left: -40px;
+    }
+
+    .ribbon-tail-right {
+        right: -40px;
+    }
+
+    .ribbon-tail-inner {
+        width: 100%;
+        height: 100%;
+    }
+
+    .ribbon-main h3 {
+        font-size: 1.5rem;
+    }
+
+    .card-custom {
+        min-height: auto !important;
+
+    }
+
+    .sidebar {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .main-content {
+        margin-left: 250px;
+    }
+}
+
+@media (min-width: 768px) {
+    .video-box {
+        width: 80%;
+    }
+}
+
+
+
+@media (max-width: 992px) {
+    .welcome-illustration img {
+        display: none !important;
+        max-width: 0px;
+    }
+
+    .size-card {
+        min-height: auto;
+    }
+}
+
+/* Wrapper item */
+.file-item {
+    background: #fff;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+/* Area thumbnail, ukuran seragam */
+.file-thumb {
+    width: 100%;
+    height: 110px;
+    /* ukuran thumbnail seragam */
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Gambar otomatis crop rapi */
+.thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* gambar rapi, tidak gepeng */
+    border-radius: 6px;
+}
+
+/* Nama file */
+.file-name {
+    margin-top: 4px;
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bubble-me,
+.bubble-other {
+    white-space: pre-line;
+}
+
+.word-cloud {
+    position: relative;
+    height: 350px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.word-cloud span {
+    position: absolute;
+    white-space: nowrap;
+    transform-origin: center;
+}
+
+.word-cloud span:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.word-list {
+    max-height: 220px;
+    overflow-y: auto;
+}
