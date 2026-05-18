@@ -2782,6 +2782,7 @@ body.sidebar-collapsed .layout-page {
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     scroll-behavior: smooth;
+    color: var();
 }
 
 #chatBox::-webkit-scrollbar {
