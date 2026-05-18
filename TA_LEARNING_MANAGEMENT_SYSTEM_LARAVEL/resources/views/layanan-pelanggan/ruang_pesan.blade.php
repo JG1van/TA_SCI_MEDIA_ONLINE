@@ -362,7 +362,8 @@
 
                                     <!-- Login Badge -->
                                     <div style="display: flex; flex-direction: column; align-items: center;">
-                                        <small style="color: #888; font-size: 11px;">Klik untuk login akun Anda</small>
+                                        <small style="color: #888; font-size: 11px;">Klik dibawah ini untuk login akun
+                                            Anda</small>
                                         <span id="statusBadge" class="status-badge {{ $badgeClass }}"
                                             style="cursor:pointer">
                                             <span class="status-dot"></span>

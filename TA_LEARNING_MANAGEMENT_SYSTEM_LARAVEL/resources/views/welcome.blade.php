@@ -313,6 +313,7 @@
             </div>
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-2 px-1">
 
+                <!-- Baris 1: Kelas & Siswa -->
                 <div class="col" data-aos="fade-up" data-aos-delay="50">
                     <div class="feature-card">
                         <div class="feature-icon-wrap"><i class="bi bi-people-fill"></i></div>
@@ -324,23 +325,42 @@
 
                 <div class="col" data-aos="fade-up" data-aos-delay="100">
                     <div class="feature-card">
-                        <div class="feature-icon-wrap"><i class="bi bi-book-half"></i></div>
-                        <div class="feature-title">Bank Materi</div>
-                        <div class="feature-desc">Gunakan paket materi bawaan atau unggah materi sendiri sesuai
-                            kebutuhan kurikulum.</div>
+                        <div class="feature-icon-wrap"><i class="bi bi-broadcast-pin"></i></div>
+                        <div class="feature-title">Kelas Online</div>
+                        <div class="feature-desc">Tatap muka virtual interaktif langsung antara guru dan siswa kapan
+                            saja.</div>
                     </div>
                 </div>
 
                 <div class="col" data-aos="fade-up" data-aos-delay="150">
                     <div class="feature-card">
-                        <div class="feature-icon-wrap"><i class="bi bi-pencil-square"></i></div>
-                        <div class="feature-title">Bank Soal</div>
-                        <div class="feature-desc">Bank soal lengkap, buat soal sendiri, atau generate otomatis dengan
-                            bantuan AI.</div>
+                        <div class="feature-icon-wrap"><i class="bi bi-chat-square-text"></i></div>
+                        <div class="feature-title">Diskusi Pembelajaran</div>
+                        <div class="feature-desc">Fitur diskusi langsung antara siswa dan guru pada setiap soal materi.
+                        </div>
                     </div>
                 </div>
 
-                <div class="col" data-aos="fade-up" data-aos-delay="200">
+                <!-- Baris 2: Materi -->
+                <div class="col" data-aos="fade-up" data-aos-delay="50">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="bi bi-book-half"></i></div>
+                        <div class="feature-title">Bank Materi</div>
+                        <div class="feature-desc">Bank materi siap pakai — tinggal pilih dan langsung share ke kelas
+                            tanpa perlu menyiapkan dari nol.</div>
+                    </div>
+                </div>
+
+                <div class="col" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="bi bi-file-earmark-text"></i></div>
+                        <div class="feature-title">Buat Materi Sendiri</div>
+                        <div class="feature-desc">Buat dan susun materi pembelajaran sesuai gaya mengajar dan kebutuhan
+                            kurikulum Anda sendiri.</div>
+                    </div>
+                </div>
+
+                <div class="col" data-aos="fade-up" data-aos-delay="150">
                     <div class="feature-card">
                         <div class="feature-icon-wrap"><i class="bi bi-graph-up-arrow"></i></div>
                         <div class="feature-title">Penilaian Terintegrasi</div>
@@ -349,6 +369,35 @@
                     </div>
                 </div>
 
+                <!-- Baris 3: Soal -->
+                <div class="col" data-aos="fade-up" data-aos-delay="50">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="bi bi-pencil-square"></i></div>
+                        <div class="feature-title">Bank Soal</div>
+                        <div class="feature-desc">Bank soal siap pakai — tinggal pilih dan langsung share ke kelas,
+                            hemat waktu persiapan.</div>
+                    </div>
+                </div>
+
+                <div class="col" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="bi bi-pencil-fill"></i></div>
+                        <div class="feature-title">Buat Soal Sendiri</div>
+                        <div class="feature-desc">Rancang soal latihan atau ujian secara mandiri dengan editor soal
+                            yang mudah digunakan.</div>
+                    </div>
+                </div>
+
+                <div class="col" data-aos="fade-up" data-aos-delay="150">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrap"><i class="bi bi-stars"></i></div>
+                        <div class="feature-title">Generate Soal dengan AI</div>
+                        <div class="feature-desc">Buat soal otomatis dalam hitungan detik menggunakan kecerdasan buatan
+                            berdasarkan materi yang dipilih.</div>
+                    </div>
+                </div>
+
+                <!-- Baris 4: Penilaian & Sikap -->
                 <div class="col" data-aos="fade-up" data-aos-delay="50">
                     <div class="feature-card">
                         <div class="feature-icon-wrap"><i class="bi bi-bar-chart-line"></i></div>
@@ -369,22 +418,14 @@
 
                 <div class="col" data-aos="fade-up" data-aos-delay="150">
                     <div class="feature-card">
-                        <div class="feature-icon-wrap"><i class="bi bi-chat-square-text"></i></div>
-                        <div class="feature-title">Diskusi Pembelajaran</div>
-                        <div class="feature-desc">Fitur diskusi langsung antara siswa dan guru pada setiap soal materi.
-                        </div>
+                        <div class="feature-icon-wrap"><i class="bi bi-person-circle"></i></div>
+                        <div class="feature-title">Manajemen Profil</div>
+                        <div class="feature-desc">Kelola akun, data pribadi, dan keamanan dengan tampilan yang mudah
+                            dipahami.</div>
                     </div>
                 </div>
 
-                <div class="col" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card">
-                        <div class="feature-icon-wrap"><i class="bi bi-broadcast-pin"></i></div>
-                        <div class="feature-title">Kelas Online</div>
-                        <div class="feature-desc">Tatap muka virtual interaktif langsung antara guru dan siswa kapan
-                            saja.</div>
-                    </div>
-                </div>
-
+                <!-- Baris 5: Pendukung -->
                 <div class="col" data-aos="fade-up" data-aos-delay="50">
                     <div class="feature-card">
                         <div class="feature-icon-wrap"><i class="bi bi-headset"></i></div>
@@ -404,15 +445,6 @@
                 </div>
 
                 <div class="col" data-aos="fade-up" data-aos-delay="150">
-                    <div class="feature-card">
-                        <div class="feature-icon-wrap"><i class="bi bi-person-circle"></i></div>
-                        <div class="feature-title">Manajemen Profil</div>
-                        <div class="feature-desc">Kelola akun, data pribadi, dan keamanan dengan tampilan yang mudah
-                            dipahami.</div>
-                    </div>
-                </div>
-
-                <div class="col" data-aos="fade-up" data-aos-delay="200">
                     <div class="feature-card">
                         <div class="feature-icon-wrap"><i class="bi bi-phone-fill"></i></div>
                         <div class="feature-title">Akses Fleksibel</div>
@@ -447,7 +479,7 @@
                         <div class="step-icon"><i class="bi bi-globe"></i></div>
                         <div class="step-title">Melalui Browser</div>
                         <div class="step-desc">Akses langsung melalui <strong>scimediaonline.com</strong> dari browser
-                            favorit Anda — Chrome, Firefox, atau Safari.</div>
+                            favorit Anda.</div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
@@ -481,7 +513,7 @@
                     <div class="step-card">
                         <div class="step-number">01</div>
                         <div class="step-icon"><i class="bi bi-person-plus"></i></div>
-                        <div class="step-title">Buat atau Dapatkan Akun</div>
+                        <div class="step-title">Buat / Dapatkan Akun</div>
                         <div class="step-desc">Daftarkan akun melalui halaman registrasi atau hubungi admin untuk
                             dibuatkan akun.</div>
                     </div>
