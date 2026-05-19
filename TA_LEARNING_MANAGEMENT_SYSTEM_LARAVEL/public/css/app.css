@@ -3646,6 +3646,10 @@ footer {
     .envelopes-row {
         gap: 28px;
     }
+
+    #sidebarToggleBtn {
+        display: none;
+    }
 }
 
 @media (max-width: 767px) {
