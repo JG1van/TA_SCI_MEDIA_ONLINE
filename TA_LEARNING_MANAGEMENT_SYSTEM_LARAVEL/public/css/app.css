@@ -3573,6 +3573,10 @@ footer {
     body.sidebar-collapsed .layout-menu {
         transform: translateX(-100%);
     }
+
+    #sidebarToggleBtn {
+        display: none;
+    }
 }
 
 @media (max-width: 991px) {
@@ -3595,6 +3599,10 @@ footer {
 
     .cta-inner {
         padding: 3rem 1.5rem;
+    }
+
+    #sidebarToggleBtn {
+        display: none;
     }
 }
 
