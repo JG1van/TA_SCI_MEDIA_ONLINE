@@ -454,13 +454,12 @@
         /* ─── LOADING STATE ─── */
         .btn-login .btn-text {
             transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-login .btn-spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             display: none;
         }
 
@@ -469,22 +468,37 @@
         }
 
         .btn-login.loading .btn-spinner {
-            display: block;
+            display: flex;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .btn-login.loading .btn-spinner::after {
+            content: "Memproses...";
+            font-size: 0.93rem;
+            font-weight: 700;
+            color: #fff;
         }
 
         @keyframes spin {
             to {
-                transform: translate(-50%, -50%) rotate(360deg);
+                transform: rotate(360deg);
             }
         }
 
         .spinner-ring {
-            width: 20px;
-            height: 20px;
-            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
             border-top-color: #fff;
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
         }
 
         /* ─── FOOTER ─── */
