@@ -34,7 +34,7 @@ class LessonController extends Controller
                 [
                     'mapel_id' => 'required|exists:mapels,id',
                     'name' => 'required|string|max:50',
-                    'grade' => 'required|string|max:10',
+                    'grade' => 'required|string|max:12',
                     'semester' => 'required|integer|min:1|max:2',
                     'category' => 'required|integer|min:1|max:3',
                 ],
@@ -100,7 +100,7 @@ class LessonController extends Controller
             [
                 'mapel_id' => 'required|exists:mapels,id',
                 'name' => 'required|string|max:50',
-                'grade' => 'required|string|max:10',
+                'grade' => 'required|string|max:12',
                 'semester' => 'required|integer|min:1|max:2',
                 'category' => 'required|integer|min:1|max:3',
             ],
