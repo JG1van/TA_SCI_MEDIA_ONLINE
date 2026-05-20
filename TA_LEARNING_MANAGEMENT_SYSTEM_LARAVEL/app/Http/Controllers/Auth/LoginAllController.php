@@ -40,7 +40,7 @@ class LoginAllController extends Controller
             dispatch(function () {
                 $controller = app(\App\Http\Controllers\Admin\SerialController::class);
 
-                if (!\Cache::add('expiry-reminder-login-lock', true, 21600)) {
+                if (!\Cache::add('expiry-reminder-lock', true, 21600)) {
                     return;
                 }
 
@@ -66,30 +66,30 @@ class LoginAllController extends Controller
             return redirect()->route('admin.dashboard')
                 ->with('success_html', $message);
         }
-        $guru = User::where('username', $username)->first();
-        if ($guru && Hash::check($password, $guru->password)) {
-            Auth::login($guru);
-            session(['role' => 'guru']);
-            $message = "
-                <b>Berhasil login!</b><br>
-                Selamat datang, <b>{$guru->username}</b><br>
-                <b>Siap mengajar!</b>
-            ";
-            return redirect()->route('guru.dashboard')
-                ->with('success_html', $message);
-        }
-        $student = Student::where('username', $username)->first();
-        if ($student && Hash::check($password, $student->password)) {
-            Auth::login($student);
-            session(['role' => 'siswa']);
-            $message = "
-                <b>Berhasil login!</b><br>
-                Selamat datang, <b>{$student->username}</b><br>
-                <b>Siap belajar!</b>
-            ";
-            return redirect()->route('student.dashboard')
-                ->with('success_html', $message);
-        }
+        // $guru = User::where('username', $username)->first();
+        // if ($guru && Hash::check($password, $guru->password)) {
+        //     Auth::login($guru);
+        //     session(['role' => 'guru']);
+        //     $message = "
+        //         <b>Berhasil login!</b><br>
+        //         Selamat datang, <b>{$guru->username}</b><br>
+        //         <b>Siap mengajar!</b>
+        //     ";
+        //     return redirect()->route('guru.dashboard')
+        //         ->with('success_html', $message);
+        // }
+        // $student = Student::where('username', $username)->first();
+        // if ($student && Hash::check($password, $student->password)) {
+        //     Auth::login($student);
+        //     session(['role' => 'siswa']);
+        //     $message = "
+        //         <b>Berhasil login!</b><br>
+        //         Selamat datang, <b>{$student->username}</b><br>
+        //         <b>Siap belajar!</b>
+        //     ";
+        //     return redirect()->route('student.dashboard')
+        //         ->with('success_html', $message);
+        // }
         return back()->withErrors([
             'username' => 'Username atau password salah.'
         ]);

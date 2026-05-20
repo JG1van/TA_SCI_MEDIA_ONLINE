@@ -540,7 +540,7 @@
         </div>
     </div>
     <div class="modal fade p-5" id="modalExpiringSoon" tabindex="-1">
-        <div class="modal-dialog mt-5 custom-modal modal-lg">
+        <div class="modal-dialog mt-5 custom-modal modal-xl">
             <div class="modal-content">
 
                 <div class="modal-header bg-warning text-dark">
@@ -553,35 +553,98 @@
 
                 <div class="modal-body">
 
+
+                    {{-- PANDUAN DI ATAS TABLE --}}
+                    <div class="mb-3">
+                        <button
+                            class="btn btn-light border w-100 text-start small d-flex justify-content-between align-items-center"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#panduanEmail"
+                            aria-expanded="false">
+                            <span><i class="fas fa-info-circle me-2 text-primary"></i><b>Ketentuan Pengiriman
+                                    Email</b></span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="collapse" id="panduanEmail">
+                            <div class="alert alert-light border small mt-1 mb-0">
+                                <b>Cara Pengiriman Email:</b>
+                                <br>• <b>Otomatis</b> — setiap hari pukul 08.00
+                                <br>• <b>Login</b> — ketika admin login
+                                <br><b>(setelah otomatis atau login, berlaku jeda 6 jam)</b>
+                                <br>• <b>Manual</b> — melalui tombol Kirim Email terpilih
+                                <br><br>
+                                <b>💡 Contoh Alur untuk Otomatis dan Login:</b>
+                                <br>• 08.00 → Email terkirim otomatis <b>jika syarat terpenuhi</b> ✅
+                                <br>• 09.00 → Admin login → email <b>dilewati</b> (masih dalam jeda 6 jam) ⏭️
+                                <br>• 15.00 → Admin login → email terkirim <b>jika syarat terpenuhi</b> (jeda 6 jam sudah
+                                habis) ✅
+                                <br>• 00.00 → Jeda direset otomatis, siap untuk hari berikutnya 🔄
+                                <br><br>
+                                <b>Syarat Notifikasi Peringatan (Otomatis, Login, dan Manual):</b><br>
+                                Email akan dikirim jika semua syarat terpenuhi, jika tidak maka akan dilewati:
+                                <br>• Kedaluwarsa kurang dari 1 bulan dari hari ini
+                                <br>• Pemberitahuan belum berstatus "Peringatan"
+                                <br>• Pengguna memiliki email
+                                <br><br>
+                                <b>Syarat Notifikasi Kedaluwarsa (Otomatis, Login, dan Manual):</b><br>
+                                Email akan dikirim jika semua syarat terpenuhi, jika tidak maka akan dilewati:
+                                <br>• Tanggal sekarang sudah mencapai atau melewati tanggal kedaluwarsa
+                                <br>• Pemberitahuan belum berstatus "Kedaluwarsa"
+                                <br>• Pengguna memiliki email
+                                <br><br>
+                                <b>Catatan:</b>
+                                <br>• Email hanya dikirim satu kali untuk setiap status
+                                <br>• Berlaku untuk status Peringatan dan Kedaluwarsa
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- PILIH SEMUA --}}
                     <div class="mb-2">
                         <input type="checkbox" id="checkAllWarning">
                         <label class="fw-semibold">Pilih Semua (yang punya email)</label>
                     </div>
 
                     {{-- TABLE (SCROLL KE BAWAH SAJA) --}}
-                    <div style="max-height:260px; overflow-y:auto; overflow-x:hidden;">
-                        <table class="table table-bordered align-middle text-center w-100" style="table-layout:fixed;">
+                    <div style="max-height:260px; overflow-y:auto; overflow-x:auto;">
+                        <table class="table table-bordered align-middle text-center"
+                            style="min-width:700px; font-size:12px;">
                             <thead class="table-light" style="position: sticky; top: 0; z-index: 2;">
                                 <tr>
-                                    <th style="width: 60px; white-space: nowrap;">Pilih</th>
-                                    <th style="width: 120px; white-space: nowrap;">Serial</th>
-                                    <th style="width: 140px; white-space: nowrap;">Kedaluwarsa</th>
-                                    <th style="width: 160px; white-space: nowrap;">Pemberitahuan</th>
-                                    <th style="white-space: nowrap;">Email</th>
+                                    <th style="width:40px;">Pilih</th>
+                                    <th style="width:130px;">Serial</th>
+                                    <th style="width:100px;">Pengguna</th>
+                                    <th style="width:90px;">Kedaluwarsa</th>
+                                    <th style="width:100px;">Sisa Hari</th>
+                                    <th style="width:110px;">Pemberitahuan</th>
+                                    <th>Email</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($notificationSerials as $s)
+                                    @php
+                                        $diff = \Carbon\Carbon::today()->diffInDays(
+                                            \Carbon\Carbon::parse($s->expired_at),
+                                            false,
+                                        );
+                                    @endphp
                                     <tr>
                                         <td>
                                             <input type="checkbox" class="warning-check" value="{{ $s->id }}"
                                                 {{ $s->user && $s->user->email ? '' : 'disabled' }}>
                                         </td>
-                                        <td class="fw-bold" style="font-size:10px; word-break:break-word;">
+                                        <td class="fw-bold" style="font-size:10px; word-break:break-all;">
                                             {{ $s->serial }}
                                         </td>
+                                        <td>{{ $s->user->name ?? '-' }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($s->expired_at)->format('d/m/Y') }}</td>
                                         <td>
-                                            {{ \Carbon\Carbon::parse($s->expired_at)->format('d/m/Y') }}
+                                            @if ($diff > 0)
+                                                <span class="badge bg-success">+{{ $diff }}</span>
+                                            @elseif ($diff == 0)
+                                                <span class="badge bg-warning text-dark">0</span>
+                                            @else
+                                                <span class="badge bg-danger">{{ $diff }}</span>
+                                            @endif
                                         </td>
                                         <td>
                                             @if ($s->notif == 'Tidak_ada')
@@ -596,7 +659,10 @@
                                             @if ($s->user && $s->user->email)
                                                 {{ $s->user->email }}
                                             @else
-                                                <span class="text-muted">Email Tidak Ada</span>
+                                                <a href="{{ route('admin.guru.index') }}" class="text-danger small"
+                                                    title="Klik untuk mengisi email di halaman Guru">
+                                                    <i class="fas fa-exclamation-circle me-1"></i>Email Tidak Ada
+                                                </a>
                                             @endif
                                         </td>
                                     </tr>
@@ -613,37 +679,6 @@
                     <button id="btnEmailWarningBulk" class="btn btn-warning" onclick="kirimEmailWarningBulk()">
                         <i class="fas fa-paper-plane me-2"></i>Kirim Email Terpilih
                     </button>
-                </div>
-
-                {{-- PANDUAN DI PALING BAWAH --}}
-                <div class="px-3 pb-3">
-                    <div class="alert alert-light border small mt-2">
-                        <b>Ketentuan Pengiriman Email:</b><br><br>
-
-                        <b>Notifikasi Peringatan</b><br>
-                        Email akan dikirim jika:
-                        <br>• Kedaluwarsa kurang dari 1 bulan dari hari ini
-                        <br>• Pemberitahuan belum berstatus "Peringatan"
-                        <br>• Pengguna memiliki email
-                        <br><br>
-
-                        <b>Notifikasi Kedaluwarsa</b><br>
-                        Email akan dikirim jika:
-                        <br>• Tanggal sekarang sudah mencapai atau melewati tanggal Kedaluwarsa
-                        <br>• Pemberitahuan belum berstatus "Kedaluwarsa"
-                        <br>• Pengguna memiliki email
-                        <br><br>
-
-                        <b>Catatan:</b>
-                        <br>• Email hanya dikirim satu kali untuk setiap status
-                        <br>• Berlaku untuk status Peringatan dan Kedaluwarsa
-                        <br><br>
-
-                        <b>Cara Pengiriman Email:</b>
-                        <br>• Otomatis setiap hari pukul 08.00
-                        <br>• Saat admin login dengan jeda 6 jam
-                        <br>• Manual melalui tombol Kirim Email
-                    </div>
                 </div>
 
             </div>

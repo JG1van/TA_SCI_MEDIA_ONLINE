@@ -284,3 +284,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('admin.layanan-pelanggan.upload');
 
 });
+
+Route::get('/clear-cache-test', function () {
+    \Cache::forget('expiry-reminder-lock');
+    return 'Cache cleared! Silakan login sekarang.';
+});
