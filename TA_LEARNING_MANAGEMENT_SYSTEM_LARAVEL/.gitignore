@@ -18,6 +18,5 @@ yarn-error.log
 /.idea
 /.vscode
 service-account.json
-/storage/app/public  ← kalau ada file upload user
 *.key
 *.pem
