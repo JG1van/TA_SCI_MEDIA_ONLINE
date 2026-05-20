@@ -69,7 +69,7 @@
         <div class="col-md-6">
             <label class="form-label">Pencarian</label>
             <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="searchInput"
-                type="text" class="form-control" placeholder="Cari Serial / Produk / Pengguna..." />
+                type="text" class="form-control" placeholder="Cari Serial / Produk / pelanggan..." />
         </div>
         <div class="col-md-2">
             <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#modalRiwayat">
@@ -96,7 +96,7 @@
                     <th>Aktif (bulan)</th>
                     <th>Kedaluwarsa</th>
                     <th>Sisa Hari</th>
-                    <th>Pengguna</th>
+                    <th>pelanggan</th>
                     <th>Pemberitahuan</th>
                     <th>Aksi</th>
                 </tr>
@@ -410,7 +410,7 @@
         <div class="modal-dialog modal-md mt-5 custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Pilih Pengguna</h5>
+                    <h5 class="modal-title">Pilih pelanggan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
@@ -449,7 +449,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="4" class="text-muted text-center">
-                                            Belum ada data pengguna / guru.
+                                            Belum ada data pelanggan / guru.
                                         </td>
                                     </tr>
                                 @endforelse
@@ -495,7 +495,7 @@
                                     <th>Pilih</th>
                                     <th>Serial</th>
                                     <th>Kedaluwarsa</th>
-                                    <th>Pengguna</th>
+                                    <th>pelanggan</th>
                                     <th>Pemberitahuan</th>
                                 </tr>
                             </thead>
@@ -582,13 +582,13 @@
                                 Email akan dikirim jika semua syarat terpenuhi, jika tidak maka akan dilewati:
                                 <br>• Kedaluwarsa kurang dari 1 bulan dari hari ini
                                 <br>• Pemberitahuan belum berstatus "Peringatan"
-                                <br>• Pengguna memiliki email
+                                <br>• pelanggan memiliki email
                                 <br><br>
                                 <b>Syarat Notifikasi Kedaluwarsa (Otomatis, Login, dan Manual):</b><br>
                                 Email akan dikirim jika semua syarat terpenuhi, jika tidak maka akan dilewati:
                                 <br>• Tanggal sekarang sudah mencapai atau melewati tanggal kedaluwarsa
                                 <br>• Pemberitahuan belum berstatus "Kedaluwarsa"
-                                <br>• Pengguna memiliki email
+                                <br>• pelanggan memiliki email
                                 <br><br>
                                 <b>Catatan:</b>
                                 <br>• Email hanya dikirim satu kali untuk setiap status
