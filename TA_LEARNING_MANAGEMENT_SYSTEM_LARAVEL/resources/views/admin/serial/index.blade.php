@@ -577,7 +577,6 @@
                                 <br>• 09.00 → Admin login → email <b>dilewati</b> (masih dalam jeda 6 jam) ⏭️
                                 <br>• 15.00 → Admin login → email terkirim <b>jika syarat terpenuhi</b> (jeda 6 jam sudah
                                 habis) ✅
-                                <br>• 00.00 → Jeda direset otomatis, siap untuk hari berikutnya 🔄
                                 <br><br>
                                 <b>Syarat Notifikasi Peringatan (Otomatis, Login, dan Manual):</b><br>
                                 Email akan dikirim jika semua syarat terpenuhi, jika tidak maka akan dilewati:
