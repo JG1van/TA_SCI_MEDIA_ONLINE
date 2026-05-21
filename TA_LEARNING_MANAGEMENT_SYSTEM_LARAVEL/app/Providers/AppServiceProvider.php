@@ -77,6 +77,9 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
+        date_default_timezone_set(config('app.timezone'));
+        \Carbon\Carbon::setDefaultTimezone(config('app.timezone'));
+
 
         Admin::observe(GlobalObserver::class);
         AdminActivityLog::observe(GlobalObserver::class);
