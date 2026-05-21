@@ -78,7 +78,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
         date_default_timezone_set(config('app.timezone'));
-        \Carbon\Carbon::setDefaultTimezone(config('app.timezone'));
+        \Carbon\Carbon::setLocale('id');
 
 
         Admin::observe(GlobalObserver::class);
