@@ -610,12 +610,12 @@
                             <thead class="table-light" style="position: sticky; top: 0; z-index: 2;">
                                 <tr>
                                     <th style="width:40px;">Pilih</th>
-                                    <th style="width:130px;">Serial</th>
+                                    <th style="width:150px;">Serial</th>
                                     <th style="width:100px;">Pengguna</th>
                                     <th style="width:90px;">Kedaluwarsa</th>
                                     <th style="width:100px;">Sisa Hari</th>
-                                    <th style="width:110px;">Pemberitahuan</th>
-                                    <th>Email</th>
+                                    <th style="width:50px;">Pemberitahuan</th>
+                                    <th style="width:110px;">Email</th>
                                 </tr>
                             </thead>
                             <tbody>
