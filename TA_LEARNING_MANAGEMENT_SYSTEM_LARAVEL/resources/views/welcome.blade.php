@@ -698,7 +698,7 @@
             </div>
             <hr class="footer-divider" />
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <p class="footer-bottom mb-0">&copy; 2025 SCI Media Online. Semua hak cipta dilindungi.</p>
+                <p class="footer-bottom mb-0">&copy; 2026 SCI Media Online. Semua hak cipta dilindungi.</p>
                 <p class="footer-bottom mb-0">Dikembangkan untuk transformasi pendidikan digital Indonesia.</p>
             </div>
         </div>
