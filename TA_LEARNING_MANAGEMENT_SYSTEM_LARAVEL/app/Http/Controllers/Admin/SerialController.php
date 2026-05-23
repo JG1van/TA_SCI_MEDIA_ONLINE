@@ -117,21 +117,34 @@ class SerialController extends Controller
             ], 500);
         }
     }
-    private function sendSerialEmailAuto($serial, $email)
+    private function sendSerialEmailAuto($serial, $email, $type = 'baru')
     {
         try {
             $fromName = config('mail.from.name');
             $fromEmail = config('mail.from.address');
             $apiKey = config('services.brevo.key');
             $productName = $serial->product->name ?? '-';
-            $infoMessage = <<<HTML
-<p>Serial Anda telah berhasil ditambahkan ke dalam sistem dan sudah terhubung dengan akun Anda.</p>
 
+            if ($type === 'perpanjang') {
+                $subject = 'Perpanjangan Serial Produk Anda';
+                $infoMessage = <<<HTML
+<p>Masa aktif serial Anda telah berhasil diperpanjang.</p>
+<p>Berikut adalah informasi terbaru mengenai serial Anda.</p>
+HTML;
+                $detailTambahan = <<<HTML
+    <li><b>Expired Baru:</b> {$serial->expired_at}</li>
+HTML;
+            } else {
+                $subject = 'Informasi Serial Produk Anda';
+                $infoMessage = <<<HTML
+<p>Serial Anda telah berhasil ditambahkan ke dalam sistem dan sudah terhubung dengan akun Anda.</p>
 <p>Anda dapat langsung menggunakan layanan tanpa perlu memasukkan kode serial secara manual.</p>
 HTML;
+                $detailTambahan = '';
+            }
+
             $html = <<<HTML
 <h3>Informasi Serial Produk Anda</h3>
-
 <p>Terima kasih telah menggunakan layanan kami.</p>
 {$infoMessage}
 
@@ -146,6 +159,7 @@ HTML;
     <li><b>Paket Kelas:</b> {$serial->paket} kelas</li>
     <li><b>Durasi Langganan:</b> {$serial->active} bulan</li>
     <li><b>Email Terdaftar:</b> {$email}</li>
+    {$detailTambahan}
 </ul>
 
 <br>
@@ -157,7 +171,6 @@ Tanggal kedaluwarsa akan mulai dihitung setelah Anda pertama kali membuat kelas.
 Setelah masa aktif berakhir, layanan tidak dapat digunakan dan harus diperpanjang.</p>
 
 <p>Apabila serial tidak diperpanjang hingga 14 bulan setelah tanggal kedaluwarsa, maka:</p>
-
 <ul>
     <li>Serial akan dihapus secara permanen</li>
     <li>Seluruh data kelas dan murid akan terhapus</li>
@@ -175,41 +188,41 @@ Setelah masa aktif berakhir, layanan tidak dapat digunakan dan harus diperpanjan
 <p>Hormat kami,<br>
 <b>{$fromName}</b></p>
 HTML;
+
             $payload = [
-                'sender' => [
-                    'name' => $fromName,
-                    'email' => $fromEmail,
-                ],
-                'to' => [
-                    ['email' => $email]
-                ],
-                'subject' => 'Informasi Serial Produk Anda',
-                'htmlContent' => $html
+                'sender' => ['name' => $fromName, 'email' => $fromEmail],
+                'to' => [['email' => $email]],
+                'subject' => $subject,
+                'htmlContent' => $html,
             ];
+
             $response = Http::timeout(10)->withHeaders([
                 'api-key' => $apiKey,
                 'accept' => 'application/json',
             ])->post('https://api.brevo.com/v3/smtp/email', $payload);
+
             EmailLog::create([
                 'serial_id' => $serial->id,
                 'email_to' => $email,
-                'subject' => 'Informasi Serial Produk Anda',
+                'subject' => $subject,
                 'email_type' => 'Serial',
                 'status' => $response->successful() ? 'Berhasil' : 'Gagal',
-                'source' => 'Manual'
+                'source' => 'Manual',
             ]);
+
         } catch (\Exception $e) {
             \Log::error('Send Serial Auto Email Error', [
                 'serial_id' => $serial->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             EmailLog::create([
                 'serial_id' => $serial->id,
                 'email_to' => $email,
-                'subject' => 'Informasi Serial Produk Anda',
+                'subject' => $subject ?? 'Informasi Serial',
                 'email_type' => 'Serial',
                 'status' => 'Gagal',
-                'source' => 'Manual'
+                'source' => 'Manual',
             ]);
         }
     }
@@ -339,7 +352,7 @@ HTML;
     }
     public function extend(Request $request, $id)
     {
-        $serial = Serial::find($id);
+        $serial = Serial::with(['user', 'product'])->find($id);
         if (!$serial) {
             return response()->json([
                 'success' => false,
@@ -392,6 +405,9 @@ HTML;
                 'active' => $request->extend_months,
                 'status' => 'Perpanjang',
             ]);
+            if ($serial->user && $serial->user->email) {
+                $this->sendSerialEmailAuto($serial, $serial->user->email, 'perpanjang');
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Masa aktif serial berhasil diperpanjang.',
