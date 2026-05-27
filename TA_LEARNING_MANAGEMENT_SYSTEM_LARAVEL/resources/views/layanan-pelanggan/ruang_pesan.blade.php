@@ -24,8 +24,8 @@
     @php
         $isAdminMode = $room->chat_status === 'ChatBot' || $room->chat_status === 'Admin';
     @endphp
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 
 <body>

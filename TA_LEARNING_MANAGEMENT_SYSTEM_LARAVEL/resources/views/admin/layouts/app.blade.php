@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'SciMedia Online')</title>
 
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <!-- Sneat Core CSS -->
     <link rel="stylesheet" href="{{ asset('assets_sneat/vendor/css/core.css') }}?v={{ time() }}">
