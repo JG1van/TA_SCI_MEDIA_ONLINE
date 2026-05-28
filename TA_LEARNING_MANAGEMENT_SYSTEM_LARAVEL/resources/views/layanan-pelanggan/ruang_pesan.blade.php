@@ -374,11 +374,11 @@
                                     </div>
 
                                     <!-- ChatBot / Admin Badge -->
-                                    @if ($room->chat_status === 'ChatBot')
+                                    {{-- @if ($room->chat_status === 'ChatBot')
                                         <span class="mode-badge bot"><i class="bi bi-robot"></i> Chatbot</span>
                                     @elseif($room->chat_status === 'Admin')
                                         <span class="mode-badge admin"><i class="bi bi-headset"></i> Admin</span>
-                                    @endif
+                                    @endif --}}
 
                                 </div>
                             </div>
