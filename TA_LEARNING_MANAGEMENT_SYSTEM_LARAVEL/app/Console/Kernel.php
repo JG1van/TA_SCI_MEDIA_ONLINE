@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('serial:send-expiry-reminder')
-            ->dailyAt('19:20');
+            ->dailyAt('08:00');
         // * * * * * php /path-ke-project/artisan schedule:run >> /dev/null 2>&1
 
         // Reset cache lock setiap tengah malam
