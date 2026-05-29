@@ -133,12 +133,12 @@
                                         <button type="button"
                                             class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 translate-middle shadow"
                                             id="btnEditPhoto"
-                                            style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                            style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; display:none;">
                                             <i class="fas fa-pen"></i>
                                         </button>
                                     </div>
 
-                                    <input type="file" id="editImgInput" name="photo" accept="image/*" hidden>
+                                    {{-- <input type="file" id="editImgInput" name="photo" accept="image/*" hidden> --}}
 
                                     <h6 class="fw-bold mb-0 mt-3" id="editNameCard">Nama Guru</h6>
                                 </div>
@@ -406,7 +406,7 @@
 
                         // Pilih path sesuai penyimpanan public storage: /storage/users/{filename}
                         if (t.img && t.img !== '') {
-                            imgPreview.src = `/storage/users/${t.img}`;
+                            imgPreview.src = `http://guru.tak-scimediaonline.my.id/storage/users/${t.img}`;
                         } else {
                             imgPreview.src = '{{ asset('images/logo.webp') }}';
                         }

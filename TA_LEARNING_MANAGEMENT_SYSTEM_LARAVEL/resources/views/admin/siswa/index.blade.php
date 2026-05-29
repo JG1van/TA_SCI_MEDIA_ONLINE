@@ -156,12 +156,12 @@
 
                                     <button type="button"
                                         class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 translate-middle shadow"
-                                        id="btnEditPhoto" style="width:35px;height:35px;">
+                                        id="btnEditPhoto" style="width:35px;height:35px; display:none;">
                                         <i class="fas fa-pen"></i>
                                     </button>
                                 </div>
 
-                                <input type="file" id="editPhotoInput" name="photo" accept="image/*" hidden>
+                                {{-- <input type="file" id="editPhotoInput" name="photo" accept="image/*" hidden> --}}
 
                                 <h6 class="fw-bold mt-3 mb-0" id="editNameCard">Nama Siswa</h6>
                             </div>
@@ -309,10 +309,8 @@
                     // ===== SET FOTO =====
                     document.getElementById("editPhotoPreview").src =
                         s.photo ?
-                        `/storage/students/${s.photo}` :
+                        `http://siswa.tak-scimediaonline.my.id/storage/students/${s.photo}` :
                         `{{ asset('images/logo.webp') }}`;
-
-                    // ===== SET NAMA DI CARD =====
                     document.getElementById("editNameCard").textContent = s.name;
 
                     // ===== OPEN MODAL =====

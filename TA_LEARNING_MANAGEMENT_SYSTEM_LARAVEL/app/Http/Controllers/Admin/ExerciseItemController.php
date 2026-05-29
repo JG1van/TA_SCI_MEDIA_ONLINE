@@ -259,7 +259,7 @@ class ExerciseItemController extends Controller
             $path = $file->storeAs('soal', $name, 'public');
 
             return response()->json([
-                'url' => '/storage/' . $path   // tidak pakai asset()
+                'url' => url('storage/' . $path)  // ← ganti ini saja
             ]);
         }
 
