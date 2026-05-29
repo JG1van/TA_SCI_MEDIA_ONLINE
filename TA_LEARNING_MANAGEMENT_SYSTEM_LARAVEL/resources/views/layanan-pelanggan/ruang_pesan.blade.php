@@ -374,11 +374,11 @@
                                     </div>
 
                                     <!-- ChatBot / Admin Badge -->
-                                    {{-- @if ($room->chat_status === 'ChatBot')
+                                    @if ($room->chat_status === 'ChatBot')
                                         <span class="mode-badge bot"><i class="bi bi-robot"></i> Chatbot</span>
                                     @elseif($room->chat_status === 'Admin')
                                         <span class="mode-badge admin"><i class="bi bi-headset"></i> Admin</span>
-                                    @endif --}}
+                                    @endif
 
                                 </div>
                             </div>
@@ -531,7 +531,7 @@
                 roomId: "{{ $room->id }}",
                 status: "{{ $room->chat_status }}",
                 webhook: {
-                    url: "http://n8n.tak-scimediaonline.my.id/webhook/d3336480-e428-478c-ba84-56c28938d66d/chat",
+                    url: "https://n8n.tak-scimediaonline.my.id/webhook/d3336480-e428-478c-ba84-56c28938d66d/chat",
                     route: "general",
                 },
             };
@@ -866,18 +866,25 @@
                     });
                     showToast("info", "Permintaan diteruskan ke Admin.");
                     window.ChatRoomConfig.status = "Admin";
+
+                    // ── UPDATE BADGE ChatBot → Admin ──────────────────
+                    const modeWrap = document.querySelector('.status-wrap');
+                    const oldBadge = modeWrap?.querySelector('.mode-badge');
+                    if (oldBadge) oldBadge.remove();
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'mode-badge admin';
+                    newBadge.innerHTML = '<i class="bi bi-headset"></i> Admin';
+                    modeWrap?.appendChild(newBadge);
+                    // ─────────────────────────────────────────────────
+
                     const btnImage = document.getElementById("btnImage");
                     const fileInput = document.getElementById("uploadFileInput");
                     if (!btnImage || !fileInput) return;
-                    if (window.ChatRoomConfig.status === "ChatBot") {
-                        btnImage.classList.add("d-none");
-                        btnImage.disabled = true;
-                        fileInput.disabled = true;
-                    } else {
-                        btnImage.classList.remove("d-none");
-                        btnImage.disabled = false;
-                        fileInput.disabled = false;
-                    }
+                    btnImage.classList.remove("d-none");
+                    btnImage.disabled = false;
+                    fileInput.disabled = false;
+                    btnImage.dataset.status = "Admin";
+
                 } catch (err) {
                     console.error(err);
                 } finally {
@@ -894,7 +901,6 @@
                 });
             }
         };
-
         async function startPanggilUlang() {
             const roomId = document.getElementById("roomId").value;
             await fetch("/layanan-pelanggan-pelapor/panggil-lagi/" + roomId, {
