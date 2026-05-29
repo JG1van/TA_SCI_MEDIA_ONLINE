@@ -199,12 +199,27 @@ class ExerciseItemController extends Controller
                     $selection = json_encode($selection);
                 } else {
                     $selection = json_encode([]);
-                }$answer = $request->input('answer');
+                }
+
+                $answer = $request->input('answer');
                 if (is_array($answer)) {
                     $answer = json_encode($answer);
                 } else {
                     $answer = json_encode([$answer]);
-                }$item->question = $request->question;
+                }
+
+                // Hapus gambar lama yang tidak ada di konten baru
+                preg_match_all('/storage\/soal\/([^\s"]+)/', $item->question, $oldMatches);
+                $oldFiles = $oldMatches[1] ?? [];
+
+                preg_match_all('/storage\/soal\/([^\s"]+)/', $request->question, $newMatches);
+                $newFiles = $newMatches[1] ?? [];
+
+                foreach (array_diff($oldFiles, $newFiles) as $filename) {
+                    \Storage::disk('public')->delete('soal/' . $filename);
+                }
+
+                $item->question = $request->question;
                 $item->selection = $selection;
                 $item->answer = $answer;
                 $item->exercise_model_id = $request->exercise_model_id;
