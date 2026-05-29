@@ -75,7 +75,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Force HTTPS di production
         if (config('app.env') === 'production') {
-            URL::forceScheme('http');
+            URL::forceScheme('https');
         }
         date_default_timezone_set(config('app.timezone'));
         \Carbon\Carbon::setLocale('id');
