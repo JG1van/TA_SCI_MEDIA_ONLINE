@@ -26,7 +26,28 @@
     @endphp
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
 </head>
+<style>
+    #chatBox {
+        border: 2px solid transparent;
+        border-radius: 12px;
+        transition: border-color 0.4s ease;
+        padding: 8px;
+    }
+
+    /* Mode Chatbot — biru/ungu */
+    #chatBox.border-chatbot {
+        border-color: #696CFF;
+        box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.12);
+    }
+
+    /* Mode Admin — hijau */
+    #chatBox.border-admin {
+        border-color: #71dd37;
+        box-shadow: 0 0 0 3px rgba(113, 221, 55, 0.12);
+    }
+</style>
 
 <body>
 
@@ -849,6 +870,7 @@
         const panggilBtn = document.getElementById("panggilLagiBtn");
         document.addEventListener("DOMContentLoaded", function() {
             checkCooldown();
+            updateChatBoxBorder(window.ChatRoomConfig.status);
         });
 
         panggilBtn.onclick = async function() {
@@ -866,7 +888,7 @@
                     });
                     showToast("info", "Permintaan diteruskan ke Admin.");
                     window.ChatRoomConfig.status = "Admin";
-
+                    updateChatBoxBorder("Admin"); // ← tambahkan ini
                     // ── UPDATE BADGE ChatBot → Admin ──────────────────
                     const modeWrap = document.querySelector('.status-wrap');
                     const oldBadge = modeWrap?.querySelector('.mode-badge');
@@ -961,6 +983,18 @@
             const card = document.getElementById("chatInfoCard");
             desc.classList.toggle("show");
             card.classList.toggle("open");
+        }
+
+        // ── UPDATE CHATBOX BORDER SESUAI STATUS ──────────────────
+        function updateChatBoxBorder(status) {
+            const chatBox = document.getElementById('chatBox');
+            if (!chatBox) return;
+            chatBox.classList.remove('border-chatbot', 'border-admin');
+            if (status === 'ChatBot') {
+                chatBox.classList.add('border-chatbot');
+            } else if (status === 'Admin') {
+                chatBox.classList.add('border-admin');
+            }
         }
     </script>
 
