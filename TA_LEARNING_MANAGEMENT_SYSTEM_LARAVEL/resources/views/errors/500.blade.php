@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halaman Tidak Berlaku Lagi</title>
+    <title>Terjadi Kesalahan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -40,8 +40,8 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: #FAEEDA;
-            border: 1px solid #FAC775;
+            background: #FCEBEB;
+            border: 1px solid #F7C1C1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -51,7 +51,7 @@
         .icon-box svg {
             width: 26px;
             height: 26px;
-            stroke: #854F0B;
+            stroke: #A32D2D;
         }
 
         .e-code {
@@ -60,7 +60,7 @@
             letter-spacing: 0.08em;
             text-transform: uppercase;
             text-align: center;
-            color: #854F0B;
+            color: #A32D2D;
             margin-bottom: 0.35rem;
         }
 
@@ -81,8 +81,8 @@
         }
 
         .trigger-box {
-            background: #FAEEDA;
-            border: 1px solid #FAC775;
+            background: #FCEBEB;
+            border: 1px solid #F7C1C1;
             border-radius: 10px;
             padding: 0.75rem 1rem;
             margin-bottom: 1rem;
@@ -93,7 +93,7 @@
             font-weight: 600;
             letter-spacing: 0.07em;
             text-transform: uppercase;
-            color: #633806;
+            color: #791F1F;
             margin-bottom: 0.5rem;
         }
 
@@ -106,7 +106,7 @@
 
         .trigger-list li {
             font-size: 12.5px;
-            color: #854F0B;
+            color: #A32D2D;
             display: flex;
             align-items: flex-start;
             gap: 6px;
@@ -120,7 +120,7 @@
 
         .section {
             background: #f9f9f9;
-            border: 1px solid #eeeeee;
+            border: 1px solid #eee;
             border-radius: 10px;
             padding: 0.9rem 1rem;
             margin-bottom: 0.6rem;
@@ -195,9 +195,9 @@
         }
 
         .btn-primary {
-            background: #FAEEDA;
-            border: 1px solid #FAC775;
-            color: #633806;
+            background: #FCEBEB;
+            border: 1px solid #F7C1C1;
+            color: #791F1F;
         }
 
         .btn-secondary {
@@ -216,59 +216,40 @@
 </head>
 
 <body>
-
     <main class="card" role="main">
-
         <div class="icon-box" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 12.75c1.148 0 2.278.08 3.383.237 1.037.146 1.866.966 1.866 2.013 0 3.728-2.35 6.75-5.25 6.75S6.75 18.728 6.75 15c0-1.046.83-1.867 1.866-2.013A24.204 24.204 0 0112 12.75zm0 0c2.883 0 5.647.508 8.207 1.44a23.91 23.91 0 01-1.152 6.06M12 12.75c-2.883 0-5.647.508-8.208 1.44a23.916 23.916 0 001.152 6.061M12 12.75c-1.794 0-3.54.16-5.232.466m10.464 0A48.78 48.78 0 0112 13.5a48.78 48.78 0 00-5.232-.284m10.464.75A48.78 48.78 0 0112 13.5m-5.232-.284A48.78 48.78 0 0112 12.75m0 0V5.25m0 7.5v-7.5m0 0a2.25 2.25 0 00-2.25-2.25H7.5A2.25 2.25 0 005.25 7.5v2.25" />
             </svg>
         </div>
-
-        <h1>Halaman tidak berlaku lagi</h1>
-        <p class="desc">
-            Halaman kedaluwarsa akibat tidak ada aktivitas terlalu lama,<br>
-            atau terjadi pergantian akun di browser yang sama.
-        </p>
-
+        <p class="e-code">Error 500</p>
+        <h1>Terjadi kesalahan pada sistem</h1>
+        <p class="desc">Ada masalah di dalam sistem yang sedang kami tangani.<br>Ini bukan kesalahan kamu — tim kami
+            sudah diberitahu.</p>
         <div class="trigger-box">
-            <p class="trigger-label">Biasanya terjadi saat</p>
+            <p class="trigger-label">Apa artinya ini?</p>
             <ul class="trigger-list">
-                <li>Terlalu lama membuka halaman tanpa aktivitas</li>
-                <li>Menekan tombol Back lalu mencoba kirim ulang</li>
-                <li>Login dengan akun lain di browser yang sama</li>
+                <li>Ada bug atau error pada kode sistem</li>
+                <li>Server mengalami gangguan sementara</li>
+                <li>Masalah sedang ditangani oleh tim teknis</li>
             </ul>
         </div>
-
         <div class="section">
-            <p class="section-label">Coba langkah berikut</p>
+            <p class="section-label">Yang bisa dilakukan</p>
             <ul class="steps">
-                <li><span class="num">1</span> Kembali ke halaman sebelumnya dan coba lagi</li>
-                <li><span class="num">2</span> Muat ulang halaman, lalu isi form dari awal</li>
-                <li><span class="num">3</span> Pastikan tidak menunggu terlalu lama sebelum mengirim</li>
+                <li><span class="num">1</span> Tunggu beberapa saat lalu coba lagi</li>
+                <li><span class="num">2</span> Muat ulang halaman</li>
+                <li><span class="num">3</span> Jika masih terjadi, hubungi tim kami</li>
             </ul>
         </div>
-
-        <div class="section">
-            <p class="section-label">Jika masih terjadi</p>
-            <ul class="steps">
-                <li><span class="num">1</span> Keluar dari akun lalu masuk kembali</li>
-                <li><span class="num">2</span> Bersihkan cache dan cookie browser, lalu coba lagi</li>
-                <li><span class="num">3</span> Tutup browser sepenuhnya lalu buka kembali dari awal</li>
-                <li><span class="num">4</span> Gunakan browser lain sebagai alternatif</li>
-                <li><span class="num">5</span> Hidupkan ulang perangkat (HP atau komputer), lalu coba lagi</li>
-            </ul>
-        </div>
-
         <div class="actions">
-            <a href="javascript:history.back()" class="btn btn-back">&#8592; Kembali</a>
+            <a href="javascript:location.reload()" class="btn btn-primary">&#8635; Muat Ulang</a>
+            <a href="/" class="btn btn-secondary">Ke Beranda</a>
         </div>
-
-        <p class="footer">Error 419 &middot; Page Expired</p>
-
+        <p class="footer">Error 500 &middot; Internal Server Error</p>
     </main>
-
 </body>
 
 </html>

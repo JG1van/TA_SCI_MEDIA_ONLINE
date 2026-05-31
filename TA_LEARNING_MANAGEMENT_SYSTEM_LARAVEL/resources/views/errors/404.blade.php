@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halaman Tidak Berlaku Lagi</title>
+    <title>Halaman Tidak Ditemukan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -120,7 +120,7 @@
 
         .section {
             background: #f9f9f9;
-            border: 1px solid #eeeeee;
+            border: 1px solid #eee;
             border-radius: 10px;
             padding: 0.9rem 1rem;
             margin-bottom: 0.6rem;
@@ -216,59 +216,40 @@
 </head>
 
 <body>
-
     <main class="card" role="main">
-
         <div class="icon-box" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
             </svg>
         </div>
-
-        <h1>Halaman tidak berlaku lagi</h1>
-        <p class="desc">
-            Halaman kedaluwarsa akibat tidak ada aktivitas terlalu lama,<br>
-            atau terjadi pergantian akun di browser yang sama.
-        </p>
-
+        <p class="e-code">Error 404</p>
+        <h1>Halaman tidak ditemukan</h1>
+        <p class="desc">Halaman yang kamu cari tidak ada atau sudah dipindahkan.<br>Cek kembali alamat yang kamu
+            ketik.</p>
         <div class="trigger-box">
-            <p class="trigger-label">Biasanya terjadi saat</p>
+            <p class="trigger-label">Kenapa ini terjadi?</p>
             <ul class="trigger-list">
-                <li>Terlalu lama membuka halaman tanpa aktivitas</li>
-                <li>Menekan tombol Back lalu mencoba kirim ulang</li>
-                <li>Login dengan akun lain di browser yang sama</li>
+                <li>Alamat halaman (URL) salah ketik</li>
+                <li>Halaman sudah dihapus atau dipindahkan</li>
+                <li>Link yang diklik sudah tidak berlaku</li>
             </ul>
         </div>
-
         <div class="section">
-            <p class="section-label">Coba langkah berikut</p>
+            <p class="section-label">Yang bisa dilakukan</p>
             <ul class="steps">
-                <li><span class="num">1</span> Kembali ke halaman sebelumnya dan coba lagi</li>
-                <li><span class="num">2</span> Muat ulang halaman, lalu isi form dari awal</li>
-                <li><span class="num">3</span> Pastikan tidak menunggu terlalu lama sebelum mengirim</li>
+                <li><span class="num">1</span> Periksa ulang alamat yang kamu ketik di browser</li>
+                <li><span class="num">2</span> Kembali ke halaman sebelumnya</li>
+                <li><span class="num">3</span> Kembali ke beranda dan cari dari sana</li>
             </ul>
         </div>
-
-        <div class="section">
-            <p class="section-label">Jika masih terjadi</p>
-            <ul class="steps">
-                <li><span class="num">1</span> Keluar dari akun lalu masuk kembali</li>
-                <li><span class="num">2</span> Bersihkan cache dan cookie browser, lalu coba lagi</li>
-                <li><span class="num">3</span> Tutup browser sepenuhnya lalu buka kembali dari awal</li>
-                <li><span class="num">4</span> Gunakan browser lain sebagai alternatif</li>
-                <li><span class="num">5</span> Hidupkan ulang perangkat (HP atau komputer), lalu coba lagi</li>
-            </ul>
-        </div>
-
         <div class="actions">
-            <a href="javascript:history.back()" class="btn btn-back">&#8592; Kembali</a>
+            <a href="javascript:history.back()" class="btn btn-primary">&#8592; Kembali</a>
+            <a href="/" class="btn btn-secondary">Ke Beranda</a>
         </div>
-
-        <p class="footer">Error 419 &middot; Page Expired</p>
-
+        <p class="footer">Error 404 &middot; Not Found</p>
     </main>
-
 </body>
 
 </html>
