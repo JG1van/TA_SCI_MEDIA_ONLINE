@@ -138,7 +138,7 @@
                                         </button>
                                     </div>
 
-                                    {{-- <input type="file" id="editImgInput" name="photo" accept="image/*" hidden> --}}
+                                    <input type="file" id="editImgInput" name="photo" accept="image/*" hidden>
 
                                     <h6 class="fw-bold mb-0 mt-3" id="editNameCard">Nama Guru</h6>
                                 </div>
