@@ -108,10 +108,6 @@
             gap: 8px;
         }
 
-        .materi-meta i {
-            font-size: 11px;
-        }
-
         .btn-actions {
             display: flex;
             gap: 5px;
@@ -119,38 +115,7 @@
             margin-left: 8px;
         }
 
-        .btn-soft {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            border: 0.5px solid transparent;
-            line-height: 1.4;
-        }
-
-        .btn-soft-video {
-            background: #e8f0fe;
-            color: #185FA5;
-            border-color: #b5d4f4;
-        }
-
-        .btn-soft-edit {
-            background: #fdf3dc;
-            color: #854F0B;
-            border-color: #FAC775;
-        }
-
-        .btn-soft-hapus {
-            background: #fcebeb;
-            color: #A32D2D;
-            border-color: #F7C1C1;
-        }
-
-        .btn-soft-import {
-            background: #e8f0fe;
-            color: #185FA5;
-            border-color: #b5d4f4;
+        .btn-import-file {
             width: 100%;
             padding: 8px 14px;
             border-radius: 8px;
@@ -175,27 +140,8 @@
             font-size: 12.5px;
             font-weight: 500;
             cursor: pointer;
-            border: 0.5px solid transparent;
             text-align: center;
             width: 100%;
-        }
-
-        .btn-add-bab {
-            background: #e8f0fe;
-            color: #185FA5;
-            border-color: #b5d4f4;
-        }
-
-        .btn-add-sub {
-            background: #fdf3dc;
-            color: #854F0B;
-            border-color: #FAC775;
-        }
-
-        .btn-add-mat {
-            background: #fcebeb;
-            color: #A32D2D;
-            border-color: #F7C1C1;
         }
 
         .form-panel-body {
@@ -251,7 +197,8 @@
                 <div class="tree-panel">
                     <div class="panel-header">
                         <h5 class="fw-bold mb-2" style="font-size:15px">Daftar Isi: {{ $lesson->name }}</h5>
-                        <button class="btn-soft-import" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <button class="btn btn-primary btn-import-file" data-bs-toggle="modal"
+                            data-bs-target="#importModal">
                             <i class="bi bi-upload"></i> Import File
                         </button>
                     </div>
@@ -262,9 +209,9 @@
                                 <div class="bab-header">
                                     <span class="bab-label">Bab {{ $theme->theme }}: {{ $theme->name }}</span>
                                     <div class="btn-actions">
-                                        <button class="btn-soft btn-soft-edit"
+                                        <button class="btn btn-warning btn-sm"
                                             onclick="editItem('theme', {{ $theme->id }})">Edit</button>
-                                        <button class="btn-soft btn-soft-hapus"
+                                        <button class="btn btn-danger btn-sm"
                                             onclick="deleteItem('theme', {{ $theme->id }})">Hapus</button>
                                     </div>
                                 </div>
@@ -275,9 +222,9 @@
                                             <span class="subbab-label">Subbab {{ $sub->subtheme }}:
                                                 {{ $sub->name }}</span>
                                             <div class="btn-actions">
-                                                <button class="btn-soft btn-soft-edit"
+                                                <button class="btn btn-warning btn-sm"
                                                     onclick="editItem('subtheme', {{ $sub->id }})">Edit</button>
-                                                <button class="btn-soft btn-soft-hapus"
+                                                <button class="btn btn-danger btn-sm"
                                                     onclick="deleteItem('subtheme', {{ $sub->id }})">Hapus</button>
                                             </div>
                                         </div>
@@ -296,11 +243,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="btn-actions">
-                                                        <button class="btn-soft btn-soft-video"
+                                                        <button class="btn btn-primary btn-sm"
                                                             onclick="previewVideo('{{ base64_encode($item->embed) }}')">Video</button>
-                                                        <button class="btn-soft btn-soft-edit"
+                                                        <button class="btn btn-warning btn-sm"
                                                             onclick="editItem('item', {{ $item->id }})">Edit</button>
-                                                        <button class="btn-soft btn-soft-hapus"
+                                                        <button class="btn btn-danger btn-sm"
                                                             onclick="deleteItem('item', {{ $item->id }})">Hapus</button>
                                                     </div>
                                                 </div>
@@ -322,9 +269,9 @@
                     </div>
                     <div class="form-panel-body">
                         <div class="btn-add-group">
-                            <button class="btn-add btn-add-bab" onclick="showForm('theme','add')">+ Bab</button>
-                            <button class="btn-add btn-add-sub" onclick="showForm('subtheme','add')">+ Subbab</button>
-                            <button class="btn-add btn-add-mat" onclick="showForm('item','add')">+ Materi</button>
+                            <button class="btn btn-primary btn-add" onclick="showForm('theme','add')">+ Bab</button>
+                            <button class="btn btn-warning btn-add" onclick="showForm('subtheme','add')">+ Subbab</button>
+                            <button class="btn btn-danger btn-add" onclick="showForm('item','add')">+ Materi</button>
                         </div>
                         <hr class="panel-divider">
                         <form id="formData">
@@ -428,17 +375,17 @@
             if (type === 'theme') {
                 if (mode === 'edit') {
                     html +=
-                    `<div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Nomor Bab</label>
+                    `<div class="mb-3"><label class="form-label fw-semibold">Nomor Bab</label>
                     <input type="number" name="theme" class="form-control" value="${data.theme || ''}" required></div>`;
                 } else {
                     html += `<input type="hidden" name="theme" value="">`;
                 }
-                html += `<div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Nama Bab</label>
+                html += `<div class="mb-3"><label class="form-label fw-semibold">Nama Bab</label>
                 <input type="text" name="name" class="form-control" value="${data.name || ''}" required></div>`;
             }
 
             if (type === 'subtheme') {
-                html += `<div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Pilih Bab</label>
+                html += `<div class="mb-3"><label class="form-label fw-semibold">Pilih Bab</label>
                 <select name="theme_id" id="selectThemeSub" class="form-select" ${mode === 'edit' ? 'disabled' : ''} required>
                     <option value="">== Pilih ==</option>
                     @foreach ($lesson->themes as $t)
@@ -447,12 +394,12 @@
                 </select></div>`;
                 if (mode === 'edit') {
                     html +=
-                        `<div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Nomor Subbab</label>
+                        `<div class="mb-3"><label class="form-label fw-semibold">Nomor Subbab</label>
                     <input type="number" name="subtheme" class="form-control" value="${data.subtheme || ''}" required></div>`;
                 } else {
                     html += `<input type="hidden" name="subtheme" value="">`;
                 }
-                html += `<div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Nama Subbab</label>
+                html += `<div class="mb-3"><label class="form-label fw-semibold">Nama Subbab</label>
                 <input type="text" name="name" class="form-control" value="${data.name || ''}" required></div>`;
             }
 
@@ -468,7 +415,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Pilih Subbab</label>
+            <div class="mb-3"><label class="form-label fw-semibold">Pilih Subbab</label>
                 <select name="subtheme_id" id="selectSubItem" class="form-select" ${mode === 'edit' ? 'disabled' : ''} required>
                     <option value="">== Pilih ==</option>
                     @foreach ($lesson->themes as $theme)
@@ -483,16 +430,16 @@
 
                 if (mode === 'edit') {
                     html +=
-                        `<div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Nomor Materi</label>
+                        `<div class="mb-3"><label class="form-label fw-semibold">Nomor Materi</label>
                     <input type="number" name="number" class="form-control" value="${data.number || ''}" required></div>`;
                 } else {
                     html += `<input type="hidden" name="number" value="">`;
                 }
 
                 html += `
-            <div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Judul Materi</label>
+            <div class="mb-3"><label class="form-label fw-semibold">Judul Materi</label>
                 <input type="text" name="title" class="form-control" value="${data.title || ''}" required></div>
-            <div class="mb-3"><label class="form-label fw-semibold" style="font-size:13px">Embed / Link</label>
+            <div class="mb-3"><label class="form-label fw-semibold">Embed / Link</label>
                 <textarea name="embed" class="form-control" rows="3" required>${data.embed || ''}</textarea></div>`;
             }
 
