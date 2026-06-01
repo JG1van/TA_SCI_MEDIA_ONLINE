@@ -148,14 +148,12 @@
         </div>
 
         {{-- PERTANYAAN TIDAK TERJAWAB --}}
-        @php $btn = btnDisable($role, [1,2,5]); @endphp
+        {{-- @php $btn = btnDisable($role, [1,2,5]); @endphp
         <div class="col-md-4">
             <div class="card shadow text-center setting-card h-100" style="{{ $btn['style'] }}">
                 <div class="card-body d-flex flex-column justify-content-between">
                     <div>
-                        <div class="mb-3">
-                            {{-- Pink / Magenta --}}
-                            <i class="fas fa-question-circle fs-1" style="color:#d63384;"></i>
+                        <div class="mb-3"> <i class="fas fa-question-circle fs-1" style="color:#d63384;"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Pertanyaan Tidak Terjawab</h5>
                         <p class="text-muted mb-4">
@@ -168,7 +166,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- SISA MEMORI SERVER --}}
         @php $btn = btnDisable($role, [1,2,3,4,5]); @endphp
@@ -222,17 +220,34 @@
             </div>
         </div> --}}
         {{-- PANEL DEVELOPER --}}
+        {{-- N8N AUTOMATION --}}
         @php $btn = btnDisable($role, [1,2]); @endphp
         <div class="col-md-4">
             <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
                 <div class="card-body">
-                    <i class="fas fa-terminal fs-1 mb-3" style="color:#6610f2;"></i>
-                    <h5 class="fw-bold">Panel Developer</h5>
-                    <p class="text-muted mb-3">Akses tools developer sistem</p>
-                    <button class="btn btn-primary w-100 {{ $btn['class'] }}" data-bs-toggle="modal"
-                        data-bs-target="#devPanelModal" {{ $btn['class'] ? 'disabled' : '' }}>
+                    <i class="fas fa-project-diagram fs-1 mb-3" style="color:#3d5a80;"></i>
+                    <h5 class="fw-bold">N8N Automation</h5>
+                    <p class="text-muted mb-3">Akses panel otomasi N8N</p>
+                    <a href="https://n8n.tak-scimediaonline.my.id/" target="_blank"
+                        class="btn btn-primary w-100 {{ $btn['class'] }}">
                         Pilih
-                    </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {{-- DATABASE MANAGER --}}
+        @php $btn = btnDisable($role, [1,2]); @endphp
+        <div class="col-md-4">
+            <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
+                <div class="card-body">
+                    <i class="fas fa-database fs-1 mb-3" style="color:#795548;"></i>
+                    <h5 class="fw-bold">Database Manager</h5>
+                    <p class="text-muted mb-3">Akses panel manajemen database</p>
+                    <a href="https://db.tak-scimediaonline.my.id/" target="_blank"
+                        class="btn btn-primary w-100 {{ $btn['class'] }}">
+                        Pilih
+                    </a>
                 </div>
             </div>
         </div>
@@ -326,47 +341,202 @@
 
     {{-- MODAL SISA MEMORI --}}
     @php
-        $drive = '/'; // sesuaikan drive server kamu
-
+        $drive = '/';
         $totalSpace = disk_total_space($drive);
         $freeSpace = disk_free_space($drive);
-
         $totalGB = round($totalSpace / 1024 / 1024 / 1024, 2);
         $freeGB = round($freeSpace / 1024 / 1024 / 1024, 2);
         $usedGB = round($totalGB - $freeGB, 2);
-        $percent = round(($usedGB / $totalGB) * 100);
+        $diskPercent = round(($usedGB / $totalGB) * 100);
+
+        // CPU Usage
+        $cpuLoad = sys_getloadavg();
+        $cpuPercent = round(($cpuLoad[0] * 100) / (int) shell_exec('nproc'), 1);
+
+        // RAM Usage
+        $ramInfo = [];
+        if (file_exists('/proc/meminfo')) {
+            foreach (file('/proc/meminfo') as $line) {
+                [$key, $val] = explode(':', $line);
+                $ramInfo[trim($key)] = (int) trim(str_replace(' kB', '', $val));
+            }
+            $ramTotal = round($ramInfo['MemTotal'] / 1024 / 1024, 2);
+            $ramFree = round($ramInfo['MemAvailable'] / 1024 / 1024, 2);
+            $ramUsed = round($ramTotal - $ramFree, 2);
+            $ramPercent = round(($ramUsed / $ramTotal) * 100);
+        } else {
+            $ramTotal = $ramFree = $ramUsed = $ramPercent = 'N/A';
+        }
+
+        // Uptime
+        $uptime = 'N/A';
+        if (file_exists('/proc/uptime')) {
+            $uptimeSec = (int) explode(' ', file_get_contents('/proc/uptime'))[0];
+            $days = floor($uptimeSec / 86400);
+            $hours = floor(($uptimeSec % 86400) / 3600);
+            $minutes = floor(($uptimeSec % 3600) / 60);
+            $uptime = "{$days}h {$hours}j {$minutes}m";
+        }
+
+        // Status Database
+        try {
+            DB::connection()->getPdo();
+            $dbStatus = true;
+        } catch (\Exception $e) {
+            $dbStatus = false;
+        }
+
+        // Status N8N
+        $n8nUrl = 'https://n8n.tak-scimediaonline.my.id/';
+        try {
+            $ch = curl_init($n8nUrl);
+            curl_setopt($ch, CURLOPT_NOBODY, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_exec($ch);
+            $n8nCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            $n8nStatus = $n8nCode > 0 && $n8nCode < 500;
+        } catch (\Exception $e) {
+            $n8nStatus = false;
+        }
+
+        // PHP & Laravel Version
+        $phpVersion = phpversion();
+        $laravelVersion = app()->version();
     @endphp
+
     <div class="modal fade" id="memoryModal" tabindex="-1">
-        <div class="modal-dialog custom-modal modal-md">
+        <div class="modal-dialog modal-lg custom-modal">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Informasi Memori Server</h5>
+                    <h5 class="modal-title"><i class="fas fa-server me-2"></i>Informasi Server</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body text-center">
-                    <div class="mb-3">
-                        <h6>Total Space</h6>
-                        <h4 class="text-primary">{{ $totalGB }} GB</h4>
-                    </div>
+                <div class="modal-body">
+                    <div class="row g-3">
 
-                    <div class="mb-3">
-                        <h6>Used Space</h6>
-                        <h4 class="text-danger">{{ $usedGB }} GB</h4>
-                    </div>
-
-                    <div class="mb-3">
-                        <h6>Free Space</h6>
-                        <h4 class="text-success">{{ $freeGB }} GB</h4>
-                    </div>
-
-                    <div class="progress mt-3" style="height:20px;">
-                        <div class="progress-bar bg-danger" style="width: {{ $percent }}%">
-                            {{ $percent }}%
+                        {{-- 1. Total Space --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#f0f4ff;border:1px solid #d0d9ff;">
+                                <i class="fas fa-hdd fs-4 mb-2 text-primary"></i>
+                                <div class="small text-muted fw-semibold">Total Disk</div>
+                                <div class="fw-bold fs-5 text-primary">{{ $totalGB }} GB</div>
+                            </div>
                         </div>
-                    </div>
 
+                        {{-- 2. Used Space --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#fff4f4;border:1px solid #ffd0d0;">
+                                <i class="fas fa-database fs-4 mb-2 text-danger"></i>
+                                <div class="small text-muted fw-semibold">Disk Terpakai</div>
+                                <div class="fw-bold fs-5 text-danger">{{ $usedGB }} GB</div>
+                                <div class="progress mt-2" style="height:5px;">
+                                    <div class="progress-bar bg-danger" style="width:{{ $diskPercent }}%"></div>
+                                </div>
+                                <div class="small text-muted mt-1">{{ $diskPercent }}%</div>
+                            </div>
+                        </div>
+
+                        {{-- 3. Free Space --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#f0fff8;border:1px solid #b6f0d8;">
+                                <i class="fas fa-hdd fs-4 mb-2 text-success"></i>
+                                <div class="small text-muted fw-semibold">Disk Bebas</div>
+                                <div class="fw-bold fs-5 text-success">{{ $freeGB }} GB</div>
+                            </div>
+                        </div>
+
+                        {{-- 4. CPU Usage --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#fffbf0;border:1px solid #ffe5a0;">
+                                <i class="fas fa-microchip fs-4 mb-2 text-warning"></i>
+                                <div class="small text-muted fw-semibold">CPU Usage</div>
+                                <div class="fw-bold fs-5 text-warning">{{ $cpuPercent }}%</div>
+                                <div class="progress mt-2" style="height:5px;">
+                                    <div class="progress-bar bg-warning" style="width:{{ $cpuPercent }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 5. RAM Usage --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#f8f0ff;border:1px solid #e0b6f0;">
+                                <i class="fas fa-memory fs-4 mb-2" style="color:#6f42c1;"></i>
+                                <div class="small text-muted fw-semibold">RAM Usage</div>
+                                <div class="fw-bold fs-5" style="color:#6f42c1;">{{ $ramUsed }} /
+                                    {{ $ramTotal }} GB</div>
+                                <div class="progress mt-2" style="height:5px;">
+                                    <div class="progress-bar" style="width:{{ $ramPercent }}%;background:#6f42c1;">
+                                    </div>
+                                </div>
+                                <div class="small text-muted mt-1">{{ $ramPercent }}%</div>
+                            </div>
+                        </div>
+
+                        {{-- 6. Uptime --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#f0faff;border:1px solid #b0e0ff;">
+                                <i class="fas fa-clock fs-4 mb-2 text-info"></i>
+                                <div class="small text-muted fw-semibold">Uptime</div>
+                                <div class="fw-bold fs-5 text-info">{{ $uptime }}</div>
+                            </div>
+                        </div>
+
+                        {{-- 7. Status Database --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:{{ $dbStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $dbStatus ? '#b6f0d8' : '#ffd0d0' }};">
+                                <i class="fas fa-database fs-4 mb-2 {{ $dbStatus ? 'text-success' : 'text-danger' }}"></i>
+                                <div class="small text-muted fw-semibold">Database</div>
+                                <div class="fw-bold fs-5 {{ $dbStatus ? 'text-success' : 'text-danger' }}">
+                                    {{ $dbStatus ? 'Online' : 'Offline' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 8. Status N8N --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:{{ $n8nStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $n8nStatus ? '#b6f0d8' : '#ffd0d0' }};">
+                                <i
+                                    class="fas fa-project-diagram fs-4 mb-2 {{ $n8nStatus ? 'text-success' : 'text-danger' }}"></i>
+                                <div class="small text-muted fw-semibold">N8N</div>
+                                <div class="fw-bold fs-5 {{ $n8nStatus ? 'text-success' : 'text-danger' }}">
+                                    {{ $n8nStatus ? 'Online' : 'Offline' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 9. Versi PHP --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#f5f0ff;border:1px solid #c8b6f0;">
+                                <i class="fab fa-php fs-4 mb-2" style="color:#4f46e5;"></i>
+                                <div class="small text-muted fw-semibold">Versi PHP</div>
+                                <div class="fw-bold fs-5" style="color:#4f46e5;">{{ $phpVersion }}</div>
+                            </div>
+                        </div>
+
+                        {{-- 10. Versi Laravel --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#fff5f0;border:1px solid #ffc8b0;">
+                                <i class="fab fa-laravel fs-4 mb-2 text-danger"></i>
+                                <div class="small text-muted fw-semibold">Versi Laravel</div>
+                                <div class="fw-bold fs-5 text-danger">v{{ $laravelVersion }}</div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
             </div>
@@ -404,31 +574,6 @@
 
                 </div>
 
-            </div>
-        </div>
-    </div>
-    {{-- MODAL PANEL DEVELOPER --}}
-    <div class="modal fade" id="devPanelModal" tabindex="-1">
-        <div class="modal-dialog modal-md custom-modal mt-5">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Panel Developer</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-grid gap-3">
-                        <a href="https://n8n.tak-scimediaonline.my.id/" target="_blank"
-                            class="btn btn-primary w-100 mb-3">
-                            <i class="fas fa-project-diagram"></i>
-                            N8N Automation
-                        </a>
-                        <a href="https://db.tak-scimediaonline.my.id/" target="_blank"
-                            class="btn btn-success btn w-100 mb-3">
-                            <i class="fas fa-database"></i>
-                            Database Manager
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
