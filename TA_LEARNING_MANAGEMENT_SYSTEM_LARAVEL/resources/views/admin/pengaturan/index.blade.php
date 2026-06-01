@@ -349,11 +349,11 @@
         $usedGB = round($totalGB - $freeGB, 2);
         $diskPercent = round(($usedGB / $totalGB) * 100);
 
-        // CPU Usage
+        // Penggunaan CPU
         $cpuLoad = sys_getloadavg();
         $cpuPercent = round(($cpuLoad[0] * 100) / (int) shell_exec('nproc'), 1);
 
-        // RAM Usage
+        // Penggunaan RAM
         $ramInfo = [];
         if (file_exists('/proc/meminfo')) {
             foreach (file('/proc/meminfo') as $line) {
@@ -368,14 +368,14 @@
             $ramTotal = $ramFree = $ramUsed = $ramPercent = 'N/A';
         }
 
-        // Uptime
+        // Lama Berjalan
         $uptime = 'N/A';
         if (file_exists('/proc/uptime')) {
             $uptimeSec = (int) explode(' ', file_get_contents('/proc/uptime'))[0];
             $days = floor($uptimeSec / 86400);
             $hours = floor(($uptimeSec % 86400) / 3600);
             $minutes = floor(($uptimeSec % 3600) / 60);
-            $uptime = "{$days}h {$hours}j {$minutes}m";
+            $uptime = "{$days} hari {$hours} jam {$minutes} menit";
         }
 
         // Status Database
@@ -386,22 +386,46 @@
             $dbStatus = false;
         }
 
-        // Status N8N
-        $n8nUrl = 'https://n8n.tak-scimediaonline.my.id/';
+        // Status Otomasi N8N
         try {
-            $ch = curl_init($n8nUrl);
-            curl_setopt($ch, CURLOPT_NOBODY, true);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_exec($ch);
-            $n8nCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-            $n8nStatus = $n8nCode > 0 && $n8nCode < 500;
+            $socket = @fsockopen('127.0.0.1', 5679, $errno, $errstr, 2);
+            if ($socket) {
+                $n8nStatus = true;
+                fclose($socket);
+            } else {
+                $n8nStatus = false;
+            }
         } catch (\Exception $e) {
             $n8nStatus = false;
         }
 
-        // PHP & Laravel Version
+        // Status Penjadwal Laravel
+        try {
+            $socket2 = @fsockopen('127.0.0.1', 5679, $errno2, $errstr2, 1);
+            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
+            $schedulerData = json_decode($schedulerOutput, true);
+            $schedulerStatus = false;
+            if (is_array($schedulerData)) {
+                foreach ($schedulerData as $proc) {
+                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
+                        $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $schedulerStatus = false;
+        }
+
+        // Jumlah Proses Berjalan
+        $prosesAktif = 'N/A';
+        if (file_exists('/proc/loadavg')) {
+            $loadavgRaw = file_get_contents('/proc/loadavg');
+            $parts = explode(' ', $loadavgRaw);
+            $prosesAktif = isset($parts[3]) ? explode('/', $parts[3])[0] : 'N/A';
+        }
+
+        // Versi PHP & Laravel
         $phpVersion = phpversion();
         $laravelVersion = app()->version();
     @endphp
@@ -418,17 +442,17 @@
                 <div class="modal-body">
                     <div class="row g-3">
 
-                        {{-- 1. Total Space --}}
+                        {{-- 1. Kapasitas Disk --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#f0f4ff;border:1px solid #d0d9ff;">
                                 <i class="fas fa-hdd fs-4 mb-2 text-primary"></i>
-                                <div class="small text-muted fw-semibold">Total Disk</div>
+                                <div class="small text-muted fw-semibold">Kapasitas Disk</div>
                                 <div class="fw-bold fs-5 text-primary">{{ $totalGB }} GB</div>
                             </div>
                         </div>
 
-                        {{-- 2. Used Space --}}
+                        {{-- 2. Disk Terpakai --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#fff4f4;border:1px solid #ffd0d0;">
@@ -442,22 +466,22 @@
                             </div>
                         </div>
 
-                        {{-- 3. Free Space --}}
+                        {{-- 3. Disk Tersedia --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#f0fff8;border:1px solid #b6f0d8;">
                                 <i class="fas fa-hdd fs-4 mb-2 text-success"></i>
-                                <div class="small text-muted fw-semibold">Disk Bebas</div>
+                                <div class="small text-muted fw-semibold">Disk Tersedia</div>
                                 <div class="fw-bold fs-5 text-success">{{ $freeGB }} GB</div>
                             </div>
                         </div>
 
-                        {{-- 4. CPU Usage --}}
+                        {{-- 4. Penggunaan CPU --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#fffbf0;border:1px solid #ffe5a0;">
                                 <i class="fas fa-microchip fs-4 mb-2 text-warning"></i>
-                                <div class="small text-muted fw-semibold">CPU Usage</div>
+                                <div class="small text-muted fw-semibold">Penggunaan CPU</div>
                                 <div class="fw-bold fs-5 text-warning">{{ $cpuPercent }}%</div>
                                 <div class="progress mt-2" style="height:5px;">
                                     <div class="progress-bar bg-warning" style="width:{{ $cpuPercent }}%"></div>
@@ -465,12 +489,12 @@
                             </div>
                         </div>
 
-                        {{-- 5. RAM Usage --}}
+                        {{-- 5. Penggunaan RAM --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#f8f0ff;border:1px solid #e0b6f0;">
                                 <i class="fas fa-memory fs-4 mb-2" style="color:#6f42c1;"></i>
-                                <div class="small text-muted fw-semibold">RAM Usage</div>
+                                <div class="small text-muted fw-semibold">Penggunaan RAM</div>
                                 <div class="fw-bold fs-5" style="color:#6f42c1;">{{ $ramUsed }} /
                                     {{ $ramTotal }} GB</div>
                                 <div class="progress mt-2" style="height:5px;">
@@ -481,12 +505,12 @@
                             </div>
                         </div>
 
-                        {{-- 6. Uptime --}}
+                        {{-- 6. Lama Berjalan --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#f0faff;border:1px solid #b0e0ff;">
                                 <i class="fas fa-clock fs-4 mb-2 text-info"></i>
-                                <div class="small text-muted fw-semibold">Uptime</div>
+                                <div class="small text-muted fw-semibold">Lama Berjalan</div>
                                 <div class="fw-bold fs-5 text-info">{{ $uptime }}</div>
                             </div>
                         </div>
@@ -496,22 +520,22 @@
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:{{ $dbStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $dbStatus ? '#b6f0d8' : '#ffd0d0' }};">
                                 <i class="fas fa-database fs-4 mb-2 {{ $dbStatus ? 'text-success' : 'text-danger' }}"></i>
-                                <div class="small text-muted fw-semibold">Database</div>
+                                <div class="small text-muted fw-semibold">Status Basis Data</div>
                                 <div class="fw-bold fs-5 {{ $dbStatus ? 'text-success' : 'text-danger' }}">
-                                    {{ $dbStatus ? 'Online' : 'Offline' }}
+                                    {{ $dbStatus ? 'Aktif' : 'Tidak Aktif' }}
                                 </div>
                             </div>
                         </div>
 
-                        {{-- 8. Status N8N --}}
+                        {{-- 8. Status Otomasi N8N --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:{{ $n8nStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $n8nStatus ? '#b6f0d8' : '#ffd0d0' }};">
                                 <i
                                     class="fas fa-project-diagram fs-4 mb-2 {{ $n8nStatus ? 'text-success' : 'text-danger' }}"></i>
-                                <div class="small text-muted fw-semibold">N8N</div>
+                                <div class="small text-muted fw-semibold">Otomasi N8N</div>
                                 <div class="fw-bold fs-5 {{ $n8nStatus ? 'text-success' : 'text-danger' }}">
-                                    {{ $n8nStatus ? 'Online' : 'Offline' }}
+                                    {{ $n8nStatus ? 'Aktif' : 'Tidak Aktif' }}
                                 </div>
                             </div>
                         </div>
@@ -533,6 +557,30 @@
                                 <i class="fab fa-laravel fs-4 mb-2 text-danger"></i>
                                 <div class="small text-muted fw-semibold">Versi Laravel</div>
                                 <div class="fw-bold fs-5 text-danger">v{{ $laravelVersion }}</div>
+                            </div>
+                        </div>
+
+                        {{-- 11. Status Penjadwal --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:{{ $schedulerStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $schedulerStatus ? '#b6f0d8' : '#ffd0d0' }};">
+                                <i
+                                    class="fas fa-calendar-check fs-4 mb-2 {{ $schedulerStatus ? 'text-success' : 'text-danger' }}"></i>
+                                <div class="small text-muted fw-semibold">Penjadwal Tugas</div>
+                                <div class="fw-bold fs-5 {{ $schedulerStatus ? 'text-success' : 'text-danger' }}">
+                                    {{ $schedulerStatus ? 'Aktif' : 'Tidak Aktif' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 12. Proses Berjalan --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#f0fdf4;border:1px solid #86efac;">
+                                <i class="fas fa-tasks fs-4 mb-2 text-success"></i>
+                                <div class="small text-muted fw-semibold">Proses Berjalan</div>
+                                <div class="fw-bold fs-5 text-success">{{ $prosesAktif }}</div>
+                                <div class="small text-muted mt-1">proses aktif</div>
                             </div>
                         </div>
 
