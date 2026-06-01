@@ -168,15 +168,14 @@
             </div>
         </div> --}}
 
-        {{-- SISA MEMORI SERVER --}}
+        {{-- INFORMASI SERVER --}}
         @php $btn = btnDisable($role, [1,2,3,4,5]); @endphp
         <div class="col-md-4">
             <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
                 <div class="card-body">
-                    {{-- Cyan (info) --}}
-                    <i class="fas fa-memory fs-1 mb-3 text-info"></i>
-                    <h5 class="fw-bold">Sisa Memori Server</h5>
-                    <p class="text-muted mb-3">penggunaan Penyimpanan saat ini</p>
+                    <i class="fas fa-server fs-1 mb-3 text-info"></i>
+                    <h5 class="fw-bold">Informasi Server</h5>
+                    <p class="text-muted mb-3">Pantau kondisi dan status server saat ini</p>
 
                     <button class="btn btn-primary w-100 {{ $btn['class'] }}" data-bs-toggle="modal"
                         data-bs-target="#memoryModal" {{ $btn['class'] ? 'disabled' : '' }}>
