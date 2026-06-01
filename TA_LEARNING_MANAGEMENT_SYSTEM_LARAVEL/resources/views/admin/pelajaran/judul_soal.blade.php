@@ -78,7 +78,7 @@
                                         class="btn btn-primary btn-sm">Soal</a>
 
                                     {{-- Tombol Edit --}}
-                                    <button class="btn btn-danger btn-sm"
+                                    <button class="btn btn-warning  btn-sm"
                                         onclick="editExercise('{{ $exercise->id }}')">Edit</button>
 
                                     {{-- Tombol Hapus --}}
@@ -134,7 +134,7 @@
                         <label class="form-label">Waktu Pengerjaan (Menit)</label>
 
                         <input type="number" name="time_limit" class="form-control" min="1"
-                            placeholder="Kosongkan jika tanpa batas waktu">
+                            placeholder="Kosongkan jika tanpa batas waktu" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -181,7 +181,7 @@
                         <label class="form-label">Waktu Pengerjaan (Menit)</label>
 
                         <input type="number" id="editTimeLimit" name="time_limit" class="form-control" min="1"
-                            placeholder="Kosongkan jika tanpa batas waktu">
+                            placeholder="Kosongkan jika tanpa batas waktu" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -219,7 +219,9 @@
         document.getElementById("searchInput").addEventListener("keyup", function() {
             const keyword = this.value.toLowerCase();
             document.querySelectorAll("#exerciseBody tr").forEach(row => {
-                const title = row.querySelector(".exercise-title").textContent.toLowerCase();
+                const titleEl = row.querySelector(".exercise-title");
+                if (!titleEl) return; // ← null check di dalam event listener
+                const title = titleEl.textContent.toLowerCase();
                 row.style.display = title.includes(keyword) ? "" : "none";
             });
         });

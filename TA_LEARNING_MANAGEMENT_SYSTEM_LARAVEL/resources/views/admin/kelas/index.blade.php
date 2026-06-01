@@ -40,7 +40,7 @@
         <div class="col-md-8">
             <label class="form-label">Pencarian</label>
             <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="searchInput"
-                type="text" class="form-control" placeholder="Cari Nama Kelas / Guru..." autocomplete="off">
+                type="text" class="form-control" placeholder="Cari Nama Kelas / Guru...">
         </div>
         <div class="col-md-4 text-end">
             <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalTambah">
@@ -107,22 +107,21 @@
                 <div class="modal-body row g-3">
                     <div class="col-12">
                         <label class="form-label">Nama Kelas</label>
-                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
-                            name="name" class="form-control" required autocomplete="off">
+                        <input autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="name"
+                            class="form-control" required autocomplete="off">
                     </div>
                     <div class="col-12">
                         <label class="form-label">Kelas</label>
-                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
-                            name="grade" class="form-control" required autocomplete="off">
+                        <input autocorrect="off" autocapitalize="off" spellcheck="false" type="number" name="grade"
+                            class="form-control" autocomplete="off" required min="1" max="12">
                     </div>
                     <div class="col-12">
                         <label class="form-label">Serial / Guru</label>
                         <div class="input-group">
-                            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                type="hidden" name="serial_id" id="tambahSerialId">
-                            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                type="text" id="tambahSerialText" class="form-control" placeholder="Belum dipilih"
-                                readonly>
+                            <input autocorrect="off" autocapitalize="off" spellcheck="false" type="hidden" name="serial_id"
+                                id="tambahSerialId">
+                            <input autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+                                id="tambahSerialText" class="form-control" placeholder="Belum dipilih" readonly>
                             <button type="button" class="btn btn-primary btn-sm" onclick="openPilihSerial('tambah')">
                                 Pilih Serial
                             </button>
@@ -151,15 +150,14 @@
                 <div class="modal-body row g-3">
                     <div class="col-12">
                         <label class="form-label">Nama Kelas</label>
-                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                            type="text" id="editName" name="name" class="form-control" required
-                            autocomplete="off">
+                        <input autocorrect="off" autocapitalize="off" spellcheck="false" type="text" id="editName"
+                            name="name" class="form-control" required autocomplete="off">
                     </div>
                     <div class="col-12">
                         <label class="form-label">Kelas</label>
-                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                            type="text" id="editGrade" name="grade" class="form-control" required
-                            autocomplete="off">
+                        <input autocorrect="off" autocapitalize="off" spellcheck="false" type="number" id="editGrade"
+                            name="grade" class="form-control" required autocomplete="off" min="1"
+                            max="12">
                     </div>
                     <div class="col-12">
                         <label class="form-label">Serial / Guru</label>
