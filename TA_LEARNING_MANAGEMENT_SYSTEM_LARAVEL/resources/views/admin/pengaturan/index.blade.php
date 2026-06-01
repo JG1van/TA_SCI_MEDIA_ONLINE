@@ -338,7 +338,6 @@
             </div>
         </div>
     </div>
-
     {{-- MODAL SISA MEMORI --}}
     @php
         $drive = '/';
@@ -378,7 +377,27 @@
             $uptime = "{$days} hari {$hours} jam {$minutes} menit";
         }
 
-        // Status Database
+        // Versi Node.js
+        $nodeVersion = trim(shell_exec('node -v 2>/dev/null') ?? 'N/A');
+
+        // Status Penjadwal Laravel
+        try {
+            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
+            $schedulerData = json_decode($schedulerOutput, true);
+            $schedulerStatus = false;
+            if (is_array($schedulerData)) {
+                foreach ($schedulerData as $proc) {
+                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
+                        $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $schedulerStatus = false;
+        }
+
+        // Status Basis Data
         try {
             DB::connection()->getPdo();
             $dbStatus = true;
@@ -399,32 +418,6 @@
             $n8nStatus = false;
         }
 
-        // Status Penjadwal Laravel
-        try {
-            $socket2 = @fsockopen('127.0.0.1', 5679, $errno2, $errstr2, 1);
-            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
-            $schedulerData = json_decode($schedulerOutput, true);
-            $schedulerStatus = false;
-            if (is_array($schedulerData)) {
-                foreach ($schedulerData as $proc) {
-                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
-                        $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
-                        break;
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            $schedulerStatus = false;
-        }
-
-        // Jumlah Proses Berjalan
-        $prosesAktif = 'N/A';
-        if (file_exists('/proc/loadavg')) {
-            $loadavgRaw = file_get_contents('/proc/loadavg');
-            $parts = explode(' ', $loadavgRaw);
-            $prosesAktif = isset($parts[3]) ? explode('/', $parts[3])[0] : 'N/A';
-        }
-
         // Versi PHP & Laravel
         $phpVersion = phpversion();
         $laravelVersion = app()->version();
@@ -441,6 +434,8 @@
 
                 <div class="modal-body">
                     <div class="row g-3">
+
+                        {{-- BARIS 1: Hardware Server --}}
 
                         {{-- 1. Kapasitas Disk --}}
                         <div class="col-6 col-md-3">
@@ -489,6 +484,8 @@
                             </div>
                         </div>
 
+                        {{-- BARIS 2: Kondisi Server --}}
+
                         {{-- 5. Penggunaan RAM --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
@@ -515,52 +512,17 @@
                             </div>
                         </div>
 
-                        {{-- 7. Status Database --}}
+                        {{-- 7. Versi Node.js --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:{{ $dbStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $dbStatus ? '#b6f0d8' : '#ffd0d0' }};">
-                                <i class="fas fa-database fs-4 mb-2 {{ $dbStatus ? 'text-success' : 'text-danger' }}"></i>
-                                <div class="small text-muted fw-semibold">Status Basis Data</div>
-                                <div class="fw-bold fs-5 {{ $dbStatus ? 'text-success' : 'text-danger' }}">
-                                    {{ $dbStatus ? 'Aktif' : 'Tidak Aktif' }}
-                                </div>
+                                style="background:#f0fdf4;border:1px solid #86efac;">
+                                <i class="fab fa-node-js fs-4 mb-2 text-success"></i>
+                                <div class="small text-muted fw-semibold">Versi Node.js</div>
+                                <div class="fw-bold fs-5 text-success">{{ $nodeVersion }}</div>
                             </div>
                         </div>
 
-                        {{-- 8. Status Otomasi N8N --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:{{ $n8nStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $n8nStatus ? '#b6f0d8' : '#ffd0d0' }};">
-                                <i
-                                    class="fas fa-project-diagram fs-4 mb-2 {{ $n8nStatus ? 'text-success' : 'text-danger' }}"></i>
-                                <div class="small text-muted fw-semibold">Otomasi N8N</div>
-                                <div class="fw-bold fs-5 {{ $n8nStatus ? 'text-success' : 'text-danger' }}">
-                                    {{ $n8nStatus ? 'Aktif' : 'Tidak Aktif' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- 9. Versi PHP --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f5f0ff;border:1px solid #c8b6f0;">
-                                <i class="fab fa-php fs-4 mb-2" style="color:#4f46e5;"></i>
-                                <div class="small text-muted fw-semibold">Versi PHP</div>
-                                <div class="fw-bold fs-5" style="color:#4f46e5;">{{ $phpVersion }}</div>
-                            </div>
-                        </div>
-
-                        {{-- 10. Versi Laravel --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#fff5f0;border:1px solid #ffc8b0;">
-                                <i class="fab fa-laravel fs-4 mb-2 text-danger"></i>
-                                <div class="small text-muted fw-semibold">Versi Laravel</div>
-                                <div class="fw-bold fs-5 text-danger">v{{ $laravelVersion }}</div>
-                            </div>
-                        </div>
-
-                        {{-- 11. Status Penjadwal --}}
+                        {{-- 8. Penjadwal Tugas --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:{{ $schedulerStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $schedulerStatus ? '#b6f0d8' : '#ffd0d0' }};">
@@ -573,14 +535,50 @@
                             </div>
                         </div>
 
-                        {{-- 12. Proses Berjalan --}}
+                        {{-- BARIS 3: Status Layanan & Versi --}}
+
+                        {{-- 9. Status Basis Data --}}
                         <div class="col-6 col-md-3">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f0fdf4;border:1px solid #86efac;">
-                                <i class="fas fa-tasks fs-4 mb-2 text-success"></i>
-                                <div class="small text-muted fw-semibold">Proses Berjalan</div>
-                                <div class="fw-bold fs-5 text-success">{{ $prosesAktif }}</div>
-                                <div class="small text-muted mt-1">proses aktif</div>
+                                style="background:{{ $dbStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $dbStatus ? '#b6f0d8' : '#ffd0d0' }};">
+                                <i class="fas fa-database fs-4 mb-2 {{ $dbStatus ? 'text-success' : 'text-danger' }}"></i>
+                                <div class="small text-muted fw-semibold">Status Basis Data</div>
+                                <div class="fw-bold fs-5 {{ $dbStatus ? 'text-success' : 'text-danger' }}">
+                                    {{ $dbStatus ? 'Aktif' : 'Tidak Aktif' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 10. Otomasi N8N --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:{{ $n8nStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $n8nStatus ? '#b6f0d8' : '#ffd0d0' }};">
+                                <i
+                                    class="fas fa-project-diagram fs-4 mb-2 {{ $n8nStatus ? 'text-success' : 'text-danger' }}"></i>
+                                <div class="small text-muted fw-semibold">Otomasi N8N</div>
+                                <div class="fw-bold fs-5 {{ $n8nStatus ? 'text-success' : 'text-danger' }}">
+                                    {{ $n8nStatus ? 'Aktif' : 'Tidak Aktif' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 11. Versi PHP --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#f5f0ff;border:1px solid #c8b6f0;">
+                                <i class="fab fa-php fs-4 mb-2" style="color:#4f46e5;"></i>
+                                <div class="small text-muted fw-semibold">Versi PHP</div>
+                                <div class="fw-bold fs-5" style="color:#4f46e5;">{{ $phpVersion }}</div>
+                            </div>
+                        </div>
+
+                        {{-- 12. Versi Laravel --}}
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#fff5f0;border:1px solid #ffc8b0;">
+                                <i class="fab fa-laravel fs-4 mb-2 text-danger"></i>
+                                <div class="small text-muted fw-semibold">Versi Laravel</div>
+                                <div class="fw-bold fs-5 text-danger">v{{ $laravelVersion }}</div>
                             </div>
                         </div>
 
