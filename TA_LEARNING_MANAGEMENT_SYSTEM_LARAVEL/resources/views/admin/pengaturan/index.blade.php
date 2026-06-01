@@ -418,12 +418,12 @@
                 <div class="modal-body">
                     <div class="d-grid gap-3">
                         <a href="https://n8n.tak-scimediaonline.my.id/" target="_blank"
-                            class="btn btn-outline-primary d-flex align-items-center gap-2">
+                            class="btn btn-primary w-100 mb-3">
                             <i class="fas fa-project-diagram"></i>
                             N8N Automation
                         </a>
                         <a href="https://db.tak-scimediaonline.my.id/" target="_blank"
-                            class="btn btn-outline-success d-flex align-items-center gap-2">
+                            class="btn btn-success btn w-100 mb-3">
                             <i class="fas fa-database"></i>
                             Database Manager
                         </a>
