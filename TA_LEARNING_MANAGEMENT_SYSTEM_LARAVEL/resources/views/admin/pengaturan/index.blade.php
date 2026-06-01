@@ -218,7 +218,7 @@
                 </div>
             </div>
         </div> --}}
-        {{-- PANEL DEVELOPER --}}
+
         {{-- N8N AUTOMATION --}}
         @php $btn = btnDisable($role, [1,2]); @endphp
         <div class="col-md-4">
