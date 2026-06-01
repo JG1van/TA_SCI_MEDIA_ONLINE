@@ -105,17 +105,29 @@
             ["image", "clean"]
         ];
 
+        // ✅ Aturan bisnis: type_id 4 (AKM) = semua model, selainnya = hanya model 1
+        const exerciseTypeId = parseInt(document.getElementById('exercise_type_id').value);
+        const allowedModels = exerciseTypeId === 4 ? [1, 2, 3, 4, 5, 6, 7] : [1];
+
+        // ✅ Filter dropdown Model Soal saat halaman load
+        document.addEventListener('DOMContentLoaded', function() {
+            const modelSelect = document.getElementById('exercise_model_id');
+            Array.from(modelSelect.options).forEach(option => {
+                const val = parseInt(option.value);
+                if (val && !allowedModels.includes(val)) {
+                    option.remove();
+                }
+            });
+        });
+
         function imageHandler() {
-
             const quill = this.quill;
-
             const input = document.createElement("input");
             input.setAttribute("type", "file");
             input.setAttribute("accept", "image/*");
             input.click();
 
             input.onchange = async () => {
-
                 const file = input.files[0];
                 if (!file) return;
 
@@ -131,7 +143,6 @@
                 );
 
                 const data = await res.json();
-
                 if (data.url) {
                     const range = quill.getSelection(true);
                     quill.insertEmbed(range.index, "image", data.url);
@@ -140,11 +151,8 @@
         }
 
         function createEditor(id, height = 200) {
-
             const el = document.getElementById(id);
-
             if (!el) return;
-
             el.style.minHeight = height + "px";
 
             const q = new Quill("#" + id, {
@@ -165,22 +173,31 @@
 
         function resetEditors() {
             editors.forEach(e => {
-                if (e && e.root) {
-                    e.root.innerHTML = "";
-                }
+                if (e && e.root) e.root.innerHTML = "";
             });
             editors = [];
         }
 
-        // 🔹 Buat ulang form sesuai model soal
         function loadForm() {
-            const model = document.getElementById("exercise_model_id").value;
+            const modelSelect = document.getElementById("exercise_model_id");
+            const model = modelSelect.value;
+            const modelInt = parseInt(model);
             const area = document.getElementById("formArea");
             const choiceSelect = document.getElementById("exercise_choice");
             const btnSimpan = document.getElementById("btnSimpan");
 
+            // ✅ Guard: tolak model yang tidak diizinkan
+            if (model && !allowedModels.includes(modelInt)) {
+                alert("Model soal ini tidak diizinkan untuk tipe soal ini.");
+                modelSelect.value = "";
+                btnSimpan.setAttribute("disabled", true);
+                area.innerHTML =
+                    "<p class='text-muted fst-italic'>Pilih model soal terlebih dahulu untuk memulai input...</p>";
+                return;
+            }
+
             // enable/disable tombol simpan
-            if (model >= 1 && model <= 7) btnSimpan.removeAttribute("disabled");
+            if (modelInt >= 1 && modelInt <= 7) btnSimpan.removeAttribute("disabled");
             else btnSimpan.setAttribute("disabled", true);
 
             // enable/disable jumlah pilihan
@@ -193,20 +210,20 @@
             resetEditors();
 
             if (!model) {
-                area.innerHTML = "<p><i>Pilih model soal terlebih dahulu...</i></p>";
+                area.innerHTML =
+                    "<p class='text-muted fst-italic'>Pilih model soal terlebih dahulu untuk memulai input...</p>";
                 return;
             }
 
             let html = "";
 
-            // 🎯 Model per jenis soal
             switch (model) {
                 case "1":
                 case "2":
                     html = `
                     <h5>Soal Pilihan Ganda${model == "2" ? " Banyak" : ""}</h5>
                     <label>Pertanyaan:</label>
-                    <div id="editorQuestion" class="border p-2 rounded" required></div>
+                    <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
                     <div id="pilihanArea" class="mt-3"></div>`;
                     break;
@@ -214,10 +231,10 @@
                     html = `
                     <h5>Soal Pernyataan</h5>
                     <label>Pernyataan:</label>
-                    <div id="editorQuestion" class="border p-2 rounded" required></div>
+                    <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
                     <label class="mt-3">Kunci Jawaban:</label>
-                    <select id="answer" name="answer" class="form-select mt-1 ">
+                    <select id="answer" name="answer" class="form-select mt-1">
                         <option>Benar</option><option>Salah</option>
                     </select>`;
                     break;
@@ -226,7 +243,7 @@
                         `
                     <h5>Soal Isian</h5>
                     <label>Pertanyaan:</label>
-                    <div id="editorQuestion" class="border p-2 rounded" required></div>
+                    <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
                     <label class="mt-3">Kunci Jawaban:</label>
                     <input type="text" id="answer" name="answer" class="form-control" placeholder="Isi jawaban benar" required autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">`;
@@ -235,7 +252,7 @@
                     html = `
                     <h5>Soal Uraian</h5>
                     <label>Pertanyaan:</label>
-                    <div id="editorQuestion" class="border p-2 rounded" required></div>
+                    <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
                     <label class="mt-3">Panduan Penilaian:</label>
                     <div id="editorAnswer" class="border p-2 rounded"></div>
@@ -245,7 +262,7 @@
                     html = `
                     <h5>Soal Iya / Tidak</h5>
                     <label>Pertanyaan:</label>
-                    <div id="editorQuestion" class="border p-2 rounded" required></div>
+                    <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
                     <label class="mt-3">Jawaban:</label>
                     <select id="answer" name="answer" class="form-select mt-1">
@@ -256,7 +273,7 @@
                     html = `
                     <h5>Soal Argumen</h5>
                     <label>Pertanyaan:</label>
-                    <div id="editorQuestion" class="border p-2 rounded" required></div>
+                    <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
                     <label class="mt-3">Argumen / Jawaban:</label>
                     <div id="editorAnswer" class="border p-2 rounded"></div>
@@ -272,7 +289,6 @@
 
             area.innerHTML = html;
 
-            // buat editor sesuai model
             if (["1", "2", "3", "4", "5", "6", "7"].includes(model)) {
                 createEditor("editorQuestion", 180);
                 if (model == "1" || model == "2") buatPilihan();
@@ -280,7 +296,6 @@
             }
         }
 
-        // 🔹 Buat pilihan jawaban
         function buatPilihan() {
             const jumlah = parseInt(document.getElementById("exercise_choice").value);
             const model = document.getElementById("exercise_model_id").value;
@@ -289,7 +304,7 @@
 
             let html = `
             <h6 class="mt-3">Pilihan Jawaban</h6>
-             <table class="table table-striped table-bordered table-hover align-middle text-center">
+            <table class="table table-striped table-bordered table-hover align-middle text-center">
                 <thead><tr><th>Abjad</th><th>Pilihan</th></tr></thead>
                 <tbody>`;
 
@@ -304,11 +319,10 @@
 
             html += `</tbody></table><div class="mt-3">`;
 
-            // Jawaban benar
             if (model == "1") {
                 html += `<label class="form-label fw-semibold">Jawaban Benar:</label>
-                     <select id="answer" name="answer" class="form-select" required>
-                     <option value="">-- Pilih Jawaban Benar --</option>`;
+                         <select id="answer" name="answer" class="form-select" required>
+                         <option value="">-- Pilih Jawaban Benar --</option>`;
                 for (let i = 0; i < jumlah; i++) {
                     const huruf = String.fromCharCode(65 + i);
                     html += `<option value="${huruf}">${huruf}</option>`;
@@ -316,7 +330,7 @@
                 html += `</select>`;
             } else if (model == "2") {
                 html += `<label class="form-label fw-semibold">Jawaban Benar:</label>
-                     <div class="d-flex flex-wrap gap-2">`;
+                         <div class="d-flex flex-wrap gap-2">`;
                 for (let i = 0; i < jumlah; i++) {
                     const huruf = String.fromCharCode(65 + i);
                     html += `
@@ -331,7 +345,6 @@
             html += `</div>`;
             area.innerHTML = html;
 
-            // delay kecil untuk memastikan elemen sudah dirender
             setTimeout(() => {
                 for (let i = 0; i < jumlah; i++) {
                     const huruf = String.fromCharCode(65 + i);
@@ -340,7 +353,6 @@
             }, 300);
         }
 
-        //   Simpan form soal
         document.getElementById('formSoal').addEventListener('submit', function(e) {
             const btn = document.getElementById("btnSimpan");
             const originalText = btn.innerHTML;

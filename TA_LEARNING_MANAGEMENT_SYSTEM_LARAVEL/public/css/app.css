@@ -3353,6 +3353,7 @@ body.sidebar-collapsed .layout-page {
 }
 
 .custom-modal {
+    display: flex;
     max-width: 700px;
     width: 100%;
     margin: 1.5rem auto;
