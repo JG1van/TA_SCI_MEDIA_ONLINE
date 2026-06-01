@@ -14,7 +14,7 @@
         rel="stylesheet" />
     @vite(['resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-     
+
 
 </head>
 
@@ -57,10 +57,10 @@
                     <a href="{{ route('login') }}" class="modal-login-btn admin">
                         <i class="bi bi-shield-lock me-2"></i>Login sebagai Admin
                     </a>
-                    <a href="#" class="modal-login-btn guru">
+                    <a href="http://guru.tak-scimediaonline.my.id/login" class="modal-login-btn guru">
                         <i class="bi bi-person-badge me-2"></i>Login sebagai Guru
                     </a>
-                    <a href="#" class="modal-login-btn siswa">
+                    <a href="" class="modal-login-btn siswa">
                         <i class="bi bi-backpack me-2"></i>Login sebagai Siswa
                     </a>
                 </div>

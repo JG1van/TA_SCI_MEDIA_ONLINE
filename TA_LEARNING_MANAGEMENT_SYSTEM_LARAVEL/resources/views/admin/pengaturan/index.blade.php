@@ -221,9 +221,23 @@
                 </div>
             </div>
         </div> --}}
-
-        {{-- KELUAR --}}
+        {{-- PANEL DEVELOPER --}}
+        @php $btn = btnDisable($role, [1,2]); @endphp
         <div class="col-md-4">
+            <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
+                <div class="card-body">
+                    <i class="fas fa-terminal fs-1 mb-3" style="color:#6610f2;"></i>
+                    <h5 class="fw-bold">Panel Developer</h5>
+                    <p class="text-muted mb-3">Akses tools developer sistem</p>
+                    <button class="btn btn-primary w-100 {{ $btn['class'] }}" data-bs-toggle="modal"
+                        data-bs-target="#devPanelModal" {{ $btn['class'] ? 'disabled' : '' }}>
+                        Pilih
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{-- KELUAR --}}
+        <div class="col-md-12">
             <div class="card shadow text-center setting-card border-danger">
                 <div class="card-body">
                     {{-- Merah (danger) --}}
@@ -390,6 +404,31 @@
 
                 </div>
 
+            </div>
+        </div>
+    </div>
+    {{-- MODAL PANEL DEVELOPER --}}
+    <div class="modal fade" id="devPanelModal" tabindex="-1">
+        <div class="modal-dialog modal-md custom-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Panel Developer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-grid gap-3">
+                        <a href="https://n8n.tak-scimediaonline.my.id/" target="_blank"
+                            class="btn btn-outline-primary d-flex align-items-center gap-2">
+                            <i class="fas fa-project-diagram"></i>
+                            N8N Automation
+                        </a>
+                        <a href="https://db.tak-scimediaonline.my.id/" target="_blank"
+                            class="btn btn-outline-success d-flex align-items-center gap-2">
+                            <i class="fas fa-database"></i>
+                            Database Manager
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
