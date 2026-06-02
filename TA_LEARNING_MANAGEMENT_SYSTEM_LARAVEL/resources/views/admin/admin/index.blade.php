@@ -225,7 +225,7 @@
                             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
                                 <div class="stat-block stat-radar-wrap">
                                     <div class="stat-block-title">Profil Kinerja</div>
-                                    <div style="display:flex;justify-content:center;">
+                                    <div style="display:flex;justify-content:center;position:relative;">
                                         <svg id="statRadarSvg" width="190" height="175" viewBox="0 0 240 220"
                                             role="img" aria-label="Radar chart profil kinerja admin">
                                             <title>Profil kinerja admin</title>
@@ -272,6 +272,22 @@
                                                     x="-74" y="-42">Responsif</text>
                                             </g>
                                         </svg>
+                                        <div id="radarTooltip"
+                                            style="
+    display:none;
+    position:absolute;
+    background:#2b2b3b;
+    color:#fff;
+    font-size:12px;
+    padding:7px 11px;
+    border-radius:8px;
+    pointer-events:none;
+    z-index:99;
+    max-width:180px;
+    line-height:1.5;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+">
+                                        </div>
                                     </div>
                                 </div>
 
@@ -510,10 +526,10 @@
 
                 // Kinerja CS
                 const rata = s.rata_rating ?? 0;
-                document.getElementById('statTotalBintang').textContent = (s.total_bintang ?? 0) + ' ⭐';
+                document.getElementById('statTotalBintang').textContent = (s.total_bintang ?? 0) + ' bintang';
                 document.getElementById('statRataRating').textContent = parseFloat(rata).toFixed(1) + ' / 5';
-                document.getElementById('statMaxRating').textContent = (s.max_rating ?? 0) + ' ⭐';
-                document.getElementById('statMinRating').textContent = (s.min_rating ?? 0) + ' ⭐';
+                document.getElementById('statMaxRating').textContent = 'nilai ' + (s.max_rating ?? 0);
+                document.getElementById('statMinRating').textContent = 'nilai ' + (s.min_rating ?? 0);
 
                 // Bintang visual
                 const starRow = document.getElementById('statStarRow');
@@ -543,16 +559,16 @@
                     materiBarsEl.innerHTML = '<p class="text-muted small text-center py-2">Belum ada data.</p>';
                 } else {
                     materiBarsEl.innerHTML = materiBulan.map(m => `
-                <div class="stat-bar-item">
-                    <div class="stat-bar-label-row">
-                        <span>${m.label}</span><span>${m.total}</span>
+            <div class="stat-bar-item">
+                <div class="stat-bar-label-row">
+                    <span>${m.label}</span><span>${m.total}</span>
+                </div>
+                <div class="stat-bar-track">
+                    <div class="stat-bar-fill"
+                        style="width:${Math.round((m.total/maxMateriBar)*100)}%;background:#696CFF">
                     </div>
-                    <div class="stat-bar-track">
-                        <div class="stat-bar-fill"
-                            style="width:${Math.round((m.total/maxMateriBar)*100)}%;background:#696CFF">
-                        </div>
-                    </div>
-                </div>`).join('');
+                </div>
+            </div>`).join('');
                 }
 
                 // Radar chart
@@ -562,6 +578,7 @@
                     if (!maxPossible || maxPossible === 0) return 0;
                     return Math.min(maxVal, Math.round((val / maxPossible) * maxVal));
                 }
+
                 const rMateri = toR(s.total_materi ?? 0, s.max_materi ?? Math.max(s.total_materi ?? 1, 1));
                 const rSoal = toR(s.total_soal ?? 0, s.max_soal ?? Math.max(s.total_soal ?? 1, 1));
                 const rCS = toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1));
@@ -573,17 +590,72 @@
                     const rad = (angle - 90) * (Math.PI / 180);
                     return [Math.round(value * Math.cos(rad)), Math.round(value * Math.sin(rad))];
                 }
+
                 const angles = [0, 60, 120, 180, 240, 300];
                 const values = [rMateri, rSoal, rCS, rRating, rAktivitas, rResponsif];
                 const pts = values.map((v, i) => radarPoint(v, angles[i]));
 
                 document.getElementById('radarPolygon').setAttribute('points', pts.map(p => p.join(',')).join(' '));
+
+                const radarMeta = [{
+                        label: 'Materi',
+                        desc: 'Jumlah materi pembelajaran yang dibuat',
+                        val: () => (s.total_materi ?? 0) + ' materi'
+                    },
+                    {
+                        label: 'Soal',
+                        desc: 'Jumlah soal latihan yang dibuat',
+                        val: () => (s.total_soal ?? 0) + ' soal'
+                    },
+                    {
+                        label: 'CS Tiket',
+                        desc: 'Jumlah tiket layanan pelanggan yang ditangani',
+                        val: () => (s.total_cs ?? 0) + ' tiket'
+                    },
+                    {
+                        label: 'Rating',
+                        desc: 'Rata-rata penilaian dari pengguna atas pelayanan CS',
+                        val: () => parseFloat(s.rata_rating ?? 0).toFixed(1) + ' / 5'
+                    },
+                    {
+                        label: 'Aktivitas',
+                        desc: 'Total aktivitas yang tercatat di log sistem',
+                        val: () => (s.total_log ?? 0) + ' aktivitas'
+                    },
+                    {
+                        label: 'Responsif',
+                        desc: 'Seberapa aktif menangani tiket CS yang masuk',
+                        val: () => (s.total_cs ?? 0) + ' tiket ditangani'
+                    },
+                ];
+
+                const tooltip = document.getElementById('radarTooltip');
+
                 pts.forEach((p, i) => {
                     const el = document.getElementById('rd' + i);
-                    if (el) {
-                        el.setAttribute('cx', p[0]);
-                        el.setAttribute('cy', p[1]);
-                    }
+                    if (!el) return;
+                    el.setAttribute('cx', p[0]);
+                    el.setAttribute('cy', p[1]);
+                    el.setAttribute('r', '4');
+                    el.style.cursor = 'pointer';
+
+                    el.onmouseenter = () => {
+                        const m = radarMeta[i];
+                        tooltip.innerHTML =
+                            `<strong style="font-size:12px;">${m.label}</strong><br>${m.desc}<br><span style="color:#a5a8ff;font-weight:700;">${m.val()}</span>`;
+                        tooltip.style.display = 'block';
+                    };
+
+                    el.onmousemove = (e) => {
+                        const svg = document.getElementById('statRadarSvg');
+                        const rect = svg.getBoundingClientRect();
+                        tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+                        tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+                    };
+
+                    el.onmouseleave = () => {
+                        tooltip.style.display = 'none';
+                    };
                 });
 
                 // Timeline aktivitas terbaru
@@ -616,134 +688,83 @@
                 document.getElementById('statContent').style.display = 'block';
             }
 
-            // ════════════════════════════════════
-            // DOM READY
-            // ════════════════════════════════════
-            document.addEventListener("DOMContentLoaded", () => {
-
-                // Pencarian
-                document.getElementById("searchInput").addEventListener("keyup", function() {
-                    const keyword = this.value.toLowerCase();
-                    document.querySelectorAll("#adminBody tr").forEach(row => {
-                        const nama = row.querySelector(".admin-name")?.textContent.toLowerCase() ?? '';
-                        row.style.display = nama.includes(keyword) ? "" : "none";
+            // ==== Edit Admin ====
+            document.getElementById("formEdit").addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const id = document.getElementById("editId").value;
+                const formData = new FormData(this);
+                const btn = this.querySelector("button[type='submit']");
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+                try {
+                    const res = await fetch(`/admin/admin/${id}`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "X-HTTP-Method-Override": "PUT"
+                        },
+                        body: formData
                     });
-                });
+                    const result = await res.json();
+                    if (result.success) {
+                        bootstrap.Modal.getInstance(document.getElementById("modalEdit")).hide();
+                        notifSuccess(result.message);
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        notifError(result.message || 'Gagal memperbarui data.');
+                    }
+                } catch (err) {
+                    notifError(err.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Simpan Perubahan';
+                }
+            });
 
-                // Reset form tambah saat modal dibuka
-                document.getElementById('modalTambah').addEventListener('show.bs.modal', () => {
-                    document.getElementById('formTambah').reset();
-                });
-
-                // ==== Tambah Admin ====
-                document.getElementById("formTambah").addEventListener("submit", async function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(this);
-                    const btn = this.querySelector("button[type='submit']");
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
-                    try {
-                        const res = await fetch("{{ route('admin.admin.store') }}", {
-                            method: "POST",
-                            headers: {
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: formData
-                        });
-                        const result = await res.json();
-                        if (result.success) {
-                            bootstrap.Modal.getInstance(document.getElementById('modalTambah')).hide();
-                            this.reset();
-                            notifSuccess(result.message);
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            notifError(result.message || 'Gagal menyimpan data.');
-                        }
-                    } catch (err) {
-                        notifError(err.message);
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerHTML = 'Simpan';
+            // ==== Reset Password ====
+            document.getElementById("btnResetPassword").addEventListener("click", function() {
+                const id = document.getElementById("editId").value;
+                Swal.fire({
+                    title: 'Reset Password?',
+                    text: 'Password admin akan dikembalikan ke default (Admin1234).',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Reset',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#696CFF',
+                    cancelButtonColor: '#8592A3',
+                    reverseButtons: true
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        fetch(`/admin/admin/${id}/reset-password`, {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                }
+                            })
+                            .then(res => res.json())
+                            .then(result => {
+                                if (result.success) notifSuccess(result.message);
+                                else notifError(result.message);
+                            })
+                            .catch(() => notifError('Gagal mereset password.'));
                     }
                 });
+            });
 
-                // ==== Edit Admin ====
-                document.getElementById("formEdit").addEventListener("submit", async function(e) {
-                    e.preventDefault();
-                    const id = document.getElementById("editId").value;
-                    const formData = new FormData(this);
-                    const btn = this.querySelector("button[type='submit']");
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
-                    try {
-                        const res = await fetch(`/admin/admin/${id}`, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                "X-HTTP-Method-Override": "PUT"
-                            },
-                            body: formData
-                        });
-                        const result = await res.json();
-                        if (result.success) {
-                            bootstrap.Modal.getInstance(document.getElementById("modalEdit")).hide();
-                            notifSuccess(result.message);
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            notifError(result.message || 'Gagal memperbarui data.');
-                        }
-                    } catch (err) {
-                        notifError(err.message);
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerHTML = 'Simpan Perubahan';
-                    }
-                });
-
-                // ==== Reset Password ====
-                document.getElementById("btnResetPassword").addEventListener("click", function() {
-                    const id = document.getElementById("editId").value;
-                    Swal.fire({
-                        title: 'Reset Password?',
-                        text: 'Password admin akan dikembalikan ke default (Admin1234).',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Reset',
-                        cancelButtonText: 'Batal',
-                        confirmButtonColor: '#696CFF',
-                        cancelButtonColor: '#8592A3',
-                        reverseButtons: true
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            fetch(`/admin/admin/${id}/reset-password`, {
-                                    method: "POST",
-                                    headers: {
-                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                    }
-                                })
-                                .then(res => res.json())
-                                .then(result => {
-                                    if (result.success) notifSuccess(result.message);
-                                    else notifError(result.message);
-                                })
-                                .catch(() => notifError('Gagal mereset password.'));
-                        }
-                    });
-                });
-
-                // ==== Upload Foto ====
-                document.getElementById("btnEditPhoto").addEventListener("click", () =>
-                    document.getElementById("editImgInput").click());
-                document.getElementById("editImgInput").addEventListener("change", (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                            document.getElementById("editImgPreview").src = ev.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
+            // ==== Upload Foto ====
+            document.getElementById("btnEditPhoto").addEventListener("click", () =>
+                document.getElementById("editImgInput").click());
+            document.getElementById("editImgInput").addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById("editImgPreview").src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            });
             });
 
             // ==== Load data ke modal edit ====
