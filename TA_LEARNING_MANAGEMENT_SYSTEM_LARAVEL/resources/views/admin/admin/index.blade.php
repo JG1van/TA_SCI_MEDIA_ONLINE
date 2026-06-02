@@ -110,7 +110,7 @@
          MODAL STATISTIK KINERJA ADMIN
     ══════════════════════════════════════════ --}}
         <div class="modal fade" id="modalStatistik" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width:620px;">
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="max-width:900px;">
                 <div class="modal-content modal-statistik-content">
 
                     <div class="modal-header modal-statistik-header">
@@ -136,8 +136,8 @@
 
                         <div id="statContent" style="display:none;">
 
-                            {{-- 3 Hero Angka --}}
-                            <div class="stat-three-hero mb-3">
+                            {{-- Row 1: 3 Hero + Kinerja CS + Detail Konten (5 kolom total, pakai grid 3+2) --}}
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" class="mb-3">
                                 <div class="stat-hero-card stat-hero-purple">
                                     <div class="stat-hero-label">Total Materi</div>
                                     <div class="stat-hero-value" id="statTotalMateri">—</div>
@@ -155,8 +155,8 @@
                                 </div>
                             </div>
 
-                            {{-- Kinerja CS + Detail Konten --}}
-                            <div class="stat-mid-row mb-3">
+                            {{-- Row 2: Kinerja CS | Detail Konten | Distribusi Rating CS --}}
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" class="mb-3">
                                 <div class="stat-block">
                                     <div class="stat-block-title">Kinerja CS</div>
                                     <div class="stat-kv-grid">
@@ -200,14 +200,32 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="stat-block">
+                                    <div class="stat-block-title">Distribusi Rating CS</div>
+                                    <div id="statRatingBars">
+                                        @foreach ([5, 4, 3, 2, 1] as $r)
+                                            <div class="stat-bar-item">
+                                                <div class="stat-bar-label-row">
+                                                    <span>{{ $r }} ★</span>
+                                                    <span id="statR{{ $r }}Count">0 tiket</span>
+                                                </div>
+                                                <div class="stat-bar-track">
+                                                    <div class="stat-bar-fill" id="statR{{ $r }}Bar"
+                                                        style="width:0%;background:{{ $r == 5 ? '#0F6E56' : ($r == 4 ? '#1D9E75' : ($r == 3 ? '#EF9F27' : ($r == 2 ? '#D85A30' : '#E24B4A'))) }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
 
-                            {{-- Radar Chart + Distribusi Rating CS (side by side) --}}
-                            <div class="stat-mid-row mb-3">
+                            {{-- Row 3: Radar Chart | Materi per Bulan | Aktivitas Terbaru --}}
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
                                 <div class="stat-block stat-radar-wrap">
                                     <div class="stat-block-title">Profil Kinerja</div>
                                     <div style="display:flex;justify-content:center;">
-                                        <svg id="statRadarSvg" width="200" height="185" viewBox="0 0 240 220"
+                                        <svg id="statRadarSvg" width="190" height="175" viewBox="0 0 240 220"
                                             role="img" aria-label="Radar chart profil kinerja admin">
                                             <title>Profil kinerja admin</title>
                                             <g transform="translate(120,115)">
@@ -255,28 +273,6 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="stat-block">
-                                    <div class="stat-block-title">Distribusi Rating CS</div>
-                                    <div id="statRatingBars">
-                                        @foreach ([5, 4, 3, 2, 1] as $r)
-                                            <div class="stat-bar-item">
-                                                <div class="stat-bar-label-row">
-                                                    <span>{{ $r }} ★</span>
-                                                    <span id="statR{{ $r }}Count">0 tiket</span>
-                                                </div>
-                                                <div class="stat-bar-track">
-                                                    <div class="stat-bar-fill" id="statR{{ $r }}Bar"
-                                                        style="width:0%;background:{{ $r == 5 ? '#0F6E56' : ($r == 4 ? '#1D9E75' : ($r == 3 ? '#EF9F27' : ($r == 2 ? '#D85A30' : '#E24B4A'))) }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Materi per Bulan + Aktivitas Terbaru (side by side) --}}
-                            <div class="stat-mid-row">
                                 <div class="stat-block">
                                     <div class="stat-block-title">Materi Dibuat per Bulan</div>
                                     <div id="statMateriBars">
