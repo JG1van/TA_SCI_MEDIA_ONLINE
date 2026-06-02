@@ -351,12 +351,14 @@ class AdminController extends Controller
                 ->groupBy('bulan')
                 ->count();
 
-            $maxBulanAktif = \DB::table('lesson_items')
-                ->selectRaw("admin_id, COUNT(DISTINCT DATE_FORMAT(created_at, '%Y-%m')) as total")
-                ->whereNotNull('admin_id')
-                ->groupBy('admin_id')
-                ->orderByDesc('total')
-                ->value('total') ?? 1;
+            $maxBulanAktif = \DB::select("
+    SELECT MAX(cnt) as total FROM (
+        SELECT COUNT(DISTINCT DATE_FORMAT(created_at, '%Y-%m')) as cnt
+        FROM lesson_items
+        WHERE admin_id IS NOT NULL
+        GROUP BY admin_id
+    ) as sub
+")[0]->total ?? 1;
             return response()->json([
                 'success' => true,
                 'stats' => [
