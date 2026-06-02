@@ -4099,3 +4099,7 @@ footer {
     padding: 10px 16px;
     justify-content: center;
 }
+
+#roleInfoPanel {
+    visibility: visible !important;
+}
