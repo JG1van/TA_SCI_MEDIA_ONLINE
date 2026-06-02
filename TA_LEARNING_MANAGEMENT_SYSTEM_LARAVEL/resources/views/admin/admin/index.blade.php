@@ -208,7 +208,7 @@
                                             <div class="stat-bar-item">
                                                 <div class="stat-bar-label-row">
                                                     <span>{{ $r }} ★</span>
-                                                    <span id="statR{{ $r }}Count">0 tiket</span>
+                                                    <span id="statR{{ $r }}Count">0 Percakapan</span>
                                                 </div>
                                                 <div class="stat-bar-track">
                                                     <div class="stat-bar-fill" id="statR{{ $r }}Bar"
@@ -263,7 +263,7 @@
                                                 <text font-size="10" fill="#8592A3" font-family="inherit"
                                                     text-anchor="start" x="74" y="-42">Soal</text>
                                                 <text font-size="10" fill="#8592A3" font-family="inherit"
-                                                    text-anchor="start" x="74" y="46">CS Tiket</text>
+                                                    text-anchor="start" x="74" y="46">CS</text>
                                                 <text font-size="10" fill="#8592A3" font-family="inherit"
                                                     text-anchor="middle" x="0" y="96">Rating</text>
                                                 <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end"
@@ -608,9 +608,9 @@
                         val: () => (s.total_soal ?? 0) + ' soal'
                     },
                     {
-                        label: 'CS Tiket',
-                        desc: 'Jumlah tiket layanan pelanggan yang ditangani',
-                        val: () => (s.total_cs ?? 0) + ' tiket'
+                        label: 'CS',
+                        desc: 'Jumlah percakapan layanan pelanggan yang ditangani',
+                        val: () => (s.total_cs ?? 0) + ' Percakapan'
                     },
                     {
                         label: 'Rating',
@@ -624,8 +624,8 @@
                     },
                     {
                         label: 'Responsif',
-                        desc: 'Seberapa aktif menangani tiket CS yang masuk',
-                        val: () => (s.total_cs ?? 0) + ' tiket ditangani'
+                        desc: 'Seberapa aktif menangani percakapan CS yang masuk',
+                        val: () => (s.total_cs ?? 0) + ' percakapan ditangani'
                     },
                 ];
 
