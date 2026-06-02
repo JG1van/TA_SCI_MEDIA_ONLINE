@@ -603,7 +603,6 @@
 
     @section('js')
         <script>
-            // ==== Notifikasi ====
             function notifSuccess(msg) {
                 Swal.fire({
                     icon: 'success',
@@ -632,21 +631,15 @@
                 0: 'Tidak Aktif'
             };
 
-            // ════════════════════════════════════
-            // STATISTIK
-            // ════════════════════════════════════
             function lihatStatistik(id, nama, posisi, role) {
                 document.getElementById('statLoading').style.display = 'block';
                 document.getElementById('statContent').style.display = 'none';
-
                 const inisial = nama.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
                 document.getElementById('statAvatar').textContent = inisial;
                 document.getElementById('statName').textContent = nama;
                 document.getElementById('statRoleLabel').textContent = (posisi || roleLabel[role]) + ' · ID #' + id;
                 document.getElementById('statBadge').textContent = roleLabel[role] || '—';
-
                 new bootstrap.Modal(document.getElementById('modalStatistik')).show();
-
                 fetch(`/admin/admin/${id}/statistik`)
                     .then(res => {
                         if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -663,25 +656,20 @@
             }
 
             function renderStatistik(s) {
-                // Hero
                 document.getElementById('statTotalMateri').textContent = (s.total_materi ?? 0);
                 document.getElementById('statTotalSoal').textContent = (s.total_soal ?? 0);
                 document.getElementById('statTotalCS').textContent = (s.total_cs ?? 0);
-
-                // Detail konten
                 document.getElementById('statMateriDetail').textContent = (s.total_materi ?? 0) + ' Materi';
                 document.getElementById('statSoalDetail').textContent = (s.total_soal ?? 0) + ' Soal';
                 document.getElementById('statLogAktivitas').textContent = (s.total_log ?? 0) + ' Aktivitas';
                 document.getElementById('statCSLogDetail').textContent = (s.total_cs ?? 0) + ' Percakapan';
 
-                // Kinerja CS
                 const rata = s.rata_rating ?? 0;
                 document.getElementById('statTotalBintang').textContent = (s.total_bintang ?? 0) + ' ⭐';
                 document.getElementById('statRataRating').textContent = parseFloat(rata).toFixed(1) + ' / 5';
                 document.getElementById('statMaxRating').textContent = 'nilai ' + (s.max_rating ?? 0) + ' ⭐';
                 document.getElementById('statMinRating').textContent = 'nilai ' + (s.min_rating ?? 0) + ' ⭐';
 
-                // Bintang visual
                 const starRow = document.getElementById('statStarRow');
                 starRow.innerHTML = '';
                 const rataInt = Math.round(parseFloat(rata));
@@ -692,7 +680,6 @@
                     starRow.appendChild(span);
                 }
 
-                // Bar distribusi rating
                 const dist = s.distribusi_rating ?? {};
                 const maxTiket = Math.max(...[5, 4, 3, 2, 1].map(r => dist[r] ?? 0), 1);
                 [5, 4, 3, 2, 1].forEach(r => {
@@ -701,50 +688,37 @@
                     document.getElementById(`statR${r}Bar`).style.width = ((count / maxTiket) * 100) + '%';
                 });
 
-                // Materi per bulan
                 const materiBulan = s.materi_per_bulan ?? [];
                 const maxMateriBar = Math.max(...materiBulan.map(m => m.total), 1);
                 const materiBarsEl = document.getElementById('statMateriBars');
-                if (materiBulan.length === 0) {
-                    materiBarsEl.innerHTML = '<p class="text-muted small text-center py-2">Belum ada data.</p>';
-                } else {
-                    materiBarsEl.innerHTML = materiBulan.map(m => `
+                materiBarsEl.innerHTML = materiBulan.length === 0 ?
+                    '<p class="text-muted small text-center py-2">Belum ada data.</p>' :
+                    materiBulan.map(m => `
                 <div class="stat-bar-item">
-                    <div class="stat-bar-label-row">
-                        <span>${m.label}</span><span>${m.total}</span>
-                    </div>
-                    <div class="stat-bar-track">
-                        <div class="stat-bar-fill"
-                            style="width:${Math.round((m.total / maxMateriBar) * 100)}%;background:#696CFF">
-                        </div>
-                    </div>
+                    <div class="stat-bar-label-row"><span>${m.label}</span><span>${m.total}</span></div>
+                    <div class="stat-bar-track"><div class="stat-bar-fill" style="width:${Math.round((m.total/maxMateriBar)*100)}%;background:#696CFF"></div></div>
                 </div>`).join('');
-                }
 
-                // Radar chart
                 const maxVal = 80;
 
-                function toR(val, maxPossible) {
-                    if (!maxPossible || maxPossible === 0) return 0;
-                    return Math.min(maxVal, Math.round((val / maxPossible) * maxVal));
+                function toR(val, maxP) {
+                    if (!maxP) return 0;
+                    return Math.min(maxVal, Math.round((val / maxP) * maxVal));
                 }
-
-                const rMateri = toR(s.total_materi ?? 0, s.max_materi ?? Math.max(s.total_materi ?? 1, 1));
-                const rSoal = toR(s.total_soal ?? 0, s.max_soal ?? Math.max(s.total_soal ?? 1, 1));
-                const rCS = toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1));
-                const rRating = toR(parseFloat(s.rata_rating ?? 0), 5);
-                const rAktivitas = toR(s.total_log ?? 0, s.max_log ?? Math.max(s.total_log ?? 1, 1));
-                const rKonsistensi = toR(s.bulan_aktif ?? 0, s.max_bulan_aktif ?? 12);
 
                 function radarPoint(value, angle) {
                     const rad = (angle - 90) * (Math.PI / 180);
                     return [Math.round(value * Math.cos(rad)), Math.round(value * Math.sin(rad))];
                 }
-
-                const angles = [0, 60, 120, 180, 240, 300];
-                const values = [rMateri, rSoal, rCS, rRating, rAktivitas, rKonsistensi];
-                const pts = values.map((v, i) => radarPoint(v, angles[i]));
-
+                const values = [
+                    toR(s.total_materi ?? 0, s.max_materi ?? Math.max(s.total_materi ?? 1, 1)),
+                    toR(s.total_soal ?? 0, s.max_soal ?? Math.max(s.total_soal ?? 1, 1)),
+                    toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1)),
+                    toR(parseFloat(s.rata_rating ?? 0), 5),
+                    toR(s.total_log ?? 0, s.max_log ?? Math.max(s.total_log ?? 1, 1)),
+                    toR(s.bulan_aktif ?? 0, s.max_bulan_aktif ?? 12),
+                ];
+                const pts = values.map((v, i) => radarPoint(v, [0, 60, 120, 180, 240, 300][i]));
                 document.getElementById('radarPolygon').setAttribute('points', pts.map(p => p.join(',')).join(' '));
 
                 const radarMeta = [{
@@ -759,28 +733,26 @@
                     },
                     {
                         label: 'CS',
-                        desc: 'Jumlah percakapan layanan pelanggan yang ditangani',
+                        desc: 'Jumlah percakapan layanan pelanggan',
                         val: () => (s.total_cs ?? 0) + ' Percakapan'
                     },
                     {
                         label: 'Rating',
-                        desc: 'Rata-rata penilaian dari pengguna atas pelayanan CS',
+                        desc: 'Rata-rata penilaian dari pengguna',
                         val: () => parseFloat(s.rata_rating ?? 0).toFixed(1) + ' / 5'
                     },
                     {
                         label: 'Aktivitas',
-                        desc: 'Total aktivitas yang tercatat di log sistem',
+                        desc: 'Total aktivitas yang tercatat di log',
                         val: () => (s.total_log ?? 0) + ' aktivitas'
                     },
                     {
                         label: 'Konsistensi',
-                        desc: 'Jumlah bulan aktif admin membuat materi pembelajaran',
+                        desc: 'Jumlah bulan aktif membuat materi',
                         val: () => (s.bulan_aktif ?? 0) + ' bulan aktif'
                     },
                 ];
-
                 const tooltip = document.getElementById('radarTooltip');
-
                 pts.forEach((p, i) => {
                     const el = document.getElementById('rd' + i);
                     if (!el) return;
@@ -788,7 +760,6 @@
                     el.setAttribute('cy', p[1]);
                     el.setAttribute('r', '4');
                     el.style.cursor = 'pointer';
-
                     el.onmouseenter = () => {
                         const m = radarMeta[i];
                         tooltip.innerHTML =
@@ -796,8 +767,7 @@
                         tooltip.style.display = 'block';
                     };
                     el.onmousemove = (e) => {
-                        const svg = document.getElementById('statRadarSvg');
-                        const rect = svg.getBoundingClientRect();
+                        const rect = document.getElementById('statRadarSvg').getBoundingClientRect();
                         tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
                         tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
                     };
@@ -806,7 +776,6 @@
                     };
                 });
 
-                // Timeline aktivitas terbaru
                 const timeline = s.aktivitas_terbaru ?? [];
                 const timelineEl = document.getElementById('statTimeline');
                 if (timeline.length === 0) {
@@ -821,14 +790,10 @@
                     };
                     timelineEl.innerHTML = timeline.map(t => {
                         const color = dotColors[t.type] ?? dotColors.default;
-                        return `
-                    <div class="stat-tl-row">
-                        <div class="stat-tl-dot" style="background:${color}"></div>
-                        <div>
-                            <div class="stat-tl-action">${t.action}</div>
-                            <div class="stat-tl-time">${t.time}</div>
-                        </div>
-                    </div>`;
+                        return `<div class="stat-tl-row">
+                    <div class="stat-tl-dot" style="background:${color}"></div>
+                    <div><div class="stat-tl-action">${t.action}</div><div class="stat-tl-time">${t.time}</div></div>
+                </div>`;
                     }).join('');
                 }
 
@@ -836,10 +801,66 @@
                 document.getElementById('statContent').style.display = 'block';
             }
 
-            // ════════════════════════════════════
-            // DOM READY
-            // ════════════════════════════════════
+            function editAdmin(id) {
+                fetch(`/admin/admin/${id}/edit`)
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success) {
+                            const a = result.data;
+                            document.getElementById("editId").value = a.id;
+                            document.getElementById("editName").value = a.name;
+                            document.getElementById("editUsername").value = a.username;
+                            document.getElementById("editDateIn").value = a.date_in ?? '';
+                            document.getElementById("editPosition").value = a.position ?? '';
+                            document.getElementById("editPhone").value = a.phone ?? '';
+                            document.getElementById("editLoginAt").value = a.login_at ?? '';
+                            document.getElementById("editRole").value = a.role ?? 0;
+                            document.getElementById("editNameCard").innerText = a.name ?? "Tanpa Nama";
+                            document.getElementById("editImgPreview").src = a.img ? `/storage/admins/${a.img}` :
+                                `/images/logo.webp`;
+                            new bootstrap.Modal(document.getElementById("modalEdit")).show();
+                        } else {
+                            notifError('Data admin tidak ditemukan.');
+                        }
+                    })
+                    .catch(() => notifError('Gagal memuat data admin.'));
+            }
+
+            function hapusAdmin(id, nama) {
+                Swal.fire({
+                    title: 'Hapus Admin?',
+                    text: `Yakin ingin menghapus "${nama}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#696CFF',
+                    cancelButtonColor: '#8592A3',
+                    reverseButtons: true
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        fetch(`/admin/admin/${id}`, {
+                                method: "DELETE",
+                                headers: {
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                }
+                            })
+                            .then(res => res.json())
+                            .then(result => {
+                                if (result.success) {
+                                    document.getElementById(`row${id}`).remove();
+                                    notifSuccess(result.message);
+                                } else notifError(result.message || 'Gagal menghapus data.');
+                            })
+                            .catch(() => notifError('Terjadi kesalahan saat menghapus.'));
+                    }
+                });
+            }
+
+            // ════ DOM READY ════
             document.addEventListener("DOMContentLoaded", () => {
+
+                // Fix: bersihkan sisa state modal
                 document.querySelectorAll('.modal').forEach(el => {
                     el.classList.remove('show');
                     el.style.display = 'none';
@@ -851,20 +872,12 @@
                 document.body.style.removeProperty('overflow');
                 document.body.style.removeProperty('padding-right');
 
-                // ════ Chevron animasi panel role ════
+                // Chevron animasi panel role
                 const rolePanel = document.getElementById('roleInfoPanel');
                 const roleChevron = document.getElementById('roleInfoChevron');
                 if (rolePanel && roleChevron) {
                     rolePanel.addEventListener('show.bs.collapse', () => roleChevron.style.transform =
                     'rotate(180deg)');
-                    rolePanel.addEventListener('hide.bs.collapse', () => roleChevron.style.transform = 'rotate(0deg)');
-                }
-                // ════ Chevron animasi panel role ════
-                const rolePanel = document.getElementById('roleInfoPanel');
-                const roleChevron = document.getElementById('roleInfoChevron');
-                if (rolePanel && roleChevron) {
-                    rolePanel.addEventListener('show.bs.collapse', () => roleChevron.style.transform =
-                        'rotate(180deg)');
                     rolePanel.addEventListener('hide.bs.collapse', () => roleChevron.style.transform = 'rotate(0deg)');
                 }
 
@@ -882,7 +895,7 @@
                     document.getElementById('formTambah').reset();
                 });
 
-                // ==== Tambah Admin ====
+                // Tambah Admin
                 document.getElementById("formTambah").addEventListener("submit", async function(e) {
                     e.preventDefault();
                     const formData = new FormData(this);
@@ -914,7 +927,7 @@
                     }
                 });
 
-                // ==== Edit Admin ====
+                // Edit Admin
                 document.getElementById("formEdit").addEventListener("submit", async function(e) {
                     e.preventDefault();
                     const id = document.getElementById("editId").value;
@@ -947,7 +960,7 @@
                     }
                 });
 
-                // ==== Reset Password ====
+                // Reset Password
                 document.getElementById("btnResetPassword").addEventListener("click", function() {
                     const id = document.getElementById("editId").value;
                     Swal.fire({
@@ -978,10 +991,9 @@
                     });
                 });
 
-                // ==== Upload Foto ====
-                document.getElementById("btnEditPhoto").addEventListener("click", () =>
-                    document.getElementById("editImgInput").click());
-
+                // Upload Foto
+                document.getElementById("btnEditPhoto").addEventListener("click", () => document.getElementById(
+                    "editImgInput").click());
                 document.getElementById("editImgInput").addEventListener("change", (e) => {
                     const file = e.target.files[0];
                     if (file) {
@@ -994,65 +1006,5 @@
                 });
 
             }); // ← tutup DOMContentLoaded
-
-            // ==== Load data ke modal edit ====
-            function editAdmin(id) {
-                fetch(`/admin/admin/${id}/edit`)
-                    .then(res => res.json())
-                    .then(result => {
-                        if (result.success) {
-                            const a = result.data;
-                            document.getElementById("editId").value = a.id;
-                            document.getElementById("editName").value = a.name;
-                            document.getElementById("editUsername").value = a.username;
-                            document.getElementById("editDateIn").value = a.date_in ?? '';
-                            document.getElementById("editPosition").value = a.position ?? '';
-                            document.getElementById("editPhone").value = a.phone ?? '';
-                            document.getElementById("editLoginAt").value = a.login_at ?? '';
-                            document.getElementById("editRole").value = a.role ?? 0;
-                            document.getElementById("editNameCard").innerText = a.name ?? "Tanpa Nama";
-                            document.getElementById("editImgPreview").src =
-                                a.img ? `/storage/admins/${a.img}` : `/images/logo.webp`;
-                            new bootstrap.Modal(document.getElementById("modalEdit")).show();
-                        } else {
-                            notifError('Data admin tidak ditemukan.');
-                        }
-                    })
-                    .catch(() => notifError('Gagal memuat data admin.'));
-            }
-
-            // ==== Hapus Admin ====
-            function hapusAdmin(id, nama) {
-                Swal.fire({
-                    title: 'Hapus Admin?',
-                    text: `Yakin ingin menghapus "${nama}"?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Hapus',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#696CFF',
-                    cancelButtonColor: '#8592A3',
-                    reverseButtons: true
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        fetch(`/admin/admin/${id}`, {
-                                method: "DELETE",
-                                headers: {
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                }
-                            })
-                            .then(res => res.json())
-                            .then(result => {
-                                if (result.success) {
-                                    document.getElementById(`row${id}`).remove();
-                                    notifSuccess(result.message);
-                                } else {
-                                    notifError(result.message || 'Gagal menghapus data.');
-                                }
-                            })
-                            .catch(() => notifError('Terjadi kesalahan saat menghapus.'));
-                    }
-                });
-            }
         </script>
     @endsection
