@@ -47,7 +47,7 @@
 
     <!-- Login Modal -->
     <div class="modal fade" id="popupLogin" tabindex="-1">
-        <div class="modal-dialog mt-5 modal-dialog-centered" style="min-width:1000px;">
+        <div class="modal-dialog mt-5 modal-dialog-centered" style="min-width:500px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-box-arrow-in-right me-2"></i>Pilih Role Login</h5>
