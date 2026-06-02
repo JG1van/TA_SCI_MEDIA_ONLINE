@@ -113,7 +113,7 @@
         <div class="modal fade" id="modalStatistik" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
                 style="max-width:900px; margin:1rem auto;">
-                <div class="modal-content modal-statistik-content">
+                <div class="modal-content">
 
                     <div class="modal-header modal-statistik-header">
                         <div class="d-flex align-items-center gap-3">
@@ -123,7 +123,7 @@
                                 <div class="stat-modal-role" id="statRoleLabel">Role · ID #0</div>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2" style="z-index: 999">
                             <span class="stat-modal-badge" id="statBadge">—</span>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
