@@ -214,25 +214,24 @@
                                         </div>
                                     </div>
                                 @endif
-
-                                @if ($waitingAdmin > 0)
-                                    <div class="alert alert-info" role="alert">
+                                @if ($warningSerialCount > 0)
+                                    <div class="alert alert-dark " role="alert">
                                         <div class="alert-left">
-                                            <i class="fas fa-user-clock"></i>
+                                            <i class="fas fa-triangle-exclamation"></i>
                                             <span>
-                                                <b>{{ $waitingAdmin }}</b> layanan pelanggan belum memiliki admin
+                                                <b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
+                                                diizinkan
                                             </span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.layanan-pelanggan.index') }}"
-                                                class="btn btn-sm btn-info text-white">Lihat</a>
+                                            <a href="{{ route('admin.kelas.index') }}"
+                                                class="btn btn-sm btn-dark">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
                                         </div>
                                     </div>
                                 @endif
-
                                 @if ($totalUnansweredCount > 20)
                                     <div class="alert alert-secondary" role="alert">
                                         <div class="alert-left">
@@ -248,18 +247,17 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if ($warningSerialCount > 0)
-                                    <div class="alert alert-dark " role="alert">
+                                @if ($waitingAdmin > 0)
+                                    <div class="alert alert-info" role="alert">
                                         <div class="alert-left">
-                                            <i class="fas fa-triangle-exclamation"></i>
+                                            <i class="fas fa-user-clock"></i>
                                             <span>
-                                                <b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
-                                                diizinkan
+                                                <b>{{ $waitingAdmin }}</b> layanan pelanggan belum memiliki admin
                                             </span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.kelas.index') }}"
-                                                class="btn btn-sm btn-dark">Lihat</a>
+                                            <a href="{{ route('admin.layanan-pelanggan.index') }}"
+                                                class="btn btn-sm btn-info text-white">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
