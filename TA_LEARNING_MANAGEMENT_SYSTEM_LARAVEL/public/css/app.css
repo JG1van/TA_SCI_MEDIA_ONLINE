@@ -3819,24 +3819,6 @@ footer {
 /* ══════════════════════════════════════
    MANAJEMEN ADMIN — TOMBOL STATISTIK
 ══════════════════════════════════════ */
-.btn-statistik {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 5px 12px;
-    box-shadow: 0 3px 10px rgba(105, 108, 255, 0.28);
-    transition: all 0.22s ease;
-}
-
-.btn-statistik:hover {
-    background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(105, 108, 255, 0.38);
-}
 
 /* ══════════════════════════════════════
    MODAL STATISTIK — WRAPPER
@@ -3854,10 +3836,19 @@ footer {
 .modal-statistik-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-bottom: none;
-    padding: 18px 20px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 12px;
+}
+
+.modal-statistik-header .btn-close {
+    flex-shrink: 0;
+    opacity: 1;
+    filter: brightness(0) invert(1);
+    margin-left: 4px;
 }
 
 .stat-modal-avatar {
@@ -3902,6 +3893,8 @@ footer {
 ══════════════════════════════════════ */
 .modal-statistik-content .modal-body {
     background: #f5f5f9;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
 }
 
 /* ══════════════════════════════════════

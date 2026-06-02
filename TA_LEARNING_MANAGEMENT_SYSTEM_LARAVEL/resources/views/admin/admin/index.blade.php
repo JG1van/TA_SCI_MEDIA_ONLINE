@@ -26,8 +26,8 @@
                     <th>Nama</th>
                     <th>Username</th>
                     <th>Role / Status</th>
-                    <th style="width:110px;">Statistik</th>
-                    <th style="width:180px;">Aksi</th>
+                    <th style="width:130px; white-space:nowrap;">Statistik</th>
+                    <th style="width:200px; white-space:nowrap;">Aksi</th>
                 </tr>
             </thead>
             <tbody id="adminBody">
@@ -69,7 +69,7 @@
 
                         {{-- Kolom Statistik — selalu tampil untuk semua --}}
                         <td class="text-center align-middle">
-                            <button class="btn btn-sm btn-statistik"
+                            <button class="btn btn-sm btn-success"
                                 onclick="lihatStatistik('{{ $admin->id }}', '{{ $admin->name }}', '{{ $admin->position ?? $admin->username }}', {{ $admin->role }})">
                                 <i class="fas fa-chart-bar me-1"></i>Statistik
                             </button>
@@ -79,7 +79,8 @@
                         <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-2">
                                 @if (auth()->user()->id !== $admin->id)
-                                    <button class="btn btn-warning btn-sm" onclick="editAdmin('{{ $admin->id }}')">
+                                    <button class="btn btn-warning btn-sm" style="white-space:nowrap;"
+                                        onclick="editAdmin('{{ $admin->id }}')">
                                         Detail / Edit
                                     </button>
                                     <button class="btn btn-danger btn-sm"
@@ -110,7 +111,8 @@
          MODAL STATISTIK KINERJA ADMIN
     ══════════════════════════════════════════ --}}
         <div class="modal fade" id="modalStatistik" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="max-width:900px;">
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+                style="max-width:900px; margin:1rem auto;">
                 <div class="modal-content modal-statistik-content">
 
                     <div class="modal-header modal-statistik-header">
@@ -292,10 +294,6 @@
                             </div>
 
                         </div>
-                    </div>
-
-                    <div class="modal-footer modal-statistik-footer">
-                        <small class="text-muted">lesson_items · exercise_items · cs_logs · admin_activity_logs</small>
                     </div>
                 </div>
             </div>
