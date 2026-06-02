@@ -220,7 +220,7 @@
                         <td class="text-center align-middle">
                             <button class="btn btn-sm btn-success"
                                 onclick="lihatStatistik('{{ $admin->id }}', '{{ $admin->name }}', '{{ $admin->position ?? $admin->username }}', {{ $admin->role }})">
-                                <i class="fas fa-chart-bar me-1"></i>Statistik
+                                Statistik
                             </button>
                         </td>
 

@@ -3682,7 +3682,7 @@ footer {
         grid-template-columns: 1fr !important;
     }
 }
-}
+
 
 @media (max-width: 767px) {
     .hero-title {
