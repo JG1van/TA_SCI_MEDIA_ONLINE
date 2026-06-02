@@ -274,8 +274,6 @@
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <span class="stat-modal-badge" id="statBadge">—</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                style="filter:brightness(0) invert(1);opacity:.85;"></button>
                         </div>
                     </div>
 

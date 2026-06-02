@@ -96,10 +96,13 @@ class ClassroomController extends Controller
                 'grade' => $request->grade,
                 'code' => $code,
             ]);
-            if (!empty($serial->active)) {
+
+            // Hanya set expired_at jika belum pernah diset sebelumnya
+            if (!empty($serial->active) && empty($serial->expired_at)) {
                 $serial->expired_at = now()->addMonths($serial->active);
                 $serial->save();
             }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Kelas berhasil ditambahkan.',
@@ -165,14 +168,21 @@ class ClassroomController extends Controller
                     'message' => "Serial sudah mencapai batas maksimum ({$serial->paket}).",
                 ], 403);
             }
-            $expiredAt = now()->addMonths($serial->active);
+
+            // Update data kelas tanpa menyentuh expired_at
             $classroom->update([
                 'serial_id' => $serial->id,
                 'name' => $request->name,
                 'grade' => $request->grade,
-                'expired_at' => $expiredAt,
             ]);
-            $serial->update(['expired_at' => $expiredAt]);
+
+            // Hanya set expired_at jika belum pernah diset sebelumnya
+            if (!empty($serial->active) && empty($serial->expired_at)) {
+                $expiredAt = now()->addMonths($serial->active);
+                $classroom->update(['expired_at' => $expiredAt]);
+                $serial->update(['expired_at' => $expiredAt]);
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Kelas berhasil diperbarui.',
