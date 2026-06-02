@@ -257,8 +257,8 @@
         </div>
 
         {{-- ══════════════════════════════════════════
-         MODAL STATISTIK KINERJA ADMIN
-    ══════════════════════════════════════════ --}}
+     MODAL STATISTIK KINERJA ADMIN
+══════════════════════════════════════════ --}}
         <div class="modal fade" id="modalStatistik" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
                 style="max-width:900px; margin:1rem auto;">
@@ -274,6 +274,8 @@
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <span class="stat-modal-badge" id="statBadge">—</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                style="filter:brightness(0) invert(1);opacity:.85;"></button>
                         </div>
                     </div>
 
@@ -286,8 +288,8 @@
 
                         <div id="statContent" style="display:none;">
 
-                            {{-- Row 1: 3 Hero + Kinerja CS + Detail Konten (5 kolom total, pakai grid 3+2) --}}
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" class="mb-3">
+                            {{-- Row 1: 3 Hero Card --}}
+                            <div class="stat-row-3 mb-3">
                                 <div class="stat-hero-card stat-hero-purple">
                                     <div class="stat-hero-label">Total Materi</div>
                                     <div class="stat-hero-value" id="statTotalMateri">—</div>
@@ -306,9 +308,11 @@
                             </div>
 
                             {{-- Row 2: Kinerja CS | Detail Konten | Distribusi Rating CS --}}
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" class="mb-3">
+                            <div class="stat-row-3 mb-3">
                                 <div class="stat-block">
-                                    <div class="stat-block-title">Kinerja CS</div>
+                                    <div class="stat-block-title">
+                                        <i class="fas fa-star me-1"></i> Kinerja CS
+                                    </div>
                                     <div class="stat-kv-grid">
                                         <div>
                                             <div class="stat-kv-label">Total Bintang</div>
@@ -330,7 +334,9 @@
                                     <div class="stat-star-row" id="statStarRow"></div>
                                 </div>
                                 <div class="stat-block">
-                                    <div class="stat-block-title">Detail Konten</div>
+                                    <div class="stat-block-title">
+                                        <i class="fas fa-book me-1"></i> Detail Konten
+                                    </div>
                                     <div class="stat-kv-grid">
                                         <div>
                                             <div class="stat-kv-label">Total Materi</div>
@@ -351,12 +357,14 @@
                                     </div>
                                 </div>
                                 <div class="stat-block">
-                                    <div class="stat-block-title">Distribusi Rating CS</div>
+                                    <div class="stat-block-title">
+                                        <i class="fas fa-chart-bar me-1"></i> Distribusi Rating CS
+                                    </div>
                                     <div id="statRatingBars">
                                         @foreach ([5, 4, 3, 2, 1] as $r)
                                             <div class="stat-bar-item">
                                                 <div class="stat-bar-label-row">
-                                                    <span>{{ $r }} ★</span>
+                                                    <span class="stat-bar-star">{{ $r }} ★</span>
                                                     <span id="statR{{ $r }}Count">0 Percakapan</span>
                                                 </div>
                                                 <div class="stat-bar-track">
@@ -371,9 +379,11 @@
                             </div>
 
                             {{-- Row 3: Radar Chart | Materi per Bulan | Aktivitas Terbaru --}}
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                            <div class="stat-row-3">
                                 <div class="stat-block stat-radar-wrap">
-                                    <div class="stat-block-title">Profil Kinerja</div>
+                                    <div class="stat-block-title">
+                                        <i class="fas fa-chart-area me-1"></i> Profil Kinerja
+                                    </div>
                                     <div style="display:flex;justify-content:center;position:relative;">
                                         <svg id="statRadarSvg" width="190" height="175" viewBox="0 0 240 220"
                                             role="img" aria-label="Radar chart profil kinerja admin">
@@ -422,35 +432,26 @@
                                             </g>
                                         </svg>
                                         <div id="radarTooltip"
-                                            style="
-    display:none;
-    position:absolute;
-    background:#2b2b3b;
-    color:#fff;
-    font-size:12px;
-    padding:7px 11px;
-    border-radius:8px;
-    pointer-events:none;
-    z-index:99;
-    max-width:180px;
-    line-height:1.5;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-">
+                                            style="display:none;position:absolute;background:#2b2b3b;color:#fff;font-size:12px;padding:7px 11px;border-radius:8px;pointer-events:none;z-index:99;max-width:180px;line-height:1.5;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- Materi per Bulan — max 5 bar --}}
+                                {{-- Materi per Bulan --}}
                                 <div class="stat-block">
-                                    <div class="stat-block-title">Materi Dibuat per Bulan</div>
+                                    <div class="stat-block-title">
+                                        <i class="fas fa-calendar-alt me-1"></i> Materi Dibuat per Bulan
+                                    </div>
                                     <div id="statMateriBars" style="max-height:200px;overflow-y:auto;">
                                         <p class="text-muted small text-center py-2">Memuat...</p>
                                     </div>
                                 </div>
 
-                                {{-- Aktivitas Terbaru — max 5 item --}}
+                                {{-- Aktivitas Terbaru --}}
                                 <div class="stat-block">
-                                    <div class="stat-block-title">Aktivitas Terbaru</div>
+                                    <div class="stat-block-title">
+                                        <i class="fas fa-history me-1"></i> Aktivitas Terbaru
+                                    </div>
                                     <div id="statTimeline" style="max-height:200px;overflow-y:auto;">
                                         <p class="text-muted small text-center py-2">Belum ada aktivitas.</p>
                                     </div>
@@ -775,6 +776,7 @@
                     };
                 });
 
+                // Ganti bagian timeline di renderStatistik
                 const timeline = s.aktivitas_terbaru ?? [];
                 const timelineEl = document.getElementById('statTimeline');
                 if (timeline.length === 0) {
@@ -787,12 +789,44 @@
                         log: '#8592A3',
                         default: '#8592A3'
                     };
+                    const typeLabel = {
+                        materi: {
+                            label: 'MATERI',
+                            bg: 'rgba(105,108,255,.1)',
+                            color: '#696CFF'
+                        },
+                        cs: {
+                            label: 'CS',
+                            bg: 'rgba(15,110,86,.1)',
+                            color: '#0F6E56'
+                        },
+                        soal: {
+                            label: 'SOAL',
+                            bg: 'rgba(186,117,23,.1)',
+                            color: '#BA7517'
+                        },
+                        log: {
+                            label: 'LOG',
+                            bg: 'rgba(133,146,163,.1)',
+                            color: '#8592A3'
+                        },
+                        default: {
+                            label: 'LOG',
+                            bg: 'rgba(133,146,163,.1)',
+                            color: '#8592A3'
+                        },
+                    };
                     timelineEl.innerHTML = timeline.map(t => {
                         const color = dotColors[t.type] ?? dotColors.default;
+                        const tl = typeLabel[t.type] ?? typeLabel.default;
                         return `<div class="stat-tl-row">
-                    <div class="stat-tl-dot" style="background:${color}"></div>
-                    <div><div class="stat-tl-action">${t.action}</div><div class="stat-tl-time">${t.time}</div></div>
-                </div>`;
+            <div class="stat-tl-dot" style="background:${color}"></div>
+            <div style="flex:1;min-width:0;">
+                <span class="stat-tl-type" style="background:${tl.bg};color:${tl.color};">${tl.label}</span>
+                <div class="stat-tl-action">${t.action}</div>
+                <div class="stat-tl-time">${t.time}</div>
+            </div>
+        </div>`;
                     }).join('');
                 }
 
