@@ -249,7 +249,7 @@
                                     </div>
                                 @endif
                                 @if ($warningSerialCount > 0)
-                                    <div class="alert alert-danger" role="alert">
+                                    <div class="alert alert-dark " role="alert">
                                         <div class="alert-left">
                                             <i class="fas fa-triangle-exclamation"></i>
                                             <span>
@@ -259,7 +259,7 @@
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <a href="{{ route('admin.kelas.index') }}"
-                                                class="btn btn-sm btn-danger">Lihat</a>
+                                                class="btn btn-sm btn-dark">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
