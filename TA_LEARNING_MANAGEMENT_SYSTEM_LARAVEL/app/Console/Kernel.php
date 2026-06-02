@@ -24,9 +24,9 @@ class Kernel extends ConsoleKernel
         // * * * * * php /path-ke-project/artisan schedule:run >> /dev/null 2>&1
 
         // Reset cache lock setiap tengah malam
-        $schedule->call(function () {
-            \Cache::forget('expiry-reminder-lock');
-        })->dailyAt('00:00');
+        // $schedule->call(function () {
+        //     \Cache::forget('expiry-reminder-lock');
+        // })->dailyAt('00:00');
     }
 
     /**
