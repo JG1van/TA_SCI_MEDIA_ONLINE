@@ -345,14 +345,15 @@ class AdminController extends Controller
                 ->orderByDesc('total')
                 ->value('total') ?? 1;
             // ── 5. KONSISTENSI: jumlah bulan aktif upload materi ─────────
-            $bulanAktif = \DB::table('lesson_items')
-                ->where('admin_id', $id)
-                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bulan")
-                ->groupBy('bulan')
-                ->count();
+            $bulanAktif = \DB::table(\DB::raw("(
+    SELECT DATE_FORMAT(created_at, '%Y-%m') as bulan
+    FROM lesson_items
+    WHERE admin_id = {$id}
+    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+) as sub"))->count();
 
             $maxBulanAktif = \DB::select("
-    SELECT MAX(cnt) as total FROM (
+    SELECT COALESCE(MAX(cnt), 1) as total FROM (
         SELECT COUNT(DISTINCT DATE_FORMAT(created_at, '%Y-%m')) as cnt
         FROM lesson_items
         WHERE admin_id IS NOT NULL
