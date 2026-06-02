@@ -273,15 +273,19 @@
                                         </svg>
                                     </div>
                                 </div>
+
+                                {{-- Materi per Bulan — max 5 bar --}}
                                 <div class="stat-block">
                                     <div class="stat-block-title">Materi Dibuat per Bulan</div>
-                                    <div id="statMateriBars">
+                                    <div id="statMateriBars" style="max-height:200px;overflow-y:auto;">
                                         <p class="text-muted small text-center py-2">Memuat...</p>
                                     </div>
                                 </div>
+
+                                {{-- Aktivitas Terbaru — max 5 item --}}
                                 <div class="stat-block">
                                     <div class="stat-block-title">Aktivitas Terbaru</div>
-                                    <div id="statTimeline">
+                                    <div id="statTimeline" style="max-height:200px;overflow-y:auto;">
                                         <p class="text-muted small text-center py-2">Belum ada aktivitas.</p>
                                     </div>
                                 </div>

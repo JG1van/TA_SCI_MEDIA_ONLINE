@@ -311,7 +311,7 @@ class AdminController extends Controller
                 ->concat($logsMateri)
                 ->concat($logsCS)
                 ->sortByDesc('sort')
-                ->take(8)
+                ->take(5)
                 ->values()
                 ->map(fn($item) => ['type' => $item['type'], 'action' => $item['action'], 'time' => $item['time']])
                 ->toArray();
