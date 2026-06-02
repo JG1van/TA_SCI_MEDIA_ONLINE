@@ -3815,3 +3815,300 @@ footer {
         padding: 16px 18px;
     }
 }
+
+/* ══════════════════════════════════════
+   MANAJEMEN ADMIN — TOMBOL STATISTIK
+══════════════════════════════════════ */
+.btn-statistik {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    box-shadow: 0 3px 10px rgba(105, 108, 255, 0.28);
+    transition: all 0.22s ease;
+}
+
+.btn-statistik:hover {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(105, 108, 255, 0.38);
+}
+
+/* ══════════════════════════════════════
+   MODAL STATISTIK — WRAPPER
+══════════════════════════════════════ */
+.modal-statistik-content {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(105, 108, 255, 0.22);
+}
+
+/* ══════════════════════════════════════
+   MODAL STATISTIK — HEADER
+══════════════════════════════════════ */
+.modal-statistik-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-bottom: none;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-modal-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.stat-modal-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.stat-modal-role {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2px;
+}
+
+.stat-modal-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ══════════════════════════════════════
+   MODAL STATISTIK — BODY BG
+══════════════════════════════════════ */
+.modal-statistik-content .modal-body {
+    background: #f5f5f9;
+}
+
+/* ══════════════════════════════════════
+   3 HERO CARD
+══════════════════════════════════════ */
+.stat-three-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.stat-hero-card {
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 12px;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    transition: transform .2s, box-shadow .2s;
+}
+
+.stat-hero-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-hero-label {
+    font-size: 11px;
+    color: #8592A3;
+    text-align: center;
+    font-weight: 500;
+}
+
+.stat-hero-value {
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.stat-hero-sub {
+    font-size: 10px;
+    color: #8592A3;
+}
+
+.stat-hero-purple .stat-hero-value {
+    color: #696CFF;
+}
+
+.stat-hero-teal .stat-hero-value {
+    color: #0F6E56;
+}
+
+.stat-hero-amber .stat-hero-value {
+    color: #BA7517;
+}
+
+/* ══════════════════════════════════════
+   MID ROW (2 kolom)
+══════════════════════════════════════ */
+.stat-mid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* ══════════════════════════════════════
+   STAT BLOCK
+══════════════════════════════════════ */
+.stat-block {
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.stat-block-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #8592A3;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    margin-bottom: 10px;
+}
+
+.stat-kv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+}
+
+.stat-kv-label {
+    font-size: 11px;
+    color: #8592A3;
+}
+
+.stat-kv-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: #566a7f;
+    margin-top: 1px;
+}
+
+/* Bintang */
+.stat-star-row {
+    display: flex;
+    gap: 3px;
+    margin-top: 10px;
+}
+
+.stat-star {
+    color: #EF9F27;
+    font-size: 15px;
+}
+
+.stat-star-empty {
+    color: #ddd;
+    font-size: 15px;
+}
+
+/* ══════════════════════════════════════
+   RADAR CHART
+══════════════════════════════════════ */
+.stat-radar-wrap {
+    text-align: center;
+}
+
+/* ══════════════════════════════════════
+   BAR CHART
+══════════════════════════════════════ */
+.stat-bar-item {
+    margin-bottom: 9px;
+}
+
+.stat-bar-item:last-child {
+    margin-bottom: 0;
+}
+
+.stat-bar-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #8592A3;
+    margin-bottom: 4px;
+}
+
+.stat-bar-label-row span:last-child {
+    color: #566a7f;
+    font-weight: 600;
+}
+
+.stat-bar-track {
+    height: 6px;
+    border-radius: 3px;
+    background: #eee;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .5s ease;
+}
+
+/* ══════════════════════════════════════
+   TIMELINE AKTIVITAS
+══════════════════════════════════════ */
+.stat-tl-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.stat-tl-row:last-child {
+    margin-bottom: 0;
+}
+
+.stat-tl-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.stat-tl-action {
+    color: #566a7f;
+    font-weight: 600;
+    font-size: 12.5px;
+}
+
+.stat-tl-time {
+    color: #8592A3;
+    font-size: 11px;
+    margin-top: 1px;
+}
+
+/* ══════════════════════════════════════
+   MODAL STATISTIK — FOOTER
+══════════════════════════════════════ */
+.modal-statistik-footer {
+    background: #f5f5f9;
+    border-top: 1px solid #e4e6ea;
+    padding: 10px 16px;
+    justify-content: center;
+}
