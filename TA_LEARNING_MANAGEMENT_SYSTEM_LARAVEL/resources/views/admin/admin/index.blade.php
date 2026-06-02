@@ -871,17 +871,20 @@
                 document.body.style.removeProperty('overflow');
                 document.body.style.removeProperty('padding-right');
 
-                // Chevron animasi panel role
+
                 const rolePanel = document.getElementById('roleInfoPanel');
                 const roleChevron = document.getElementById('roleInfoChevron');
                 if (rolePanel && roleChevron) {
+                    const collapseInstance = new bootstrap.Collapse(rolePanel, {
+                        toggle: false
+                    });
                     document.getElementById('roleInfoTrigger').addEventListener('click', () => {
                         const isShown = rolePanel.classList.contains('show');
                         if (isShown) {
-                            new bootstrap.Collapse(rolePanel).hide();
+                            collapseInstance.hide();
                             roleChevron.style.transform = 'rotate(0deg)';
                         } else {
-                            new bootstrap.Collapse(rolePanel).show();
+                            collapseInstance.show();
                             roleChevron.style.transform = 'rotate(180deg)';
                         }
                     });
