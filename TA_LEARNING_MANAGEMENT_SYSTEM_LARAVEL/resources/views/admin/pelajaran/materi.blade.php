@@ -148,19 +148,6 @@
             padding: 14px 18px;
         }
 
-        .btn-simpan-main {
-            width: 100%;
-            padding: 9px;
-            background: #e8f0fe;
-            color: #185FA5;
-            border: 0.5px solid #b5d4f4;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            margin-top: 4px;
-        }
-
         .panel-divider {
             border: none;
             border-top: 0.5px solid #e0e0e0;
@@ -277,7 +264,7 @@
                         <form id="formData">
                             @csrf
                             <div id="formContent"></div>
-                            <button type="submit" id="btnSimpan" class="btn-simpan-main"
+                            <button type="submit" id="btnSimpan" class="btn btn-primary "
                                 style="display:none">Simpan</button>
                         </form>
                     </div>
@@ -375,7 +362,7 @@
             if (type === 'theme') {
                 if (mode === 'edit') {
                     html +=
-                    `<div class="mb-3"><label class="form-label fw-semibold">Nomor Bab</label>
+                        `<div class="mb-3"><label class="form-label fw-semibold">Nomor Bab</label>
                     <input type="number" name="theme" class="form-control" value="${data.theme || ''}" required></div>`;
                 } else {
                     html += `<input type="hidden" name="theme" value="">`;
