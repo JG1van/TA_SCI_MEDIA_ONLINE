@@ -97,7 +97,8 @@
     </form>
 
     {{-- Modal Tambah Materi --}}
-    <div class="modal fade p-5" id="modalMateri" tabindex="-1" aria-labelledby="modalMateriLabel" aria-hidden="true">
+    <div class="modal fade p-5" id="modalMateri" tabindex="-1" aria-labelledby="modalMateriLabel" aria-hidden="true"
+        style="overflow-x: scroll;">
         <div class="modal-dialog modal-md mt-5 modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
