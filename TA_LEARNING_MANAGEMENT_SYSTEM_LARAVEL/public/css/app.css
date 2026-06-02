@@ -4160,3 +4160,18 @@ footer {
 #roleInfoPanel {
     visibility: visible !important;
 }
+
+/* Fix Bootstrap collapse visibility */
+.collapse:not(.show) {
+    display: none !important;
+    visibility: visible !important;
+}
+
+.collapse.show {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.collapse.collapsing {
+    visibility: visible !important;
+}
