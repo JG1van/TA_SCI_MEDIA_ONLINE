@@ -344,9 +344,17 @@ class AdminController extends Controller
                 ->groupBy('admin_id')
                 ->orderByDesc('total')
                 ->value('total') ?? 1;
-            $totalCSLog = \DB::table('cs_logs')
+
+            // Hitung total pesan yang ditulis admin di kolom notes
+            $csNotes = \DB::table('cs_logs')
                 ->where('admin_id', $id)
-                ->count('id');
+                ->whereNotNull('notes')
+                ->pluck('notes');
+
+            $totalCSLog = $csNotes->sum(function ($notes) {
+                return substr_count($notes, '] Admin:');
+            });
+
             return response()->json([
                 'success' => true,
                 'stats' => [
