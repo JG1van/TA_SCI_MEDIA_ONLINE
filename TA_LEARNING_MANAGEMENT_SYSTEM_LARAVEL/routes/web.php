@@ -167,10 +167,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/siswa/{id}/reset-password', [StudentController::class, 'resetPassword'])->name('siswa.reset-password');
 
     //  ADMIN
-    Route::resource('admin', AdminController::class);
-    Route::post('/admin/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('data-admin.reset-password');
     Route::get('/admin/{id}/statistik', [AdminController::class, 'statistik'])->name('admin.statistik');
-    //  PENGATURAN SISTEM
+    Route::post('/admin/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('data-admin.reset-password');
+    Route::get('/admin/{id}/edit', [AdminController::class, 'editData'])->name('admin.admin.edit-data'); // jika ada
+
+    // Resource SETELAH
+    Route::resource('admin', AdminController::class);   //  PENGATURAN SISTEM
     Route::prefix('pengaturan')->name('pengaturan.')->group(function () {
         Route::get('/', fn() => view('admin.pengaturan.index'))->name('index');
     });
