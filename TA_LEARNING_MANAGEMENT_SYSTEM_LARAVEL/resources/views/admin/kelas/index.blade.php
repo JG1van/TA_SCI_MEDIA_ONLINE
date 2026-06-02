@@ -167,9 +167,9 @@
                             <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                                 type="text" id="editSerialText" class="form-control" placeholder="Belum dipilih"
                                 readonly>
-                            <button type="button" class="btn btn-warning btn-sm" onclick="openPilihSerial('edit')">
+                            {{-- <button type="button" class="btn btn-primary btn-sm" onclick="openPilihSerial('edit')">
                                 Pilih Serial
-                            </button>
+                            </button> --}}
                         </div>
                     </div>
                 </div>

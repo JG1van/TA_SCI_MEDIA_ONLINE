@@ -3672,6 +3672,16 @@ footer {
     #sidebarToggleBtn {
         display: none;
     }
+
+    #modalStatistik .modal-dialog {
+        width: calc(100% - 16px);
+        margin: 8px auto;
+    }
+
+    #statContent>div {
+        grid-template-columns: 1fr !important;
+    }
+}
 }
 
 @media (max-width: 767px) {
@@ -3965,6 +3975,8 @@ footer {
     border-radius: 12px;
     padding: 14px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    min-width: 0;
+    overflow: hidden;
 }
 
 .stat-block-title {
