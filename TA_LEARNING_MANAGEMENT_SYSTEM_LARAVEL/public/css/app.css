@@ -4177,6 +4177,6 @@ footer {
 }
 
 #tabelLesson {
-    min-width: 500px;
-    overflow-x: scroll;
+    min-width: 200px;
+    overflow-x: auto;
 }
