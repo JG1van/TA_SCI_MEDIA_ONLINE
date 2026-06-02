@@ -3819,6 +3819,11 @@ footer {
 /* ══════════════════════════════════════
    MANAJEMEN ADMIN — TOMBOL STATISTIK
 ══════════════════════════════════════ */
+#modalStatistik .modal-dialog {
+    max-width: 900px;
+    width: calc(100% - 32px);
+    margin: 16px auto;
+}
 
 /* ══════════════════════════════════════
    MODAL STATISTIK — WRAPPER
@@ -3826,6 +3831,7 @@ footer {
 .modal-statistik-content {
     border: none;
     border-radius: 16px;
+    max-height: 90vh;
     overflow: hidden;
     box-shadow: 0 24px 80px rgba(105, 108, 255, 0.22);
 }
@@ -3836,19 +3842,21 @@ footer {
 .modal-statistik-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-bottom: none;
-    padding: 14px 20px;
+    padding: 14px 16px 14px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
     flex-wrap: nowrap;
-    gap: 12px;
+    overflow: hidden;
 }
 
 .modal-statistik-header .btn-close {
     flex-shrink: 0;
-    opacity: 1;
     filter: brightness(0) invert(1);
-    margin-left: 4px;
+    opacity: 0.85;
+    margin: 0;
+    padding: 8px;
 }
 
 .stat-modal-avatar {
@@ -3893,8 +3901,9 @@ footer {
 ══════════════════════════════════════ */
 .modal-statistik-content .modal-body {
     background: #f5f5f9;
-    max-height: calc(100vh - 140px);
+    max-height: calc(100dvh - 120px);
     overflow-y: auto;
+    padding: 12px;
 }
 
 /* ══════════════════════════════════════
