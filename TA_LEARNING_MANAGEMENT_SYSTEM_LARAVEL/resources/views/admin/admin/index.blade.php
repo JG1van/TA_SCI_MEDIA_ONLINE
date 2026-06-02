@@ -584,7 +584,7 @@
                 const rCS = toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1));
                 const rRating = toR(parseFloat(s.rata_rating ?? 0), 5);
                 const rAktivitas = toR(s.total_log ?? 0, s.max_log ?? Math.max(s.total_log ?? 1, 1));
-                const rResponsif = toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1));
+                const rResponsif = toR(s.total_cs_log ?? 0, s.max_log ?? Math.max(s.total_cs_log ?? 1, 1));
 
                 function radarPoint(value, angle) {
                     const rad = (angle - 90) * (Math.PI / 180);
@@ -624,8 +624,8 @@
                     },
                     {
                         label: 'Responsif',
-                        desc: 'Seberapa aktif menangani percakapan CS yang masuk',
-                        val: () => (s.total_cs ?? 0) + ' percakapan ditangani'
+                        desc: 'Total pesan/balasan yang dikirim admin di CS',
+                        val: () => (s.total_cs_log ?? 0) + ' pesan CS'
                     },
                 ];
 

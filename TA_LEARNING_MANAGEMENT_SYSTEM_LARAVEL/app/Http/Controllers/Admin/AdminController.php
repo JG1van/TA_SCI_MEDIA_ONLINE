@@ -344,7 +344,9 @@ class AdminController extends Controller
                 ->groupBy('admin_id')
                 ->orderByDesc('total')
                 ->value('total') ?? 1;
-
+            $totalCSLog = \DB::table('cs_logs')
+                ->where('admin_id', $id)
+                ->count('id');
             return response()->json([
                 'success' => true,
                 'stats' => [
@@ -363,6 +365,7 @@ class AdminController extends Controller
                     'max_soal' => $maxSoal,
                     'max_cs' => $maxCS,
                     'max_log' => $maxLog,
+                    'total_cs_log' => $totalCSLog,
                 ],
             ]);
 
