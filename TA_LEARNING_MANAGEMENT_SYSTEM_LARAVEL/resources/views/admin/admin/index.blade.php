@@ -102,198 +102,164 @@
         {{-- ══════════════════════════════════════════
          MODAL STATISTIK KINERJA ADMIN
     ══════════════════════════════════════════ --}}
-        <div class="modal fade" id="modalStatistik" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width:620px;">
-                <div class="modal-content modal-statistik-content">
+        <div id="statContent" style="display:none;">
 
-                    <div class="modal-header modal-statistik-header">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="stat-modal-avatar" id="statAvatar">AS</div>
-                            <div>
-                                <div class="stat-modal-name" id="statName">Nama Admin</div>
-                                <div class="stat-modal-role" id="statRoleLabel">Role · ID #0</div>
-                            </div>
+            {{-- 3 Hero Angka --}}
+            <div class="stat-three-hero mb-3">
+                <div class="stat-hero-card stat-hero-purple">
+                    <div class="stat-hero-label">Total Materi</div>
+                    <div class="stat-hero-value" id="statTotalMateri">—</div>
+                    <div class="stat-hero-sub">lesson items</div>
+                </div>
+                <div class="stat-hero-card stat-hero-teal">
+                    <div class="stat-hero-label">Total Soal</div>
+                    <div class="stat-hero-value" id="statTotalSoal">—</div>
+                    <div class="stat-hero-sub">exercise items</div>
+                </div>
+                <div class="stat-hero-card stat-hero-amber">
+                    <div class="stat-hero-label">CS Ditangani</div>
+                    <div class="stat-hero-value" id="statTotalCS">—</div>
+                    <div class="stat-hero-sub">tiket selesai</div>
+                </div>
+            </div>
+
+            {{-- Kinerja CS + Detail Konten --}}
+            <div class="stat-mid-row mb-3">
+                <div class="stat-block">
+                    <div class="stat-block-title">Kinerja CS</div>
+                    <div class="stat-kv-grid">
+                        <div>
+                            <div class="stat-kv-label">Total Bintang</div>
+                            <div class="stat-kv-val" id="statTotalBintang">—</div>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="stat-modal-badge" id="statBadge">—</span>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        <div>
+                            <div class="stat-kv-label">Rata-rata</div>
+                            <div class="stat-kv-val" id="statRataRating">—</div>
                         </div>
-                    </div>
-
-                    <div class="modal-body p-3" id="statModalBody">
-
-                        <div id="statLoading" class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status"></div>
-                            <p class="mt-2 text-muted small">Memuat statistik...</p>
+                        <div>
+                            <div class="stat-kv-label">Tertinggi</div>
+                            <div class="stat-kv-val" id="statMaxRating">—</div>
                         </div>
-
-                        <div id="statContent" style="display:none;">
-
-                            {{-- 3 Hero Angka --}}
-                            <div class="stat-three-hero mb-3">
-                                <div class="stat-hero-card stat-hero-purple">
-                                    <div class="stat-hero-label">Total Materi</div>
-                                    <div class="stat-hero-value" id="statTotalMateri">—</div>
-                                    <div class="stat-hero-sub">lesson items</div>
-                                </div>
-                                <div class="stat-hero-card stat-hero-teal">
-                                    <div class="stat-hero-label">Total Soal</div>
-                                    <div class="stat-hero-value" id="statTotalSoal">—</div>
-                                    <div class="stat-hero-sub">exercise items</div>
-                                </div>
-                                <div class="stat-hero-card stat-hero-amber">
-                                    <div class="stat-hero-label">CS Ditangani</div>
-                                    <div class="stat-hero-value" id="statTotalCS">—</div>
-                                    <div class="stat-hero-sub">tiket selesai</div>
-                                </div>
-                            </div>
-
-                            {{-- Kinerja CS + Detail Konten --}}
-                            <div class="stat-mid-row mb-3">
-                                <div class="stat-block">
-                                    <div class="stat-block-title">Kinerja CS</div>
-                                    <div class="stat-kv-grid">
-                                        <div>
-                                            <div class="stat-kv-label">Total Bintang</div>
-                                            <div class="stat-kv-val" id="statTotalBintang">—</div>
-                                        </div>
-                                        <div>
-                                            <div class="stat-kv-label">Rata-rata</div>
-                                            <div class="stat-kv-val" id="statRataRating">—</div>
-                                        </div>
-                                        <div>
-                                            <div class="stat-kv-label">Tertinggi</div>
-                                            <div class="stat-kv-val" id="statMaxRating">—</div>
-                                        </div>
-                                        <div>
-                                            <div class="stat-kv-label">Terendah</div>
-                                            <div class="stat-kv-val" id="statMinRating">—</div>
-                                        </div>
-                                    </div>
-                                    <div class="stat-star-row" id="statStarRow"></div>
-                                </div>
-                                <div class="stat-block">
-                                    <div class="stat-block-title">Detail Konten</div>
-                                    <div class="stat-kv-grid">
-                                        <div>
-                                            <div class="stat-kv-label">Total Materi</div>
-                                            <div class="stat-kv-val" id="statMateriDetail">—</div>
-                                        </div>
-                                        <div>
-                                            <div class="stat-kv-label">Total Soal</div>
-                                            <div class="stat-kv-val" id="statSoalDetail">—</div>
-                                        </div>
-                                        <div>
-                                            <div class="stat-kv-label">Log Aktivitas</div>
-                                            <div class="stat-kv-val" id="statLogAktivitas">—</div>
-                                        </div>
-                                        <div>
-                                            <div class="stat-kv-label">Total CS Log</div>
-                                            <div class="stat-kv-val" id="statCSLogDetail">—</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Radar Chart --}}
-                            <div class="stat-block stat-radar-wrap mb-3">
-                                <div class="stat-block-title">Profil Kinerja</div>
-                                <div style="display:flex;justify-content:center;">
-                                    <svg id="statRadarSvg" width="240" height="220" viewBox="0 0 240 220"
-                                        role="img" aria-label="Radar chart profil kinerja admin">
-                                        <title>Profil kinerja admin</title>
-                                        <g transform="translate(120,115)">
-                                            <polygon points="0,-80 69,-40 69,40 0,80 -69,40 -69,-40" fill="none"
-                                                stroke="#e0e0e0" stroke-width="0.5" />
-                                            <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="none"
-                                                stroke="#e0e0e0" stroke-width="0.5" />
-                                            <polygon points="0,-40 35,-20 35,20 0,40 -35,20 -35,-20" fill="none"
-                                                stroke="#e0e0e0" stroke-width="0.5" />
-                                            <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="none"
-                                                stroke="#e0e0e0" stroke-width="0.5" />
-                                            <line x1="0" y1="0" x2="0" y2="-80"
-                                                stroke="#ccc" stroke-width="0.5" />
-                                            <line x1="0" y1="0" x2="69" y2="-40"
-                                                stroke="#ccc" stroke-width="0.5" />
-                                            <line x1="0" y1="0" x2="69" y2="40"
-                                                stroke="#ccc" stroke-width="0.5" />
-                                            <line x1="0" y1="0" x2="0" y2="80"
-                                                stroke="#ccc" stroke-width="0.5" />
-                                            <line x1="0" y1="0" x2="-69" y2="40"
-                                                stroke="#ccc" stroke-width="0.5" />
-                                            <line x1="0" y1="0" x2="-69" y2="-40"
-                                                stroke="#ccc" stroke-width="0.5" />
-                                            <polygon id="radarPolygon" points="0,0 0,0 0,0 0,0 0,0 0,0" fill="#696CFF"
-                                                fill-opacity="0.25" stroke="#696CFF" stroke-width="1.5" />
-                                            <circle id="rd0" cx="0" cy="0" r="3" fill="#696CFF" />
-                                            <circle id="rd1" cx="0" cy="0" r="3" fill="#696CFF" />
-                                            <circle id="rd2" cx="0" cy="0" r="3" fill="#696CFF" />
-                                            <circle id="rd3" cx="0" cy="0" r="3" fill="#696CFF" />
-                                            <circle id="rd4" cx="0" cy="0" r="3" fill="#696CFF" />
-                                            <circle id="rd5" cx="0" cy="0" r="3" fill="#696CFF" />
-                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="middle"
-                                                x="0" y="-88">Materi</text>
-                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="start"
-                                                x="74" y="-42">Soal</text>
-                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="start"
-                                                x="74" y="46">CS Tiket</text>
-                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="middle"
-                                                x="0" y="96">Rating</text>
-                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end"
-                                                x="-74" y="46">Aktivitas</text>
-                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end"
-                                                x="-74" y="-42">Responsif</text>
-                                        </g>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            {{-- Distribusi Rating CS + Materi per Bulan --}}
-                            <div class="stat-mid-row mb-3">
-                                <div class="stat-block">
-                                    <div class="stat-block-title">Distribusi Rating CS</div>
-                                    <div id="statRatingBars">
-                                        @foreach ([5, 4, 3, 2, 1] as $r)
-                                            <div class="stat-bar-item">
-                                                <div class="stat-bar-label-row">
-                                                    <span>{{ $r }} ★</span>
-                                                    <span id="statR{{ $r }}Count">0 tiket</span>
-                                                </div>
-                                                <div class="stat-bar-track">
-                                                    <div class="stat-bar-fill" id="statR{{ $r }}Bar"
-                                                        style="width:0%;background:{{ $r == 5 ? '#0F6E56' : ($r == 4 ? '#1D9E75' : ($r == 3 ? '#EF9F27' : ($r == 2 ? '#D85A30' : '#E24B4A'))) }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <div class="stat-block">
-                                    <div class="stat-block-title">Materi Dibuat per Bulan</div>
-                                    <div id="statMateriBars">
-                                        <p class="text-muted small text-center py-2">Memuat...</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Timeline Aktivitas Terbaru --}}
-                            <div class="stat-block">
-                                <div class="stat-block-title">Aktivitas Terbaru</div>
-                                <div id="statTimeline">
-                                    <p class="text-muted small text-center py-2">Belum ada aktivitas.</p>
-                                </div>
-                            </div>
-
+                        <div>
+                            <div class="stat-kv-label">Terendah</div>
+                            <div class="stat-kv-val" id="statMinRating">—</div>
                         </div>
                     </div>
-
-                    <div class="modal-footer modal-statistik-footer">
-                        <small class="text-muted">lesson_items · exercise_items · cs_logs · admin_activity_logs</small>
+                    <div class="stat-star-row" id="statStarRow"></div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-block-title">Detail Konten</div>
+                    <div class="stat-kv-grid">
+                        <div>
+                            <div class="stat-kv-label">Total Materi</div>
+                            <div class="stat-kv-val" id="statMateriDetail">—</div>
+                        </div>
+                        <div>
+                            <div class="stat-kv-label">Total Soal</div>
+                            <div class="stat-kv-val" id="statSoalDetail">—</div>
+                        </div>
+                        <div>
+                            <div class="stat-kv-label">Log Aktivitas</div>
+                            <div class="stat-kv-val" id="statLogAktivitas">—</div>
+                        </div>
+                        <div>
+                            <div class="stat-kv-label">Total CS Log</div>
+                            <div class="stat-kv-val" id="statCSLogDetail">—</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+            {{-- Radar Chart + Distribusi Rating CS (side by side) --}}
+            <div class="stat-mid-row mb-3">
+                <div class="stat-block stat-radar-wrap">
+                    <div class="stat-block-title">Profil Kinerja</div>
+                    <div style="display:flex;justify-content:center;">
+                        <svg id="statRadarSvg" width="200" height="185" viewBox="0 0 240 220" role="img"
+                            aria-label="Radar chart profil kinerja admin">
+                            <title>Profil kinerja admin</title>
+                            <g transform="translate(120,115)">
+                                <polygon points="0,-80 69,-40 69,40 0,80 -69,40 -69,-40" fill="none" stroke="#e0e0e0"
+                                    stroke-width="0.5" />
+                                <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="none" stroke="#e0e0e0"
+                                    stroke-width="0.5" />
+                                <polygon points="0,-40 35,-20 35,20 0,40 -35,20 -35,-20" fill="none" stroke="#e0e0e0"
+                                    stroke-width="0.5" />
+                                <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="none" stroke="#e0e0e0"
+                                    stroke-width="0.5" />
+                                <line x1="0" y1="0" x2="0" y2="-80" stroke="#ccc"
+                                    stroke-width="0.5" />
+                                <line x1="0" y1="0" x2="69" y2="-40" stroke="#ccc"
+                                    stroke-width="0.5" />
+                                <line x1="0" y1="0" x2="69" y2="40" stroke="#ccc"
+                                    stroke-width="0.5" />
+                                <line x1="0" y1="0" x2="0" y2="80" stroke="#ccc"
+                                    stroke-width="0.5" />
+                                <line x1="0" y1="0" x2="-69" y2="40" stroke="#ccc"
+                                    stroke-width="0.5" />
+                                <line x1="0" y1="0" x2="-69" y2="-40" stroke="#ccc"
+                                    stroke-width="0.5" />
+                                <polygon id="radarPolygon" points="0,0 0,0 0,0 0,0 0,0 0,0" fill="#696CFF"
+                                    fill-opacity="0.25" stroke="#696CFF" stroke-width="1.5" />
+                                <circle id="rd0" cx="0" cy="0" r="3" fill="#696CFF" />
+                                <circle id="rd1" cx="0" cy="0" r="3" fill="#696CFF" />
+                                <circle id="rd2" cx="0" cy="0" r="3" fill="#696CFF" />
+                                <circle id="rd3" cx="0" cy="0" r="3" fill="#696CFF" />
+                                <circle id="rd4" cx="0" cy="0" r="3" fill="#696CFF" />
+                                <circle id="rd5" cx="0" cy="0" r="3" fill="#696CFF" />
+                                <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="middle" x="0"
+                                    y="-88">Materi</text>
+                                <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="start" x="74"
+                                    y="-42">Soal</text>
+                                <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="start" x="74"
+                                    y="46">CS Tiket</text>
+                                <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="middle" x="0"
+                                    y="96">Rating</text>
+                                <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end" x="-74"
+                                    y="46">Aktivitas</text>
+                                <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end" x="-74"
+                                    y="-42">Responsif</text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-block-title">Distribusi Rating CS</div>
+                    <div id="statRatingBars">
+                        @foreach ([5, 4, 3, 2, 1] as $r)
+                            <div class="stat-bar-item">
+                                <div class="stat-bar-label-row">
+                                    <span>{{ $r }} ★</span>
+                                    <span id="statR{{ $r }}Count">0 tiket</span>
+                                </div>
+                                <div class="stat-bar-track">
+                                    <div class="stat-bar-fill" id="statR{{ $r }}Bar"
+                                        style="width:0%;background:{{ $r == 5 ? '#0F6E56' : ($r == 4 ? '#1D9E75' : ($r == 3 ? '#EF9F27' : ($r == 2 ? '#D85A30' : '#E24B4A'))) }}">
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            {{-- Materi per Bulan + Aktivitas Terbaru (side by side) --}}
+            <div class="stat-mid-row">
+                <div class="stat-block">
+                    <div class="stat-block-title">Materi Dibuat per Bulan</div>
+                    <div id="statMateriBars">
+                        <p class="text-muted small text-center py-2">Memuat...</p>
+                    </div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-block-title">Aktivitas Terbaru</div>
+                    <div id="statTimeline">
+                        <p class="text-muted small text-center py-2">Belum ada aktivitas.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
         {{-- Modal Tambah --}}
         <div class="modal fade p-5" id="modalTambah" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md mt-5 custom-modal">
