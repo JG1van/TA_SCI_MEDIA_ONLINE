@@ -64,6 +64,26 @@
         $waitingAdmin = App\Models\CsRoom::where('chat_status', 'Admin')->whereNull('admin_id')->count();
     @endphp
     @php
+        $warningSerials = [];
+        $serialsAll = App\Models\Serial::with(['classrooms', 'user'])->get();
+
+        foreach ($serialsAll as $serial) {
+            $kelasCount = $serial->classrooms->count();
+            $paketCount = (int) ($serial->paket ?? 1);
+
+            if ($kelasCount > $paketCount) {
+                $warningSerials[] = [
+                    'kode_serial' => $serial->serial ?? '-',
+                    'paket' => $paketCount,
+                    'kelas' => $kelasCount,
+                    'username' => $serial->user->username ?? 'Tidak Ada Pengguna',
+                    'daftar_kelas' => $serial->classrooms->pluck('name')->toArray(),
+                ];
+            }
+        }
+        $warningSerialCount = count($warningSerials);
+    @endphp
+    @php
         use Illuminate\Support\Facades\DB;
 
         $totalUnansweredCount = DB::table('unanswered_questions')->sum('count');
@@ -102,7 +122,7 @@
                         <div class="flex-grow-1"></div>
 
                         <!-- Tombol Toggle Notifikasi -->
-                        @php $hasAnyAlertNav = ($expired14Months > 0 || $warningNoEmail > 0 || $waitingAdmin > 0 || $totalUnansweredCount > 20); @endphp
+                        @php $hasAnyAlertNav = ($expired14Months > 0 || $warningNoEmail > 0 || $waitingAdmin > 0 || $totalUnansweredCount > 20 ||    $warningSerialCount > 0 ); @endphp
                         @if ($hasAnyAlertNav)
                             <button id="navAlertToggleBtn" title="Notifikasi" class="navbar-icon-btn position-relative">
                                 <i class="bi bi-bell" id="navBellIcon"></i>
@@ -228,7 +248,24 @@
                                         </div>
                                     </div>
                                 @endif
-
+                                @if ($warningSerialCount > 0)
+                                    <div class="alert alert-danger" role="alert">
+                                        <div class="alert-left">
+                                            <i class="fas fa-triangle-exclamation"></i>
+                                            <span>
+                                                <b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
+                                                diizinkan
+                                            </span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ route('admin.kelas.index') }}"
+                                                class="btn btn-sm btn-danger">Lihat</a>
+                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>{{-- #globalAlertBox --}}
                         @endif
                         {{-- ═══ END GLOBAL ALERT BOX ═══ --}}
