@@ -22,8 +22,7 @@
 
             {{-- Trigger --}}
             <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-light" style="cursor:pointer;"
-                data-bs-toggle="collapse" data-bs-target="#roleInfoPanel" aria-expanded="false"
-                aria-controls="roleInfoPanel" id="roleInfoTrigger">
+                id="roleInfoTrigger">
                 <div class="d-flex align-items-center gap-2">
                     <i class="fas fa-shield-alt text-secondary" style="font-size:13px;"></i>
                     <span class="fw-semibold small">Informasi Role &amp; Hak Akses</span>
@@ -876,9 +875,16 @@
                 const rolePanel = document.getElementById('roleInfoPanel');
                 const roleChevron = document.getElementById('roleInfoChevron');
                 if (rolePanel && roleChevron) {
-                    rolePanel.addEventListener('show.bs.collapse', () => roleChevron.style.transform =
-                    'rotate(180deg)');
-                    rolePanel.addEventListener('hide.bs.collapse', () => roleChevron.style.transform = 'rotate(0deg)');
+                    document.getElementById('roleInfoTrigger').addEventListener('click', () => {
+                        const isShown = rolePanel.classList.contains('show');
+                        if (isShown) {
+                            new bootstrap.Collapse(rolePanel).hide();
+                            roleChevron.style.transform = 'rotate(0deg)';
+                        } else {
+                            new bootstrap.Collapse(rolePanel).show();
+                            roleChevron.style.transform = 'rotate(180deg)';
+                        }
+                    });
                 }
 
                 // Pencarian
