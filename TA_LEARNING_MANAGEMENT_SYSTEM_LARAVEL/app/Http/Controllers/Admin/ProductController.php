@@ -91,7 +91,7 @@ class ProductController extends Controller
         if (!$product) {
             return redirect()->route('admin.produk.index')->with('error', 'Produk tidak ditemukan.');
         }
-        $lessons = Lesson::select('id', 'name')->orderBy('id')->get();
+        $lessons = Lesson::orderBy('id')->get();
         $product->lesson_id = json_decode($product->lesson_id, true) ?? [];
         $product->grade_category = json_decode($product->grade_category, true) ?? [];
         return view('admin.produk.edit', compact('product', 'lessons'));
