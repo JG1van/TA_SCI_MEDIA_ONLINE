@@ -166,17 +166,7 @@
         </div>
     </div>
 
-    @push('js')
-        <script>
-            (function() {
-                const el = document.getElementById('roleInfoPanel');
-                const chevron = document.getElementById('roleInfoChevron');
-                if (!el || !chevron) return;
-                el.addEventListener('show.bs.collapse', () => chevron.style.transform = 'rotate(180deg)');
-                el.addEventListener('hide.bs.collapse', () => chevron.style.transform = 'rotate(0deg)');
-            })();
-        </script>
-    @endpush
+
     {{-- Tabel Admin --}}
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover align-middle text-center" id="adminTable">
@@ -719,16 +709,16 @@
                     materiBarsEl.innerHTML = '<p class="text-muted small text-center py-2">Belum ada data.</p>';
                 } else {
                     materiBarsEl.innerHTML = materiBulan.map(m => `
-            <div class="stat-bar-item">
-                <div class="stat-bar-label-row">
-                    <span>${m.label}</span><span>${m.total}</span>
-                </div>
-                <div class="stat-bar-track">
-                    <div class="stat-bar-fill"
-                        style="width:${Math.round((m.total/maxMateriBar)*100)}%;background:#696CFF">
+                <div class="stat-bar-item">
+                    <div class="stat-bar-label-row">
+                        <span>${m.label}</span><span>${m.total}</span>
                     </div>
-                </div>
-            </div>`).join('');
+                    <div class="stat-bar-track">
+                        <div class="stat-bar-fill"
+                            style="width:${Math.round((m.total / maxMateriBar) * 100)}%;background:#696CFF">
+                        </div>
+                    </div>
+                </div>`).join('');
                 }
 
                 // Radar chart
@@ -805,14 +795,12 @@
                             `<strong style="font-size:12px;">${m.label}</strong><br>${m.desc}<br><span style="color:#a5a8ff;font-weight:700;">${m.val()}</span>`;
                         tooltip.style.display = 'block';
                     };
-
                     el.onmousemove = (e) => {
                         const svg = document.getElementById('statRadarSvg');
                         const rect = svg.getBoundingClientRect();
                         tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
                         tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
                     };
-
                     el.onmouseleave = () => {
                         tooltip.style.display = 'none';
                     };
@@ -834,13 +822,13 @@
                     timelineEl.innerHTML = timeline.map(t => {
                         const color = dotColors[t.type] ?? dotColors.default;
                         return `
-                <div class="stat-tl-row">
-                    <div class="stat-tl-dot" style="background:${color}"></div>
-                    <div>
-                        <div class="stat-tl-action">${t.action}</div>
-                        <div class="stat-tl-time">${t.time}</div>
-                    </div>
-                </div>`;
+                    <div class="stat-tl-row">
+                        <div class="stat-tl-dot" style="background:${color}"></div>
+                        <div>
+                            <div class="stat-tl-action">${t.action}</div>
+                            <div class="stat-tl-time">${t.time}</div>
+                        </div>
+                    </div>`;
                     }).join('');
                 }
 
@@ -852,6 +840,15 @@
             // DOM READY
             // ════════════════════════════════════
             document.addEventListener("DOMContentLoaded", () => {
+
+                // ════ Chevron animasi panel role ════
+                const rolePanel = document.getElementById('roleInfoPanel');
+                const roleChevron = document.getElementById('roleInfoChevron');
+                if (rolePanel && roleChevron) {
+                    rolePanel.addEventListener('show.bs.collapse', () => roleChevron.style.transform =
+                    'rotate(180deg)');
+                    rolePanel.addEventListener('hide.bs.collapse', () => roleChevron.style.transform = 'rotate(0deg)');
+                }
 
                 // Pencarian
                 document.getElementById("searchInput").addEventListener("keyup", function() {
