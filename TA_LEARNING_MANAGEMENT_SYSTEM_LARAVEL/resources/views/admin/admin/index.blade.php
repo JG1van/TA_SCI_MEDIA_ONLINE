@@ -688,84 +688,137 @@
                 document.getElementById('statContent').style.display = 'block';
             }
 
-            // ==== Edit Admin ====
-            document.getElementById("formEdit").addEventListener("submit", async function(e) {
-                e.preventDefault();
-                const id = document.getElementById("editId").value;
-                const formData = new FormData(this);
-                const btn = this.querySelector("button[type='submit']");
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
-                try {
-                    const res = await fetch(`/admin/admin/${id}`, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "X-HTTP-Method-Override": "PUT"
-                        },
-                        body: formData
-                    });
-                    const result = await res.json();
-                    if (result.success) {
-                        bootstrap.Modal.getInstance(document.getElementById("modalEdit")).hide();
-                        notifSuccess(result.message);
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        notifError(result.message || 'Gagal memperbarui data.');
-                    }
-                } catch (err) {
-                    notifError(err.message);
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = 'Simpan Perubahan';
-                }
-            });
+            // ════════════════════════════════════
+            // DOM READY
+            // ════════════════════════════════════
+            document.addEventListener("DOMContentLoaded", () => {
 
-            // ==== Reset Password ====
-            document.getElementById("btnResetPassword").addEventListener("click", function() {
-                const id = document.getElementById("editId").value;
-                Swal.fire({
-                    title: 'Reset Password?',
-                    text: 'Password admin akan dikembalikan ke default (Admin1234).',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Reset',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#696CFF',
-                    cancelButtonColor: '#8592A3',
-                    reverseButtons: true
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        fetch(`/admin/admin/${id}/reset-password`, {
-                                method: "POST",
-                                headers: {
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                }
-                            })
-                            .then(res => res.json())
-                            .then(result => {
-                                if (result.success) notifSuccess(result.message);
-                                else notifError(result.message);
-                            })
-                            .catch(() => notifError('Gagal mereset password.'));
+                // Pencarian
+                document.getElementById("searchInput").addEventListener("keyup", function() {
+                    const keyword = this.value.toLowerCase();
+                    document.querySelectorAll("#adminBody tr").forEach(row => {
+                        const nama = row.querySelector(".admin-name")?.textContent.toLowerCase() ?? '';
+                        row.style.display = nama.includes(keyword) ? "" : "none";
+                    });
+                });
+
+                // Reset form tambah saat modal dibuka
+                document.getElementById('modalTambah').addEventListener('show.bs.modal', () => {
+                    document.getElementById('formTambah').reset();
+                });
+
+                // ==== Tambah Admin ====
+                document.getElementById("formTambah").addEventListener("submit", async function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const btn = this.querySelector("button[type='submit']");
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+                    try {
+                        const res = await fetch("{{ route('admin.admin.store') }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: formData
+                        });
+                        const result = await res.json();
+                        if (result.success) {
+                            bootstrap.Modal.getInstance(document.getElementById('modalTambah')).hide();
+                            this.reset();
+                            notifSuccess(result.message);
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            notifError(result.message || 'Gagal menyimpan data.');
+                        }
+                    } catch (err) {
+                        notifError(err.message);
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Simpan';
                     }
                 });
-            });
 
-            // ==== Upload Foto ====
-            document.getElementById("btnEditPhoto").addEventListener("click", () =>
-                document.getElementById("editImgInput").click());
-            document.getElementById("editImgInput").addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    document.getElementById("editImgPreview").src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-            });
-            });
+                // ==== Edit Admin ====
+                document.getElementById("formEdit").addEventListener("submit", async function(e) {
+                    e.preventDefault();
+                    const id = document.getElementById("editId").value;
+                    const formData = new FormData(this);
+                    const btn = this.querySelector("button[type='submit']");
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+                    try {
+                        const res = await fetch(`/admin/admin/${id}`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "X-HTTP-Method-Override": "PUT"
+                            },
+                            body: formData
+                        });
+                        const result = await res.json();
+                        if (result.success) {
+                            bootstrap.Modal.getInstance(document.getElementById("modalEdit")).hide();
+                            notifSuccess(result.message);
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            notifError(result.message || 'Gagal memperbarui data.');
+                        }
+                    } catch (err) {
+                        notifError(err.message);
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Simpan Perubahan';
+                    }
+                });
+
+                // ==== Reset Password ====
+                document.getElementById("btnResetPassword").addEventListener("click", function() {
+                    const id = document.getElementById("editId").value;
+                    Swal.fire({
+                        title: 'Reset Password?',
+                        text: 'Password admin akan dikembalikan ke default (Admin1234).',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Reset',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#696CFF',
+                        cancelButtonColor: '#8592A3',
+                        reverseButtons: true
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            fetch(`/admin/admin/${id}/reset-password`, {
+                                    method: "POST",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                    }
+                                })
+                                .then(res => res.json())
+                                .then(result => {
+                                    if (result.success) notifSuccess(result.message);
+                                    else notifError(result.message);
+                                })
+                                .catch(() => notifError('Gagal mereset password.'));
+                        }
+                    });
+                });
+
+                // ==== Upload Foto ====
+                document.getElementById("btnEditPhoto").addEventListener("click", () =>
+                    document.getElementById("editImgInput").click());
+
+                document.getElementById("editImgInput").addEventListener("change", (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            document.getElementById("editImgPreview").src = ev.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+            }); // ← tutup DOMContentLoaded
 
             // ==== Load data ke modal edit ====
             function editAdmin(id) {
