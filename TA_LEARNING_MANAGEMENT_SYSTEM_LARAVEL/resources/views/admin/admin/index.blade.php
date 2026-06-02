@@ -123,6 +123,9 @@
                                 <div class="stat-modal-role" id="statRoleLabel">Role · ID #0</div>
                             </div>
                         </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="stat-modal-badge" id="statBadge">—</span>
+                        </div>
                     </div>
 
                     <div class="modal-body p-3" id="statModalBody">
@@ -139,17 +142,17 @@
                                 <div class="stat-hero-card stat-hero-purple">
                                     <div class="stat-hero-label">Total Materi</div>
                                     <div class="stat-hero-value" id="statTotalMateri">—</div>
-                                    <div class="stat-hero-sub">lesson items</div>
+                                    <div class="stat-hero-sub">Materi</div>
                                 </div>
                                 <div class="stat-hero-card stat-hero-teal">
                                     <div class="stat-hero-label">Total Soal</div>
                                     <div class="stat-hero-value" id="statTotalSoal">—</div>
-                                    <div class="stat-hero-sub">exercise items</div>
+                                    <div class="stat-hero-sub">Soal</div>
                                 </div>
                                 <div class="stat-hero-card stat-hero-amber">
                                     <div class="stat-hero-label">CS Ditangani</div>
                                     <div class="stat-hero-value" id="statTotalCS">—</div>
-                                    <div class="stat-hero-sub">tiket selesai</div>
+                                    <div class="stat-hero-sub">Percakapan</div>
                                 </div>
                             </div>
 
@@ -495,15 +498,15 @@
 
             function renderStatistik(s) {
                 // Hero
-                document.getElementById('statTotalMateri').textContent = s.total_materi ?? 0;
-                document.getElementById('statTotalSoal').textContent = s.total_soal ?? 0;
-                document.getElementById('statTotalCS').textContent = s.total_cs ?? 0;
+                document.getElementById('statTotalMateri').textContent = (s.total_materi ?? 0);
+                document.getElementById('statTotalSoal').textContent = (s.total_soal ?? 0);
+                document.getElementById('statTotalCS').textContent = (s.total_cs ?? 0);
 
                 // Detail konten
-                document.getElementById('statMateriDetail').textContent = s.total_materi ?? 0;
-                document.getElementById('statSoalDetail').textContent = s.total_soal ?? 0;
-                document.getElementById('statLogAktivitas').textContent = s.total_log ?? '—';
-                document.getElementById('statCSLogDetail').textContent = s.total_cs ?? 0;
+                document.getElementById('statMateriDetail').textContent = (s.total_materi ?? 0) + ' Materi';
+                document.getElementById('statSoalDetail').textContent = (s.total_soal ?? 0) + ' Soal';
+                document.getElementById('statLogAktivitas').textContent = (s.total_log ?? 0) + ' Aktivitas';
+                document.getElementById('statCSLogDetail').textContent = (s.total_cs ?? 0) + ' Percakapan';
 
                 // Kinerja CS
                 const rata = s.rata_rating ?? 0;
@@ -528,7 +531,7 @@
                 const maxTiket = Math.max(...[5, 4, 3, 2, 1].map(r => dist[r] ?? 0), 1);
                 [5, 4, 3, 2, 1].forEach(r => {
                     const count = dist[r] ?? 0;
-                    document.getElementById(`statR${r}Count`).textContent = count + ' tiket';
+                    document.getElementById(`statR${r}Count`).textContent = count + ' Percakapan';
                     document.getElementById(`statR${r}Bar`).style.width = ((count / maxTiket) * 100) + '%';
                 });
 
