@@ -840,13 +840,24 @@
             // DOM READY
             // ════════════════════════════════════
             document.addEventListener("DOMContentLoaded", () => {
-
+                document.querySelectorAll('.modal').forEach(modalEl => {
+                    const instance = bootstrap.Modal.getInstance(modalEl);
+                    if (instance) instance.hide();
+                    modalEl.classList.remove('show');
+                    modalEl.style.display = 'none';
+                    modalEl.removeAttribute('aria-modal');
+                    modalEl.setAttribute('aria-hidden', 'true');
+                });
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
                 // ════ Chevron animasi panel role ════
                 const rolePanel = document.getElementById('roleInfoPanel');
                 const roleChevron = document.getElementById('roleInfoChevron');
                 if (rolePanel && roleChevron) {
                     rolePanel.addEventListener('show.bs.collapse', () => roleChevron.style.transform =
-                    'rotate(180deg)');
+                        'rotate(180deg)');
                     rolePanel.addEventListener('hide.bs.collapse', () => roleChevron.style.transform = 'rotate(0deg)');
                 }
 
