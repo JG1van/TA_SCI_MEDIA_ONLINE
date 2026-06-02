@@ -16,7 +16,7 @@
 
         {{-- Tabel Materi --}}
         <label>Daftar Materi</label>
-        <div class="table-responsive table-wrapper mb-2">
+        <div class="table-responsive table-wrapper mb-2 modal-dialog-scrollable">
             <table class="table table-striped table-bordered table-hover align-middle text-center" id="tabelMateri">
                 <thead>
                     <tr>
