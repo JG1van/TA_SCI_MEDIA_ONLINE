@@ -3303,6 +3303,10 @@ body.sidebar-collapsed .layout-page {
     justify-content: center !important;
 }
 
+.modal:not(.show) {
+    display: none !important;
+}
+
 .modal-content {
     border-radius: var(--radius-lg);
     border: none;
