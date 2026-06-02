@@ -489,8 +489,8 @@
                                 @section('css')
                                     <style>
                                         /* ══════════════════════════════════════
-                           TOMBOL STATISTIK
-                        ══════════════════════════════════════ */
+                                   TOMBOL STATISTIK
+                                ══════════════════════════════════════ */
                                         .btn-statistik {
                                             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                                             color: #fff;
@@ -511,8 +511,8 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           MODAL STATISTIK — WRAPPER
-                        ══════════════════════════════════════ */
+                                   MODAL STATISTIK — WRAPPER
+                                ══════════════════════════════════════ */
                                         .modal-statistik-content {
                                             border: none;
                                             border-radius: 16px;
@@ -521,8 +521,8 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           MODAL HEADER
-                        ══════════════════════════════════════ */
+                                   MODAL HEADER
+                                ══════════════════════════════════════ */
                                         .modal-statistik-header {
                                             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                                             border-bottom: none;
@@ -570,15 +570,15 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           MODAL BODY BACKGROUND
-                        ══════════════════════════════════════ */
+                                   MODAL BODY BACKGROUND
+                                ══════════════════════════════════════ */
                                         .modal-statistik-content .modal-body {
                                             background: #f5f5f9;
                                         }
 
                                         /* ══════════════════════════════════════
-                           3 HERO CARD
-                        ══════════════════════════════════════ */
+                                   3 HERO CARD
+                                ══════════════════════════════════════ */
                                         .stat-three-hero {
                                             display: grid;
                                             grid-template-columns: 1fr 1fr 1fr;
@@ -633,8 +633,8 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           MID ROW
-                        ══════════════════════════════════════ */
+                                   MID ROW
+                                ══════════════════════════════════════ */
                                         .stat-mid-row {
                                             display: grid;
                                             grid-template-columns: 1fr 1fr;
@@ -642,8 +642,8 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           STAT BLOCK
-                        ══════════════════════════════════════ */
+                                   STAT BLOCK
+                                ══════════════════════════════════════ */
                                         .stat-block {
                                             background: #fff;
                                             border: 1px solid #e4e6ea;
@@ -697,15 +697,15 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           RADAR
-                        ══════════════════════════════════════ */
+                                   RADAR
+                                ══════════════════════════════════════ */
                                         .stat-radar-wrap {
                                             text-align: center;
                                         }
 
                                         /* ══════════════════════════════════════
-                           BAR CHART
-                        ══════════════════════════════════════ */
+                                   BAR CHART
+                                ══════════════════════════════════════ */
                                         .stat-bar-item {
                                             margin-bottom: 9px;
                                         }
@@ -741,8 +741,8 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           TIMELINE
-                        ══════════════════════════════════════ */
+                                   TIMELINE
+                                ══════════════════════════════════════ */
                                         .stat-tl-row {
                                             display: flex;
                                             align-items: flex-start;
@@ -776,8 +776,8 @@
                                         }
 
                                         /* ══════════════════════════════════════
-                           FOOTER
-                        ══════════════════════════════════════ */
+                                   FOOTER
+                                ══════════════════════════════════════ */
                                         .modal-statistik-footer {
                                             background: #f5f5f9;
                                             border-top: 1px solid #e4e6ea;
@@ -822,31 +822,30 @@
                                         // STATISTIK
                                         // ════════════════════════════════════
                                         function lihatStatistik(id, nama, posisi, role) {
-                                            // Reset tampilan
                                             document.getElementById('statLoading').style.display = 'block';
                                             document.getElementById('statContent').style.display = 'none';
 
-                                            // Isi header modal
                                             const inisial = nama.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
                                             document.getElementById('statAvatar').textContent = inisial;
                                             document.getElementById('statName').textContent = nama;
                                             document.getElementById('statRoleLabel').textContent = (posisi || roleLabel[role]) + ' · ID #' + id;
                                             document.getElementById('statBadge').textContent = roleLabel[role] || '—';
 
-                                            // Buka modal
                                             new bootstrap.Modal(document.getElementById('modalStatistik')).show();
 
-                                            // Fetch data
                                             fetch(`/admin/admin/${id}/statistik`)
-                                                .then(res => res.json())
+                                                .then(res => {
+                                                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                                                    return res.json();
+                                                })
                                                 .then(data => {
                                                     if (!data.success) {
-                                                        notifError('Gagal memuat statistik.');
+                                                        notifError(data.message || 'Gagal memuat statistik.');
                                                         return;
                                                     }
                                                     renderStatistik(data.stats);
                                                 })
-                                                .catch(() => notifError('Terjadi kesalahan saat memuat statistik.'));
+                                                .catch(err => notifError('Error: ' + err.message));
                                         }
 
                                         function renderStatistik(s) {
