@@ -4163,7 +4163,7 @@ footer {
 
 /* Fix Bootstrap collapse visibility */
 .collapse:not(.show) {
-    display: none !important;
+    /* display: none !important; */
     visibility: visible !important;
 }
 
