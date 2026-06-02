@@ -169,7 +169,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     //  ADMIN
     Route::resource('admin', AdminController::class);
     Route::post('/admin/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('data-admin.reset-password');
-
+    Route::get('/admin/{id}/statistik', [AdminController::class, 'statistik'])->name('admin.statistik');
     //  PENGATURAN SISTEM
     Route::prefix('pengaturan')->name('pengaturan.')->group(function () {
         Route::get('/', fn() => view('admin.pengaturan.index'))->name('index');

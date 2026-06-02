@@ -7,9 +7,8 @@
     <div class="row g-3 align-items-end mb-3">
         <div class="col-md-8">
             <label class="form-label">Pencarian</label>
-            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="off"
-                autocorrect="off" autocapitalize="off" spellcheck="false" id="searchInput" type="text" class="form-control"
-                placeholder="Cari Nama Admin...">
+            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="searchInput" type="text"
+                class="form-control" placeholder="Cari Nama Admin...">
         </div>
         <div class="col-md-4 text-end">
             <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalTambah">
@@ -18,7 +17,7 @@
         </div>
     </div>
 
-    {{--   Tabel Admin --}}
+    {{-- Tabel Admin --}}
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover align-middle text-center" id="adminTable">
             <thead>
@@ -27,11 +26,11 @@
                     <th>Nama</th>
                     <th>Username</th>
                     <th>Role / Status</th>
-                    <th style="width:200px;">Aksi</th>
+                    <th style="width:260px;">Aksi</th>
                 </tr>
             </thead>
             <tbody id="adminBody">
-                @forelse ($admins as $index => $admin)
+                @forelse ($admins as $admin)
                     <tr id="row{{ $admin->id }}">
                         <td>{{ $admin->id }}</td>
                         <td class="admin-name">{{ $admin->name }}</td>
@@ -66,11 +65,13 @@
                                         Aktif</span>
                             @endswitch
                         </td>
-
-
                         <td>
                             <div class="d-flex justify-content-center gap-2">
                                 @if (auth()->user()->id !== $admin->id)
+                                    <button class="btn btn-sm btn-statistik"
+                                        onclick="lihatStatistik('{{ $admin->id }}', '{{ $admin->name }}', '{{ $admin->position ?? $admin->username }}', {{ $admin->role }})">
+                                        <i class="fas fa-chart-bar me-1"></i>Statistik
+                                    </button>
                                     <button class="btn btn-warning btn-sm" onclick="editAdmin('{{ $admin->id }}')">Detail
                                         / Edit</button>
                                     <button class="btn btn-danger btn-sm"
@@ -80,7 +81,6 @@
                                 @endif
                             </div>
                         </td>
-
                     </tr>
                     @empty
                         <tr>
@@ -96,7 +96,206 @@
             </table>
         </div>
 
-        {{--   Modal Tambah --}}
+        {{-- ══════════════════════════════════════════
+         MODAL STATISTIK KINERJA ADMIN
+    ══════════════════════════════════════════ --}}
+        <div class="modal fade" id="modalStatistik" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width:620px;">
+                <div class="modal-content modal-statistik-content">
+
+                    {{-- Header --}}
+                    <div class="modal-header modal-statistik-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-modal-avatar" id="statAvatar">AS</div>
+                            <div>
+                                <div class="stat-modal-name" id="statName">Nama Admin</div>
+                                <div class="stat-modal-role" id="statRoleLabel">Role · ID #0</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="stat-modal-badge" id="statBadge">—</span>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                    </div>
+
+                    {{-- Body --}}
+                    <div class="modal-body p-3" id="statModalBody">
+
+                        {{-- Loading state --}}
+                        <div id="statLoading" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-2 text-muted small">Memuat statistik...</p>
+                        </div>
+
+                        {{-- Konten statistik (tersembunyi dulu) --}}
+                        <div id="statContent" style="display:none;">
+
+                            {{-- 3 Hero Angka --}}
+                            <div class="stat-three-hero mb-3">
+                                <div class="stat-hero-card stat-hero-purple">
+                                    <div class="stat-hero-label">Total Materi</div>
+                                    <div class="stat-hero-value" id="statTotalMateri">—</div>
+                                    <div class="stat-hero-sub">lesson items</div>
+                                </div>
+                                <div class="stat-hero-card stat-hero-teal">
+                                    <div class="stat-hero-label">Total Soal</div>
+                                    <div class="stat-hero-value" id="statTotalSoal">—</div>
+                                    <div class="stat-hero-sub">exercise items</div>
+                                </div>
+                                <div class="stat-hero-card stat-hero-amber">
+                                    <div class="stat-hero-label">CS Ditangani</div>
+                                    <div class="stat-hero-value" id="statTotalCS">—</div>
+                                    <div class="stat-hero-sub">tiket selesai</div>
+                                </div>
+                            </div>
+
+                            {{-- Dua Kartu Detail --}}
+                            <div class="stat-mid-row mb-3">
+                                <div class="stat-block">
+                                    <div class="stat-block-title">Kinerja CS</div>
+                                    <div class="stat-kv-grid">
+                                        <div>
+                                            <div class="stat-kv-label">Total Bintang</div>
+                                            <div class="stat-kv-val" id="statTotalBintang">—</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-kv-label">Rata-rata</div>
+                                            <div class="stat-kv-val" id="statRataRating">—</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-kv-label">Tertinggi</div>
+                                            <div class="stat-kv-val" id="statMaxRating">—</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-kv-label">Terendah</div>
+                                            <div class="stat-kv-val" id="statMinRating">—</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-star-row" id="statStarRow"></div>
+                                </div>
+                                <div class="stat-block">
+                                    <div class="stat-block-title">Detail Konten</div>
+                                    <div class="stat-kv-grid">
+                                        <div>
+                                            <div class="stat-kv-label">Total Materi</div>
+                                            <div class="stat-kv-val" id="statMateriDetail">—</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-kv-label">Total Soal</div>
+                                            <div class="stat-kv-val" id="statSoalDetail">—</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-kv-label">Log Aktivitas</div>
+                                            <div class="stat-kv-val" id="statLogAktivitas">—</div>
+                                        </div>
+                                        <div>
+                                            <div class="stat-kv-label">Total CS Log</div>
+                                            <div class="stat-kv-val" id="statCSLogDetail">—</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Radar Chart --}}
+                            <div class="stat-block stat-radar-wrap mb-3">
+                                <div class="stat-block-title">Profil Kinerja</div>
+                                <div style="display:flex;justify-content:center;">
+                                    <svg id="statRadarSvg" width="240" height="220" viewBox="0 0 240 220"
+                                        role="img" aria-label="Radar chart profil kinerja admin">
+                                        <title>Profil kinerja admin</title>
+                                        <g transform="translate(120,115)">
+                                            <polygon points="0,-80 69,-40 69,40 0,80 -69,40 -69,-40" fill="none"
+                                                stroke="#e0e0e0" stroke-width="0.5" />
+                                            <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="none"
+                                                stroke="#e0e0e0" stroke-width="0.5" />
+                                            <polygon points="0,-40 35,-20 35,20 0,40 -35,20 -35,-20" fill="none"
+                                                stroke="#e0e0e0" stroke-width="0.5" />
+                                            <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="none"
+                                                stroke="#e0e0e0" stroke-width="0.5" />
+                                            <line x1="0" y1="0" x2="0" y2="-80"
+                                                stroke="#ccc" stroke-width="0.5" />
+                                            <line x1="0" y1="0" x2="69" y2="-40"
+                                                stroke="#ccc" stroke-width="0.5" />
+                                            <line x1="0" y1="0" x2="69" y2="40"
+                                                stroke="#ccc" stroke-width="0.5" />
+                                            <line x1="0" y1="0" x2="0" y2="80"
+                                                stroke="#ccc" stroke-width="0.5" />
+                                            <line x1="0" y1="0" x2="-69" y2="40"
+                                                stroke="#ccc" stroke-width="0.5" />
+                                            <line x1="0" y1="0" x2="-69" y2="-40"
+                                                stroke="#ccc" stroke-width="0.5" />
+                                            <polygon id="radarPolygon" points="0,0 0,0 0,0 0,0 0,0 0,0" fill="#696CFF"
+                                                fill-opacity="0.25" stroke="#696CFF" stroke-width="1.5" />
+                                            <circle id="rd0" cx="0" cy="0" r="3" fill="#696CFF" />
+                                            <circle id="rd1" cx="0" cy="0" r="3" fill="#696CFF" />
+                                            <circle id="rd2" cx="0" cy="0" r="3" fill="#696CFF" />
+                                            <circle id="rd3" cx="0" cy="0" r="3" fill="#696CFF" />
+                                            <circle id="rd4" cx="0" cy="0" r="3" fill="#696CFF" />
+                                            <circle id="rd5" cx="0" cy="0" r="3" fill="#696CFF" />
+                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="middle"
+                                                x="0" y="-88">Materi</text>
+                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="start"
+                                                x="74" y="-42">Soal</text>
+                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="start"
+                                                x="74" y="46">CS Tiket</text>
+                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="middle"
+                                                x="0" y="96">Rating</text>
+                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end"
+                                                x="-74" y="46">Aktivitas</text>
+                                            <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end"
+                                                x="-74" y="-42">Responsif</text>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            {{-- Distribusi Rating CS --}}
+                            <div class="stat-block mb-3">
+                                <div class="stat-block-title">Distribusi Rating CS</div>
+                                <div id="statRatingBars">
+                                    @foreach ([5, 4, 3, 2, 1] as $r)
+                                        <div class="stat-bar-item">
+                                            <div class="stat-bar-label-row">
+                                                <span>{{ $r }} ★</span>
+                                                <span id="statR{{ $r }}Count">0 tiket</span>
+                                            </div>
+                                            <div class="stat-bar-track">
+                                                <div class="stat-bar-fill" id="statR{{ $r }}Bar"
+                                                    style="width:0%;background:{{ $r == 5 ? '#0F6E56' : ($r == 4 ? '#1D9E75' : ($r == 3 ? '#EF9F27' : ($r == 2 ? '#D85A30' : '#E24B4A'))) }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Materi per Bulan --}}
+                            <div class="stat-block mb-3">
+                                <div class="stat-block-title">Materi Dibuat per Bulan</div>
+                                <div id="statMateriBars">
+                                    <p class="text-muted small text-center py-2">Memuat...</p>
+                                </div>
+                            </div>
+
+                            {{-- Timeline Aktivitas Terbaru --}}
+                            <div class="stat-block">
+                                <div class="stat-block-title">Aktivitas Terbaru</div>
+                                <div id="statTimeline">
+                                    <p class="text-muted small text-center py-2">Belum ada aktivitas.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer modal-statistik-footer">
+                        <small class="text-muted">lesson_items · exercise_items · cs_logs · admin_activity_logs</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Tambah --}}
         <div class="modal fade p-5" id="modalTambah" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md mt-5 custom-modal">
                 <form id="formTambah" class="modal-content">
@@ -105,26 +304,21 @@
                         <h5 class="modal-title">Tambah Admin</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-
                     <div class="modal-body row g-3">
                         <div class="col-md-12">
                             <label class="form-label">Nama</label>
                             <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                autocomplete="off" type="text" name="name" class="form-control" required>
+                                type="text" name="name" class="form-control" required>
                         </div>
-
                         <div class="col-md-12">
                             <label class="form-label">Username</label>
                             <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                autocomplete="off" type="text" name="username" class="form-control" required>
+                                type="text" name="username" class="form-control" required>
                         </div>
-
                         <div class="col-md-12">
                             <label class="form-label">Tanggal Masuk</label>
-                            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="date"
-                                name="date_in" class="form-control" required>
+                            <input autocomplete="off" type="date" name="date_in" class="form-control" required>
                         </div>
-
                         <div class="col-md-12">
                             <label class="form-label">Role</label>
                             <select name="role" class="form-select" required>
@@ -136,9 +330,7 @@
                                 <option value="5">Layanan-Pengguna</option>
                             </select>
                         </div>
-
                     </div>
-
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary w-100">Simpan</button>
                     </div>
@@ -146,24 +338,21 @@
             </div>
         </div>
 
-
-        {{--  Modal Edit --}}
+        {{-- Modal Edit --}}
         <div class="modal fade p-5" id="modalEdit" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md mt-5 custom-modal">
                 <form id="formEdit" class="modal-content border-0 shadow-lg rounded-4" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-
                     <div class="modal-header bg-light border-bottom-0">
                         <h5 class="modal-title fw-bold">Detail / Edit Admin</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-
                     <div class="modal-body p-4">
                         <div class="row align-items-center g-4">
                             <div class="col-md-4 d-flex justify-content-center">
                                 <div class="bg-light rounded-4 shadow p-4 d-flex flex-column align-items-center justify-content-center"
-                                    style="min-height: 250px;">
+                                    style="min-height:250px;">
                                     <div class="position-relative">
                                         @php
                                             $editPhotoPath =
@@ -171,74 +360,58 @@
                                                     ? asset('storage/admins/' . $admin->img)
                                                     : asset('images/logo.webp');
                                         @endphp
-
                                         <img id="editImgPreview" src="{{ $editPhotoPath }}"
                                             class="rounded-circle border shadow bg-white" width="120" height="120"
-                                            style="object-fit: cover;">
+                                            style="object-fit:cover;">
                                         <button type="button"
                                             class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 translate-middle"
-                                            id="btnEditPhoto" style="width: 35px; height: 35px;">
+                                            id="btnEditPhoto" style="width:35px;height:35px;">
                                             <i class="fas fa-pen"></i>
                                         </button>
                                     </div>
-
-                                    <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                        type="file" id="editImgInput" name="photo" accept="image/*" hidden>
+                                    <input type="file" id="editImgInput" name="photo" accept="image/*" hidden>
                                     <h6 class="fw-bold mb-0 mt-3" id="editNameCard">Nama Admin</h6>
                                 </div>
                             </div>
-
                             <div class="col-md-8">
                                 <div class="row g-3">
-                                    <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                        type="hidden" id="editId" name="id">
-
+                                    <input type="hidden" id="editId" name="id">
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Nama</label>
-                                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                            type="text" id="editName" name="name" class="form-control" required>
+                                        <input autocomplete="off" type="text" id="editName" name="name"
+                                            class="form-control" required>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Username</label>
-                                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                            type="text" id="editUsername" name="username" class="form-control" required>
+                                        <input autocomplete="off" type="text" id="editUsername" name="username"
+                                            class="form-control" required>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Tanggal Masuk</label>
-                                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                            type="date" id="editDateIn" name="date_in" class="form-control" required>
+                                        <input type="date" id="editDateIn" name="date_in" class="form-control" required>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Jabatan / Posisi</label>
-                                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                            type="text" id="editPosition" name="position" class="form-control">
+                                        <input autocomplete="off" type="text" id="editPosition" name="position"
+                                            class="form-control">
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">No. Telepon</label>
-                                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                            type="number" id="editPhone" name="phone" class="form-control">
+                                        <input type="number" id="editPhone" name="phone" class="form-control">
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Login Terakhir</label>
-                                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                            type="text" id="editLoginAt" name="login_at" class="form-control" readonly>
+                                        <input type="text" id="editLoginAt" class="form-control" readonly>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Password</label>
-                                        <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                            type="text" id="editPassword" class="form-control" value="********" readonly>
+                                        <input type="text" id="editPassword" class="form-control" value="********"
+                                            readonly>
                                         <button type="button" class="btn btn-outline-danger w-100 mt-2"
                                             id="btnResetPassword">
                                             <i class="fas fa-undo me-1"></i> Reset Password
                                         </button>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Role / Status</label>
                                         <select id="editRole" name="role" class="form-select" required>
@@ -250,20 +423,319 @@
                                             <option value="5">Layanan-Pengguna</option>
                                         </select>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="modal-footer bg-light border-0">
-                        <button type="submit" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold">
-                            Simpan Perubahan
-                        </button>
+                        <button type="submit" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold">Simpan
+                            Perubahan</button>
                     </div>
                 </form>
             </div>
         </div>
+
+    @endsection
+
+    @section('css')
+        <style>
+            /* ══════════════════════════════════════
+           TOMBOL STATISTIK
+        ══════════════════════════════════════ */
+            .btn-statistik {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 600;
+                padding: 5px 12px;
+                box-shadow: 0 3px 10px rgba(105, 108, 255, 0.28);
+                transition: all 0.22s ease;
+            }
+
+            .btn-statistik:hover {
+                background: linear-gradient(135deg, var(--primary-light), var(--primary));
+                color: #fff;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 18px rgba(105, 108, 255, 0.38);
+            }
+
+            /* ══════════════════════════════════════
+           MODAL STATISTIK — WRAPPER
+        ══════════════════════════════════════ */
+            .modal-statistik-content {
+                border: none;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 24px 80px rgba(105, 108, 255, 0.22);
+            }
+
+            /* ══════════════════════════════════════
+           MODAL HEADER
+        ══════════════════════════════════════ */
+            .modal-statistik-header {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                border-bottom: none;
+                padding: 18px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .stat-modal-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid rgba(255, 255, 255, 0.4);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 17px;
+                font-weight: 700;
+                color: #fff;
+                flex-shrink: 0;
+            }
+
+            .stat-modal-name {
+                font-size: 15px;
+                font-weight: 700;
+                color: #fff;
+            }
+
+            .stat-modal-role {
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.7);
+                margin-top: 2px;
+            }
+
+            .stat-modal-badge {
+                font-size: 11px;
+                padding: 3px 10px;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.18);
+                color: #fff;
+                font-weight: 600;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+            }
+
+            /* ══════════════════════════════════════
+           MODAL BODY BACKGROUND
+        ══════════════════════════════════════ */
+            .modal-statistik-content .modal-body {
+                background: #f5f5f9;
+            }
+
+            /* ══════════════════════════════════════
+           3 HERO CARD
+        ══════════════════════════════════════ */
+            .stat-three-hero {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-hero-card {
+                background: #fff;
+                border: 1px solid #e4e6ea;
+                border-radius: 12px;
+                padding: 14px 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+                transition: transform .2s, box-shadow .2s;
+            }
+
+            .stat-hero-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .stat-hero-label {
+                font-size: 11px;
+                color: #8592A3;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .stat-hero-value {
+                font-size: 26px;
+                font-weight: 800;
+            }
+
+            .stat-hero-sub {
+                font-size: 10px;
+                color: #8592A3;
+            }
+
+            .stat-hero-purple .stat-hero-value {
+                color: #696CFF;
+            }
+
+            .stat-hero-teal .stat-hero-value {
+                color: #0F6E56;
+            }
+
+            .stat-hero-amber .stat-hero-value {
+                color: #BA7517;
+            }
+
+            /* ══════════════════════════════════════
+           MID ROW
+        ══════════════════════════════════════ */
+            .stat-mid-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            /* ══════════════════════════════════════
+           STAT BLOCK
+        ══════════════════════════════════════ */
+            .stat-block {
+                background: #fff;
+                border: 1px solid #e4e6ea;
+                border-radius: 12px;
+                padding: 14px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            }
+
+            .stat-block-title {
+                font-size: 10px;
+                font-weight: 700;
+                color: #8592A3;
+                text-transform: uppercase;
+                letter-spacing: .6px;
+                margin-bottom: 10px;
+            }
+
+            .stat-kv-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px 12px;
+            }
+
+            .stat-kv-label {
+                font-size: 11px;
+                color: #8592A3;
+            }
+
+            .stat-kv-val {
+                font-size: 15px;
+                font-weight: 700;
+                color: #566a7f;
+                margin-top: 1px;
+            }
+
+            /* Bintang */
+            .stat-star-row {
+                display: flex;
+                gap: 3px;
+                margin-top: 10px;
+            }
+
+            .stat-star {
+                color: #EF9F27;
+                font-size: 15px;
+            }
+
+            .stat-star-empty {
+                color: #ddd;
+                font-size: 15px;
+            }
+
+            /* ══════════════════════════════════════
+           RADAR
+        ══════════════════════════════════════ */
+            .stat-radar-wrap {
+                text-align: center;
+            }
+
+            /* ══════════════════════════════════════
+           BAR CHART
+        ══════════════════════════════════════ */
+            .stat-bar-item {
+                margin-bottom: 9px;
+            }
+
+            .stat-bar-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .stat-bar-label-row {
+                display: flex;
+                justify-content: space-between;
+                font-size: 12px;
+                color: #8592A3;
+                margin-bottom: 4px;
+            }
+
+            .stat-bar-label-row span:last-child {
+                color: #566a7f;
+                font-weight: 600;
+            }
+
+            .stat-bar-track {
+                height: 6px;
+                border-radius: 3px;
+                background: #eee;
+                overflow: hidden;
+            }
+
+            .stat-bar-fill {
+                height: 100%;
+                border-radius: 3px;
+                transition: width .5s ease;
+            }
+
+            /* ══════════════════════════════════════
+           TIMELINE
+        ══════════════════════════════════════ */
+            .stat-tl-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 10px;
+                font-size: 12px;
+            }
+
+            .stat-tl-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .stat-tl-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                margin-top: 3px;
+                flex-shrink: 0;
+            }
+
+            .stat-tl-action {
+                color: #566a7f;
+                font-weight: 600;
+                font-size: 12.5px;
+            }
+
+            .stat-tl-time {
+                color: #8592A3;
+                font-size: 11px;
+                margin-top: 1px;
+            }
+
+            /* ══════════════════════════════════════
+           FOOTER
+        ══════════════════════════════════════ */
+            .modal-statistik-footer {
+                background: #f5f5f9;
+                border-top: 1px solid #e4e6ea;
+                padding: 10px 16px;
+                justify-content: center;
+            }
+        </style>
     @endsection
 
     @section('js')
@@ -288,19 +760,183 @@
                 });
             }
 
+            const roleLabel = {
+                1: 'Super-Admin',
+                2: 'Admin',
+                3: 'Operasional',
+                4: 'Konten-Pembelajaran',
+                5: 'Layanan-Pengguna',
+                0: 'Tidak Aktif'
+            };
+
+            // ════════════════════════════════════
+            // STATISTIK
+            // ════════════════════════════════════
+            function lihatStatistik(id, nama, posisi, role) {
+                // Reset tampilan
+                document.getElementById('statLoading').style.display = 'block';
+                document.getElementById('statContent').style.display = 'none';
+
+                // Isi header modal
+                const inisial = nama.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('statAvatar').textContent = inisial;
+                document.getElementById('statName').textContent = nama;
+                document.getElementById('statRoleLabel').textContent = (posisi || roleLabel[role]) + ' · ID #' + id;
+                document.getElementById('statBadge').textContent = roleLabel[role] || '—';
+
+                // Buka modal
+                new bootstrap.Modal(document.getElementById('modalStatistik')).show();
+
+                // Fetch data
+                fetch(`/admin/admin/${id}/statistik`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            notifError('Gagal memuat statistik.');
+                            return;
+                        }
+                        renderStatistik(data.stats);
+                    })
+                    .catch(() => notifError('Terjadi kesalahan saat memuat statistik.'));
+            }
+
+            function renderStatistik(s) {
+                // Hero
+                document.getElementById('statTotalMateri').textContent = s.total_materi ?? 0;
+                document.getElementById('statTotalSoal').textContent = s.total_soal ?? 0;
+                document.getElementById('statTotalCS').textContent = s.total_cs ?? 0;
+
+                // Detail konten
+                document.getElementById('statMateriDetail').textContent = s.total_materi ?? 0;
+                document.getElementById('statSoalDetail').textContent = s.total_soal ?? 0;
+                document.getElementById('statLogAktivitas').textContent = s.total_log ?? '—';
+                document.getElementById('statCSLogDetail').textContent = s.total_cs ?? 0;
+
+                // Kinerja CS
+                const rata = s.rata_rating ?? 0;
+                document.getElementById('statTotalBintang').textContent = (s.total_bintang ?? 0) + ' ⭐';
+                document.getElementById('statRataRating').textContent = parseFloat(rata).toFixed(1) + ' / 5';
+                document.getElementById('statMaxRating').textContent = (s.max_rating ?? 0) + ' ⭐';
+                document.getElementById('statMinRating').textContent = (s.min_rating ?? 0) + ' ⭐';
+
+                // Bintang visual
+                const starRow = document.getElementById('statStarRow');
+                starRow.innerHTML = '';
+                const rataInt = Math.round(parseFloat(rata));
+                for (let i = 1; i <= 5; i++) {
+                    const span = document.createElement('span');
+                    span.textContent = '★';
+                    span.className = i <= rataInt ? 'stat-star' : 'stat-star-empty';
+                    starRow.appendChild(span);
+                }
+
+                // Bar distribusi rating
+                const dist = s.distribusi_rating ?? {};
+                const maxTiket = Math.max(...[5, 4, 3, 2, 1].map(r => dist[r] ?? 0), 1);
+                [5, 4, 3, 2, 1].forEach(r => {
+                    const count = dist[r] ?? 0;
+                    document.getElementById(`statR${r}Count`).textContent = count + ' tiket';
+                    document.getElementById(`statR${r}Bar`).style.width = ((count / maxTiket) * 100) + '%';
+                });
+
+                // Materi per bulan
+                const materiBulan = s.materi_per_bulan ?? [];
+                const maxMateriBar = Math.max(...materiBulan.map(m => m.total), 1);
+                const materiBarsEl = document.getElementById('statMateriBars');
+                if (materiBulan.length === 0) {
+                    materiBarsEl.innerHTML = '<p class="text-muted small text-center py-2">Belum ada data.</p>';
+                } else {
+                    materiBarsEl.innerHTML = materiBulan.map(m => `
+                <div class="stat-bar-item">
+                    <div class="stat-bar-label-row">
+                        <span>${m.label}</span><span>${m.total}</span>
+                    </div>
+                    <div class="stat-bar-track">
+                        <div class="stat-bar-fill"
+                            style="width:${Math.round((m.total/maxMateriBar)*100)}%;background:#696CFF">
+                        </div>
+                    </div>
+                </div>`).join('');
+                }
+
+                // Radar chart — normalize ke 0–80
+                const maxVal = 80;
+
+                function toR(val, maxPossible) {
+                    if (!maxPossible || maxPossible === 0) return 0;
+                    return Math.min(maxVal, Math.round((val / maxPossible) * maxVal));
+                }
+                const rMateri = toR(s.total_materi ?? 0, s.max_materi ?? Math.max(s.total_materi ?? 1, 1));
+                const rSoal = toR(s.total_soal ?? 0, s.max_soal ?? Math.max(s.total_soal ?? 1, 1));
+                const rCS = toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1));
+                const rRating = toR(parseFloat(s.rata_rating ?? 0), 5);
+                const rAktivitas = toR(s.total_log ?? 0, s.max_log ?? Math.max(s.total_log ?? 1, 1));
+                const rResponsif = toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1));
+
+                function radarPoint(value, angle) {
+                    const rad = (angle - 90) * (Math.PI / 180);
+                    return [Math.round(value * Math.cos(rad)), Math.round(value * Math.sin(rad))];
+                }
+                const angles = [0, 60, 120, 180, 240, 300];
+                const values = [rMateri, rSoal, rCS, rRating, rAktivitas, rResponsif];
+                const pts = values.map((v, i) => radarPoint(v, angles[i]));
+
+                document.getElementById('radarPolygon').setAttribute('points', pts.map(p => p.join(',')).join(' '));
+                pts.forEach((p, i) => {
+                    const el = document.getElementById('rd' + i);
+                    if (el) {
+                        el.setAttribute('cx', p[0]);
+                        el.setAttribute('cy', p[1]);
+                    }
+                });
+
+                // Timeline aktivitas terbaru
+                const timeline = s.aktivitas_terbaru ?? [];
+                const timelineEl = document.getElementById('statTimeline');
+                if (timeline.length === 0) {
+                    timelineEl.innerHTML = '<p class="text-muted small text-center py-2">Belum ada aktivitas.</p>';
+                } else {
+                    const dotColors = {
+                        materi: '#696CFF',
+                        cs: '#0F6E56',
+                        soal: '#BA7517',
+                        log: '#8592A3',
+                        default: '#8592A3'
+                    };
+                    timelineEl.innerHTML = timeline.map(t => {
+                        const color = dotColors[t.type] ?? dotColors.default;
+                        return `
+                <div class="stat-tl-row">
+                    <div class="stat-tl-dot" style="background:${color}"></div>
+                    <div>
+                        <div class="stat-tl-action">${t.action}</div>
+                        <div class="stat-tl-time">${t.time}</div>
+                    </div>
+                </div>`;
+                    }).join('');
+                }
+
+                // Tampilkan konten
+                document.getElementById('statLoading').style.display = 'none';
+                document.getElementById('statContent').style.display = 'block';
+            }
+
+            // ════════════════════════════════════
+            // DOM READY
+            // ════════════════════════════════════
             document.addEventListener("DOMContentLoaded", () => {
-                // ==== Pencarian ====
+
+                // Pencarian
                 document.getElementById("searchInput").addEventListener("keyup", function() {
                     const keyword = this.value.toLowerCase();
                     document.querySelectorAll("#adminBody tr").forEach(row => {
-                        const nama = row.querySelector(".admin-name").textContent.toLowerCase();
+                        const nama = row.querySelector(".admin-name")?.textContent.toLowerCase() ?? '';
                         row.style.display = nama.includes(keyword) ? "" : "none";
                     });
                 });
 
-                // ==== Reset form tambah ====
-                const modalTambah = document.getElementById('modalTambah');
-                modalTambah.addEventListener('show.bs.modal', function() {
+                // Reset form tambah saat modal dibuka
+                document.getElementById('modalTambah').addEventListener('show.bs.modal', () => {
                     document.getElementById('formTambah').reset();
                 });
 
@@ -311,7 +947,6 @@
                     const btn = this.querySelector("button[type='submit']");
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
-
                     try {
                         const res = await fetch("{{ route('admin.admin.store') }}", {
                             method: "POST",
@@ -322,7 +957,7 @@
                         });
                         const result = await res.json();
                         if (result.success) {
-                            bootstrap.Modal.getInstance(modalTambah).hide();
+                            bootstrap.Modal.getInstance(document.getElementById('modalTambah')).hide();
                             this.reset();
                             notifSuccess(result.message);
                             setTimeout(() => location.reload(), 1000);
@@ -343,7 +978,6 @@
                     const btn = this.querySelector("button[type='submit']");
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
-
                     try {
                         const res = await fetch(`/admin/admin/${id}`, {
                             method: "POST",
@@ -399,18 +1033,14 @@
                 });
 
                 // ==== Upload Foto ====
-                const btnEditPhoto = document.getElementById("btnEditPhoto");
-                const editImgInput = document.getElementById("editImgInput");
-                const editImgPreview = document.getElementById("editImgPreview");
-
-                btnEditPhoto.addEventListener("click", () => editImgInput.click());
-
-                editImgInput.addEventListener("change", (e) => {
+                document.getElementById("btnEditPhoto").addEventListener("click", () =>
+                    document.getElementById("editImgInput").click());
+                document.getElementById("editImgInput").addEventListener("change", (e) => {
                     const file = e.target.files[0];
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = (ev) => {
-                            editImgPreview.src = ev.target.result;
+                            document.getElementById("editImgPreview").src = ev.target.result;
                         };
                         reader.readAsDataURL(file);
                     }
@@ -433,14 +1063,10 @@
                             document.getElementById("editLoginAt").value = a.login_at ?? '';
                             document.getElementById("editRole").value = a.role ?? 0;
                             document.getElementById("editNameCard").innerText = a.name ?? "Tanpa Nama";
-
-                            const imgPreview = document.getElementById("editImgPreview");
-                            imgPreview.src = a.img ? `/storage/admins/${a.img}` : `/images/logo.webp`;
-
+                            document.getElementById("editImgPreview").src =
+                                a.img ? `/storage/admins/${a.img}` : `/images/logo.webp`;
                             new bootstrap.Modal(document.getElementById("modalEdit")).show();
-                        } else {
-                            notifError('Data admin tidak ditemukan.');
-                        }
+                        } else notifError('Data admin tidak ditemukan.');
                     })
                     .catch(() => notifError('Gagal memuat data admin.'));
             }
@@ -477,6 +1103,4 @@
                 });
             }
         </script>
-
-
     @endsection

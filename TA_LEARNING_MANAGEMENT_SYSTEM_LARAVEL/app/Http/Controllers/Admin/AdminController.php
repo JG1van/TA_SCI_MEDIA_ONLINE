@@ -216,4 +216,190 @@ class AdminController extends Controller
             ]);
         }
     }
+    public function statistik($id)
+    {
+        // Pastikan admin yang diminta ada
+        $admin = \App\Models\Admin::find($id);
+        if (!$admin) {
+            return response()->json(['success' => false, 'message' => 'Admin tidak ditemukan.'], 404);
+        }
+
+        // ── 1. TOTAL MATERI (lesson_items) ────────────────────────────
+        $totalMateri = \DB::table('lesson_items')
+            ->where('admin_id', $id)
+            ->count();
+
+        // ── 2. TOTAL SOAL (exercise_items) ───────────────────────────
+        $totalSoal = \DB::table('exercise_items')
+            ->where('admin_id', $id)
+            ->count();
+
+        // ── 3. CS LOGS ───────────────────────────────────────────────
+        $csQuery = \DB::table('cs_logs')->where('admin_id', $id);
+
+        $totalCS = $csQuery->count();
+        $totalBintang = $csQuery->sum('rating');
+        $rataRating = $totalCS > 0 ? round($csQuery->avg('rating'), 2) : 0;
+        $maxRating = $totalCS > 0 ? $csQuery->max('rating') : 0;
+        $minRating = $totalCS > 0 ? $csQuery->min('rating') : 0;
+
+        // Distribusi rating 1–5
+        $distribusiRaw = \DB::table('cs_logs')
+            ->where('admin_id', $id)
+            ->selectRaw('rating, COUNT(*) as total')
+            ->groupBy('rating')
+            ->pluck('total', 'rating');
+
+        $distribusiRating = [];
+        foreach ([5, 4, 3, 2, 1] as $r) {
+            $distribusiRating[$r] = $distribusiRaw[$r] ?? 0;
+        }
+
+        // ── 4. LOG AKTIVITAS ─────────────────────────────────────────
+        $totalLog = \DB::table('admin_activity_logs')
+            ->where('admin_id', $id)
+            ->count();
+
+        // ── 5. MATERI PER BULAN (12 bulan terakhir) ──────────────────
+        $materiBulan = \DB::table('lesson_items')
+            ->where('admin_id', $id)
+            ->where('created_at', '>=', now()->subMonths(12)->startOfMonth())
+            ->selectRaw("DATE_FORMAT(created_at, '%b %Y') as label,
+                     DATE_FORMAT(created_at, '%Y-%m') as sort_key,
+                     COUNT(*) as total")
+            ->groupBy('label', 'sort_key')
+            ->orderBy('sort_key', 'asc')
+            ->get()
+            ->map(fn($row) => [
+                'label' => $row->label,
+                'total' => (int) $row->total,
+            ])
+            ->values()
+            ->toArray();
+
+        // ── 6. AKTIVITAS TERBARU (gabungan 3 sumber, maks 8 item) ────
+        // 6a. Dari admin_activity_logs
+        $logsAktivitas = \DB::table('admin_activity_logs')
+            ->where('admin_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(fn($row) => [
+                'type' => 'log',
+                'action' => $row->action,
+                'time' => \Carbon\Carbon::parse($row->created_at)
+                    ->locale('id')
+                    ->isoFormat('DD MMM YYYY · HH:mm'),
+                'sort' => $row->created_at,
+            ]);
+
+        // 6b. Dari lesson_items (materi terbaru)
+        $logsMateri = \DB::table('lesson_items')
+            ->where('admin_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(fn($row) => [
+                'type' => 'materi',
+                'action' => 'Upload materi "' . \Str::limit($row->title ?? 'Tanpa Judul', 40) . '"',
+                'time' => \Carbon\Carbon::parse($row->created_at)
+                    ->locale('id')
+                    ->isoFormat('DD MMM YYYY · HH:mm'),
+                'sort' => $row->created_at,
+            ]);
+
+        // 6c. Dari cs_logs (tiket CS yang ditangani)
+        $logsCS = \DB::table('cs_logs')
+            ->where('admin_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(fn($row) => [
+                'type' => 'cs',
+                'action' => 'Selesaikan tiket CS (rating ' . $row->rating . ' ★)',
+                'time' => \Carbon\Carbon::parse($row->created_at)
+                    ->locale('id')
+                    ->isoFormat('DD MMM YYYY · HH:mm'),
+                'sort' => $row->created_at,
+            ]);
+
+        // Gabung, sort desc, ambil 8 terbaru
+        $aktivitasTerbaru = $logsAktivitas
+            ->concat($logsMateri)
+            ->concat($logsCS)
+            ->sortByDesc('sort')
+            ->take(8)
+            ->values()
+            ->map(fn($item) => [
+                'type' => $item['type'],
+                'action' => $item['action'],
+                'time' => $item['time'],
+            ])
+            ->toArray();
+
+        // ── 7. MAX VALUES (untuk normalisasi radar chart) ─────────────
+        // Nilai maksimum dari seluruh admin — digunakan sebagai pembagi
+        // agar radar chart proporsional antar admin
+
+        $maxMateri = \DB::table('lesson_items')
+            ->selectRaw('admin_id, COUNT(*) as total')
+            ->whereNotNull('admin_id')
+            ->groupBy('admin_id')
+            ->orderByDesc('total')
+            ->value('total') ?? 1;
+
+        $maxSoal = \DB::table('exercise_items')
+            ->selectRaw('admin_id, COUNT(*) as total')
+            ->whereNotNull('admin_id')
+            ->groupBy('admin_id')
+            ->orderByDesc('total')
+            ->value('total') ?? 1;
+
+        $maxCS = \DB::table('cs_logs')
+            ->selectRaw('admin_id, COUNT(*) as total')
+            ->whereNotNull('admin_id')
+            ->groupBy('admin_id')
+            ->orderByDesc('total')
+            ->value('total') ?? 1;
+
+        $maxLog = \DB::table('admin_activity_logs')
+            ->selectRaw('admin_id, COUNT(*) as total')
+            ->whereNotNull('admin_id')
+            ->groupBy('admin_id')
+            ->orderByDesc('total')
+            ->value('total') ?? 1;
+
+        // ── 8. RETURN JSON ───────────────────────────────────────────
+        return response()->json([
+            'success' => true,
+            'stats' => [
+                // Hero cards
+                'total_materi' => $totalMateri,
+                'total_soal' => $totalSoal,
+                'total_cs' => $totalCS,
+
+                // Kinerja CS
+                'total_bintang' => $totalBintang,
+                'rata_rating' => $rataRating,
+                'max_rating' => $maxRating,
+                'min_rating' => $minRating,
+                'distribusi_rating' => $distribusiRating,
+
+                // Log
+                'total_log' => $totalLog,
+
+                // Chart
+                'materi_per_bulan' => $materiBulan,
+
+                // Timeline
+                'aktivitas_terbaru' => $aktivitasTerbaru,
+
+                // Max values untuk normalisasi radar
+                'max_materi' => $maxMateri,
+                'max_soal' => $maxSoal,
+                'max_cs' => $maxCS,
+                'max_log' => $maxLog,
+            ],
+        ]);
+    }
 }
