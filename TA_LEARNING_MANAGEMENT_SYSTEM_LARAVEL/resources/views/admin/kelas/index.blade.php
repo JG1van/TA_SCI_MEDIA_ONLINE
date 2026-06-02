@@ -191,7 +191,8 @@
                 <div class="modal-body">
                     <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
                         id="searchSerial" class="form-control mb-3" placeholder="Cari serial atau guru...">
-                    <div class="table-responsive  table-wrapper">
+                    <div class="table-responsive table-wrapper"
+                        style="max-height:560px; overflow-y:auto; overflow-x:auto;">
                         <table class="table table-bordered table-hover text-center align-middle">
                             <thead>
                                 <tr>

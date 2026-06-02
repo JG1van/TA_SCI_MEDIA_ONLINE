@@ -564,7 +564,8 @@
                                     Email</b></span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
-                        <div class="collapse" id="panduanEmail">
+                        <div class="collapse" style="max-height:260px; overflow-y:auto; overflow-x:auto;"
+                            id="panduanEmail">
                             <div class="alert alert-light border small mt-1 mb-0">
                                 <b>Cara Pengiriman Email:</b>
                                 <br>• <b>Otomatis</b> — setiap hari pukul 08.00

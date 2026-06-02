@@ -130,11 +130,11 @@
         <div class="modal-dialog custom-modal mt-5">
             <form id="formTambah" class="modal-content" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-header">
+                <div class="modal-header mb-3">
                     <h5 class="modal-title">Tambah Kategori Pertanyaan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body row g-3">
+                <div class="modal-body row g-3" style="max-height:600px; overflow-y:auto; overflow-x:auto;">
                     <div class="col-md-12">
                         <label class="form-label">Nama Kategori</label>
                         <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="name"
@@ -183,11 +183,11 @@
             <form id="formEdit" class="modal-content" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <div class="modal-header">
+                <div class="modal-header mb-3">
                     <h5 class="modal-title">Edit Kategori Pertanyaan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body row g-3">
+                <div class="modal-body row g-3" style="max-height:600px; overflow-y:auto; overflow-x:auto;">
                     <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="hidden"
                         id="editId" name="id">
                     <div class="col-md-12">

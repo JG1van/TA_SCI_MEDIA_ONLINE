@@ -75,12 +75,12 @@
             <form id="formConvert" class="modal-content" enctype="multipart/form-data">
                 @csrf
 
-                <div class="modal-header">
+                <div class="modal-header mb-3">
                     <h5 class="modal-title">Berikan Jawaban</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body row g-3">
+                <div class="modal-body row g-3" style="max-height:600px; overflow-y:auto; overflow-x:auto;">
 
                     <input type="hidden" id="convertId">
 

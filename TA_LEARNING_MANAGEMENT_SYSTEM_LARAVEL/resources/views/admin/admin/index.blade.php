@@ -507,7 +507,7 @@
 
         {{-- Modal Edit --}}
         <div class="modal fade p-5" id="modalEdit" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-md mt-5 custom-modal">
+            <div class="modal-dialog modal-lg mt-5 custom-modal">
                 <form id="formEdit" class="modal-content border-0 shadow-lg rounded-4" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -518,11 +518,11 @@
                     <div class="modal-body p-4">
                         <div class="row align-items-center g-4">
                             <div class="col-md-4 d-flex justify-content-center">
-                                <div class="bg-light rounded-4 shadow p-4 d-flex flex-column align-items-center justify-content-center"
+                                <div class="bg-light rounded-4 p-4 d-flex flex-column align-items-center justify-content-center"
                                     style="min-height:250px;">
                                     <div class="position-relative">
                                         <img id="editImgPreview" src="{{ asset('images/logo.webp') }}"
-                                            class="rounded-circle border shadow bg-white" width="120" height="120"
+                                            class="rounded-circle border bg-white" width="120" height="120"
                                             style="object-fit:cover;">
                                         <button type="button"
                                             class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 translate-middle"
