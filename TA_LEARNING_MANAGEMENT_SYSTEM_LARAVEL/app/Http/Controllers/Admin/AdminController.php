@@ -344,17 +344,19 @@ class AdminController extends Controller
                 ->groupBy('admin_id')
                 ->orderByDesc('total')
                 ->value('total') ?? 1;
-
-            // Hitung total pesan yang ditulis admin di kolom notes
-            $csNotes = \DB::table('cs_logs')
+            // ── 5. KONSISTENSI: jumlah bulan aktif upload materi ─────────
+            $bulanAktif = \DB::table('lesson_items')
                 ->where('admin_id', $id)
-                ->whereNotNull('notes')
-                ->pluck('notes');
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bulan")
+                ->groupBy('bulan')
+                ->count();
 
-            $totalCSLog = $csNotes->sum(function ($notes) {
-                return substr_count($notes, '] Admin:');
-            });
-
+            $maxBulanAktif = \DB::table('lesson_items')
+                ->selectRaw("admin_id, COUNT(DISTINCT DATE_FORMAT(created_at, '%Y-%m')) as total")
+                ->whereNotNull('admin_id')
+                ->groupBy('admin_id')
+                ->orderByDesc('total')
+                ->value('total') ?? 1;
             return response()->json([
                 'success' => true,
                 'stats' => [
@@ -373,7 +375,8 @@ class AdminController extends Controller
                     'max_soal' => $maxSoal,
                     'max_cs' => $maxCS,
                     'max_log' => $maxLog,
-                    'total_cs_log' => $totalCSLog,
+                    'bulan_aktif' => $bulanAktif,
+                    'max_bulan_aktif' => $maxBulanAktif,
                 ],
             ]);
 

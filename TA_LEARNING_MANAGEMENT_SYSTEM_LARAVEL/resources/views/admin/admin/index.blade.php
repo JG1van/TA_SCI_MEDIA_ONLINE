@@ -269,7 +269,7 @@
                                                 <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end"
                                                     x="-74" y="46">Aktivitas</text>
                                                 <text font-size="10" fill="#8592A3" font-family="inherit" text-anchor="end"
-                                                    x="-74" y="-42">Responsif</text>
+                                                    x="-74" y="-42">Konsistensi</text>
                                             </g>
                                         </svg>
                                         <div id="radarTooltip"
@@ -526,10 +526,10 @@
 
                 // Kinerja CS
                 const rata = s.rata_rating ?? 0;
-                document.getElementById('statTotalBintang').textContent = (s.total_bintang ?? 0) + ' bintang';
+                document.getElementById('statTotalBintang').textContent = (s.total_bintang ?? 0) + ' ⭐';
                 document.getElementById('statRataRating').textContent = parseFloat(rata).toFixed(1) + ' / 5';
-                document.getElementById('statMaxRating').textContent = 'nilai ' + (s.max_rating ?? 0);
-                document.getElementById('statMinRating').textContent = 'nilai ' + (s.min_rating ?? 0);
+                document.getElementById('statMaxRating').textContent = 'nilai ' + (s.max_rating ?? 0) + ' ⭐';
+                document.getElementById('statMinRating').textContent = 'nilai ' + (s.min_rating ?? 0) + ' ⭐';
 
                 // Bintang visual
                 const starRow = document.getElementById('statStarRow');
@@ -584,7 +584,7 @@
                 const rCS = toR(s.total_cs ?? 0, s.max_cs ?? Math.max(s.total_cs ?? 1, 1));
                 const rRating = toR(parseFloat(s.rata_rating ?? 0), 5);
                 const rAktivitas = toR(s.total_log ?? 0, s.max_log ?? Math.max(s.total_log ?? 1, 1));
-                const rResponsif = toR(s.total_cs_log ?? 0, s.max_log ?? Math.max(s.total_cs_log ?? 1, 1));
+                const rKonsistensi = toR(s.bulan_aktif ?? 0, s.max_bulan_aktif ?? 12);
 
                 function radarPoint(value, angle) {
                     const rad = (angle - 90) * (Math.PI / 180);
@@ -592,7 +592,7 @@
                 }
 
                 const angles = [0, 60, 120, 180, 240, 300];
-                const values = [rMateri, rSoal, rCS, rRating, rAktivitas, rResponsif];
+                const values = [rMateri, rSoal, rCS, rRating, rAktivitas, rKonsistensi];
                 const pts = values.map((v, i) => radarPoint(v, angles[i]));
 
                 document.getElementById('radarPolygon').setAttribute('points', pts.map(p => p.join(',')).join(' '));
@@ -623,9 +623,9 @@
                         val: () => (s.total_log ?? 0) + ' aktivitas'
                     },
                     {
-                        label: 'Responsif',
-                        desc: 'Total pesan/balasan yang dikirim admin di CS',
-                        val: () => (s.total_cs_log ?? 0) + ' pesan CS'
+                        label: 'Konsistensi',
+                        desc: 'Jumlah bulan aktif admin membuat materi pembelajaran',
+                        val: () => (s.bulan_aktif ?? 0) + ' bulan aktif'
                     },
                 ];
 
