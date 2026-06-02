@@ -251,10 +251,9 @@
             </div>
         </div>
         {{-- KELUAR --}}
-        <div class="col-md-12">
+        {{-- <div class="col-md-12">
             <div class="card shadow text-center setting-card border-danger">
                 <div class="card-body">
-                    {{-- Merah (danger) --}}
                     <i class="fas fa-sign-out-alt fs-1 mb-3 text-danger"></i>
                     <h5 class="fw-bold">Keluar</h5>
                     <p class="text-muted mb-3">Logout dari sistem</p>
@@ -267,7 +266,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 
     {{-- MODAL RIWAYAT AKTIVITAS --}}

@@ -16,7 +16,153 @@
             </button>
         </div>
     </div>
+    {{-- INFO ROLE — collapsible --}}
+    <div class="mb-3">
+        <div class="border rounded-3 overflow-hidden">
 
+            {{-- Trigger --}}
+            <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-light" style="cursor:pointer;"
+                data-bs-toggle="collapse" data-bs-target="#roleInfoPanel">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-shield-alt text-secondary" style="font-size:13px;"></i>
+                    <span class="fw-semibold small">Informasi Role & Hak Akses</span>
+                    <span class="text-muted" style="font-size:11px;">5 role tersedia</span>
+                </div>
+                <i class="fas fa-chevron-down text-muted" style="font-size:12px;transition:transform .2s;"></i>
+            </div>
+
+            {{-- Body --}}
+            <div class="collapse" id="roleInfoPanel">
+                <div class="p-3 border-top">
+                    <div class="row g-2">
+
+                        @php
+                            $roleList = [
+                                1 => [
+                                    'label' => 'Super-Admin',
+                                    'color' => 'dark',
+                                    'menus' => [
+                                        'Dashboard',
+                                        'Mata Pelajaran',
+                                        'Pelajaran',
+                                        'Produk',
+                                        'Guru',
+                                        'Serial',
+                                        'Layanan Pelanggan',
+                                        'Profil',
+                                        'Manajemen Admin',
+                                        'Manajemen Kelas',
+                                        'Manajemen Siswa',
+                                        'Tipe Soal',
+                                        'Model Soal',
+                                        'Kategori Pertanyaan',
+                                        'Informasi Server',
+                                        'N8N Automation',
+                                        'Database Manager',
+                                    ],
+                                    'topColor' => '#212529',
+                                ],
+                                2 => [
+                                    'label' => 'Admin',
+                                    'color' => 'primary',
+                                    'menus' => [
+                                        'Dashboard',
+                                        'Mata Pelajaran',
+                                        'Pelajaran',
+                                        'Produk',
+                                        'Guru',
+                                        'Serial',
+                                        'Layanan Pelanggan',
+                                        'Profil',
+                                        'Manajemen Kelas',
+                                        'Manajemen Siswa',
+                                        'Tipe Soal',
+                                        'Model Soal',
+                                        'Kategori Pertanyaan',
+                                        'Informasi Server',
+                                        'N8N Automation',
+                                        'Database Manager',
+                                    ],
+                                    'topColor' => '#0d6efd',
+                                ],
+                                3 => [
+                                    'label' => 'Operasional',
+                                    'color' => 'success',
+                                    'menus' => [
+                                        'Dashboard',
+                                        'Produk',
+                                        'Guru',
+                                        'Serial',
+                                        'Profil',
+                                        'Manajemen Kelas',
+                                        'Manajemen Siswa',
+                                        'Informasi Server',
+                                    ],
+                                    'topColor' => '#198754',
+                                ],
+                                4 => [
+                                    'label' => 'Konten-Pembelajaran',
+                                    'color' => 'warning',
+                                    'menus' => [
+                                        'Dashboard',
+                                        'Mata Pelajaran',
+                                        'Pelajaran',
+                                        'Profil',
+                                        'Tipe Soal',
+                                        'Model Soal',
+                                        'Informasi Server',
+                                    ],
+                                    'topColor' => '#f59e0b',
+                                ],
+                                5 => [
+                                    'label' => 'Layanan-Pengguna',
+                                    'color' => 'info',
+                                    'menus' => [
+                                        'Dashboard',
+                                        'Serial',
+                                        'Layanan Pelanggan',
+                                        'Profil',
+                                        'Kategori Pertanyaan',
+                                        'Informasi Server',
+                                    ],
+                                    'topColor' => '#0dcaf0',
+                                ],
+                            ];
+                        @endphp
+
+                        @foreach ($roleList as $roleNum => $r)
+                            <div class="col-md">
+                                <div class="p-2 rounded-3 h-100 bg-white border"
+                                    style="border-top: 3px solid {{ $r['topColor'] }} !important;">
+                                    <div class="d-flex align-items-center gap-1 mb-2">
+                                        <span
+                                            class="badge bg-{{ $r['color'] }} {{ in_array($r['color'], ['warning', 'info']) ? 'text-dark' : '' }}"
+                                            style="font-size:10px;">
+                                            {{ $r['label'] }}
+                                        </span>
+                                        <span class="text-muted" style="font-size:10px;">Role {{ $roleNum }}</span>
+                                    </div>
+                                    <div class="d-flex flex-column" style="gap:1px;">
+                                        @foreach ($r['menus'] as $m)
+                                            <span class="text-muted"
+                                                style="font-size:11px;padding:2px 0;border-bottom:0.5px solid #f0f0f0;">
+                                                {{ $m }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                    <div class="mt-2 text-center rounded-2 py-1 small fw-semibold"
+                                        style="font-size:10px;background:#f8f9fa;color:#555;">
+                                        {{ count($r['menus']) }} akses
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {{-- Tabel Admin --}}
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover align-middle text-center" id="adminTable">
