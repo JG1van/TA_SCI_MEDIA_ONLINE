@@ -3678,6 +3678,16 @@ footer {
         margin: 8px auto;
     }
 
+    #modalStatistik .modal-dialog {
+        width: calc(100% - 16px);
+        margin: 8px auto;
+    }
+
+    #modalStatistik .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
     #statContent>div {
         grid-template-columns: 1fr !important;
     }
