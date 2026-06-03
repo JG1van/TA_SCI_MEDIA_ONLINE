@@ -74,7 +74,7 @@
         </div>
 
         {{-- MANAJEMEN KELAS --}}
-        @php $btn = btnDisable($role, [1,2,3]); @endphp
+        @php $btn = btnDisable($role, [1,2,3,5]); @endphp
         <div class="col-md-4">
             <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
                 <div class="card-body">
@@ -89,7 +89,7 @@
 
         {{-- MANAJEMEN SISWA --}}
         {{-- fa-children diganti fa-child agar lebih kompatibel & tidak aneh --}}
-        @php $btn = btnDisable($role, [1,2,3]); @endphp
+        @php $btn = btnDisable($role, [1,2,3,5]); @endphp
         <div class="col-md-4">
             <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
                 <div class="card-body">

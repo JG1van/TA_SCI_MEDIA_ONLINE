@@ -80,7 +80,7 @@
                                         @break
 
                                         @case(5)
-                                            Layanan-Pengguna
+                                            Layanan-Pelanggan
                                         @break
 
                                         @default

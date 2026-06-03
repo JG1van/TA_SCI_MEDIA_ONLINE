@@ -71,11 +71,11 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 5,
                 'name' => 'Admin E',
-                'username' => 'Layanan-Pengguna',
+                'username' => 'Layanan-Pelanggan',
                 'password' => Hash::make('Admin1234'),
                 'role' => 5,
                 'date_in' => now()->format('Y-m-d'),
-                'position' => 'Layanan-Pengguna',
+                'position' => 'Layanan-Pelanggan',
                 'phone' => '085555555555',
                 'img' => null,
                 'login_at' => null,

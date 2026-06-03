@@ -52,7 +52,7 @@ class LoginAllController extends Controller
                 2 => 'Admin',
                 3 => 'Operasional',
                 4 => 'Konten-Pembelajaran',
-                5 => 'Layanan-Pengguna',
+                5 => 'Layanan-Pelanggan',
             ];
             $roleName = $roles[$admin->role] ?? 'Admin';
 

@@ -308,7 +308,7 @@
                                                 @break
 
                                                 @case(5)
-                                                    <span class="badge bg-info text-dark px-3 py-2">Layanan-Pengguna</span>
+                                                    <span class="badge bg-info text-dark px-3 py-2">Layanan-Pelanggan</span>
                                                 @break
 
                                                 @default
@@ -340,7 +340,7 @@
 
                                                     @case(5)
                                                         <span
-                                                            class="badge bg-info text-dark px-3 py-2 m-1">Layanan-Pengguna</span>
+                                                            class="badge bg-info text-dark px-3 py-2 m-1">Layanan-Pelanggan</span>
                                                     @break
 
                                                     @default

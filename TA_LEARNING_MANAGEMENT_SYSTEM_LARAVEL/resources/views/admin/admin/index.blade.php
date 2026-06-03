@@ -98,13 +98,18 @@
                                     'topColor' => '#198754',
                                     'menus' => [
                                         'Dashboard',
-                                        'Produk',
-                                        'Guru',
-                                        'Serial',
                                         'Profil',
+                                        'Informasi Server',
+                                        'Mata Pelajaran',
+                                        'Pelajaran',
+                                        'Daftar Isi Materi',
+                                        'Kompetensi Dasar',
+                                        'Soal',
+                                        'Guru',
+                                        'Produk',
+                                        'Serial',
                                         'Manajemen Kelas',
                                         'Manajemen Siswa',
-                                        'Informasi Server',
                                     ],
                                 ],
                                 4 => [
@@ -113,28 +118,32 @@
                                     'topColor' => '#f59e0b',
                                     'menus' => [
                                         'Dashboard',
+                                        'Profil',
+                                        'Informasi Server',
                                         'Mata Pelajaran',
                                         'Pelajaran',
                                         'Daftar Isi Materi',
                                         'Kompetensi Dasar',
                                         'Soal',
-                                        'Profil',
                                         'Tipe Soal',
                                         'Model Soal',
-                                        'Informasi Server',
                                     ],
                                 ],
                                 5 => [
-                                    'label' => 'Layanan-Pengguna',
+                                    'label' => 'Layanan-Pelanggan',
                                     'color' => 'info',
                                     'topColor' => '#0dcaf0',
                                     'menus' => [
                                         'Dashboard',
+                                        'Profil',
+                                        'Informasi Server',
                                         'Serial',
                                         'Layanan Pelanggan',
-                                        'Profil',
                                         'Kategori Pertanyaan',
-                                        'Informasi Server',
+                                        'Guru',
+                                        'Produk',
+                                        'Manajemen Kelas',
+                                        'Manajemen Siswa',
                                     ],
                                 ],
                             ];
@@ -215,7 +224,7 @@
 
                                 @case(5)
                                     <span
-                                        class="badge bg-info text-dark d-flex justify-content-center align-items-center">Layanan-Pengguna</span>
+                                        class="badge bg-info text-dark d-flex justify-content-center align-items-center">Layanan-Pelanggan</span>
                                 @break
 
                                 @default
@@ -497,7 +506,7 @@
                                 <option value="2">Admin</option>
                                 <option value="3">Operasional</option>
                                 <option value="4">Konten-Pembelajaran</option>
-                                <option value="5">Layanan-Pengguna</option>
+                                <option value="5">Layanan-Pelanggan</option>
                             </select>
                         </div>
                     </div>
@@ -584,7 +593,7 @@
                                             <option value="2">Admin</option>
                                             <option value="3">Operasional</option>
                                             <option value="4">Konten-Pembelajaran</option>
-                                            <option value="5">Layanan-Pengguna</option>
+                                            <option value="5">Layanan-Pelanggan</option>
                                         </select>
                                     </div>
                                 </div>
@@ -628,7 +637,7 @@
                 2: 'Admin',
                 3: 'Operasional',
                 4: 'Konten-Pembelajaran',
-                5: 'Layanan-Pengguna',
+                5: 'Layanan-Pelanggan',
                 0: 'Tidak Aktif'
             };
 

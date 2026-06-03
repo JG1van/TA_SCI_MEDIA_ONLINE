@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class ImportMateriController extends Controller
 {
-    public const ALLOWED_ROLES = [1, 2, 4];
+    public const ALLOWED_ROLES = [1, 2, 3, 4];
     public function index($lesson_id)
     {
         $lesson = Lesson::findOrFail($lesson_id);

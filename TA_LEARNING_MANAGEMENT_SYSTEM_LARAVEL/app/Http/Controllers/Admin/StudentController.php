@@ -13,7 +13,7 @@ use App\Models\Serial;
 use Illuminate\Support\Facades\Storage;
 class StudentController extends Controller
 {
-    public const ALLOWED_ROLES = [1, 2, 3];
+    public const ALLOWED_ROLES = [1, 2, 3, 5];
     public function __construct()
     {
         $this->middleware(['auth']);

@@ -10,7 +10,7 @@ use App\Models\Lesson;
 
 class CompetenceController extends Controller
 {
-    public const ALLOWED_ROLES = [1, 2, 4];
+    public const ALLOWED_ROLES = [1, 2, 3, 4];
     public function index($lesson_id)
     {
         $lesson = Lesson::with('mapel')->findOrFail($lesson_id);

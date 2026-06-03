@@ -11,7 +11,7 @@ use App\Models\Theme;
 
 class LessonController extends Controller
 {
-    public const ALLOWED_ROLES = [1, 2, 4];
+    public const ALLOWED_ROLES = [1, 2, 3, 4];
     public function __construct()
     {
         $this->middleware(['auth']);
