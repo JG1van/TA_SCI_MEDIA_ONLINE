@@ -181,7 +181,7 @@
                                 @if ($expired14Months > 0)
                                     <div class="alert alert-danger" role="alert">
                                         <div class="alert-left">
-                                            <i class="fas fa-triangle-exclamation"></i>
+                                            <i class="fas fa-circle-xmark"></i>
                                             <span><b>{{ $expired14Months }}</b> serial expired lebih dari 14
                                                 bulan</span>
                                         </div>
@@ -198,7 +198,7 @@
                                 @if ($warningSerialCount > 0)
                                     <div class="alert alert-warning" role="alert">
                                         <div class="alert-left">
-                                            <i class="fas fa-boxes-stacked"></i>
+                                            <i class="fas fa-triangle-exclamation"></i>
                                             <span><b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
                                                 diizinkan</span>
                                         </div>
