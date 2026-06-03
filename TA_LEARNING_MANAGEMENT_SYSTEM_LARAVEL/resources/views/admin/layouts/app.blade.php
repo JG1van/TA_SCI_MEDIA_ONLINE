@@ -182,9 +182,8 @@
                                     <div class="alert alert-danger" role="alert">
                                         <div class="alert-left">
                                             <i class="fas fa-triangle-exclamation"></i>
-                                            <span>
-                                                <b>{{ $expired14Months }}</b> serial expired lebih dari 14 bulan
-                                            </span>
+                                            <span><b>{{ $expired14Months }}</b> serial expired lebih dari 14
+                                                bulan</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <a href="{{ route('admin.serial.index') }}"
@@ -196,17 +195,15 @@
                                     </div>
                                 @endif
 
-                                @if ($warningNoEmail > 0)
+                                @if ($warningSerialCount > 0)
                                     <div class="alert alert-warning" role="alert">
                                         <div class="alert-left">
-                                            <i class="fas fa-envelope-open-text"></i>
-                                            <span>
-                                                <b>{{ $warningNoEmail }}</b> serial gagal kirim peringatan — email
-                                                kosong
-                                            </span>
+                                            <i class="fas fa-boxes-stacked"></i>
+                                            <span><b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
+                                                diizinkan</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.serial.index') }}"
+                                            <a href="{{ route('admin.kelas.index') }}"
                                                 class="btn btn-sm btn-warning">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
@@ -214,46 +211,13 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if ($warningSerialCount > 0)
-                                    <div class="alert alert-dark " role="alert">
-                                        <div class="alert-left">
-                                            <i class="fas fa-triangle-exclamation"></i>
-                                            <span>
-                                                <b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
-                                                diizinkan
-                                            </span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.kelas.index') }}"
-                                                class="btn btn-sm btn-dark">Lihat</a>
-                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endif
-                                @if ($totalUnansweredCount > 20)
-                                    <div class="alert alert-secondary" role="alert">
-                                        <div class="alert-left">
-                                            <i class="fas fa-circle-question"></i>
-                                            <span>Total pertanyaan tidak terjawab melebihi batas maksimum</span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.pertanyaan-tidak-terjawab.index') }}"
-                                                class="btn btn-sm btn-secondary text-white">Lihat</a>
-                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endif
+
                                 @if ($waitingAdmin > 0)
                                     <div class="alert alert-info" role="alert">
                                         <div class="alert-left">
                                             <i class="fas fa-user-clock"></i>
-                                            <span>
-                                                <b>{{ $waitingAdmin }}</b> layanan pelanggan belum memiliki admin
-                                            </span>
+                                            <span><b>{{ $waitingAdmin }}</b> layanan pelanggan belum memiliki
+                                                admin</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <a href="{{ route('admin.layanan-pelanggan.index') }}"
@@ -264,6 +228,40 @@
                                         </div>
                                     </div>
                                 @endif
+
+                                @if ($warningNoEmail > 0)
+                                    <div class="alert alert-secondary" role="alert">
+                                        <div class="alert-left">
+                                            <i class="fas fa-envelope-open-text"></i>
+                                            <span><b>{{ $warningNoEmail }}</b> serial gagal kirim peringatan — email
+                                                kosong</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ route('admin.serial.index') }}"
+                                                class="btn btn-sm btn-secondary text-white">Lihat</a>
+                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if ($totalUnansweredCount > 20)
+                                    <div class="alert alert-dark" role="alert">
+                                        <div class="alert-left">
+                                            <i class="fas fa-circle-question"></i>
+                                            <span>Total pertanyaan tidak terjawab melebihi batas maksimum</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ route('admin.pertanyaan-tidak-terjawab.index') }}"
+                                                class="btn btn-sm btn-dark">Lihat</a>
+                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+
                             </div>{{-- #globalAlertBox --}}
                         @endif
                         {{-- ═══ END GLOBAL ALERT BOX ═══ --}}

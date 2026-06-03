@@ -47,6 +47,9 @@
                                         'Dashboard',
                                         'Mata Pelajaran',
                                         'Pelajaran',
+                                        'Daftar Isi Materi',
+                                        'Kompetensi Dasar',
+                                        'Soal',
                                         'Produk',
                                         'Guru',
                                         'Serial',
@@ -71,6 +74,9 @@
                                         'Dashboard',
                                         'Mata Pelajaran',
                                         'Pelajaran',
+                                        'Daftar Isi Materi',
+                                        'Kompetensi Dasar',
+                                        'Soal',
                                         'Produk',
                                         'Guru',
                                         'Serial',
@@ -109,6 +115,9 @@
                                         'Dashboard',
                                         'Mata Pelajaran',
                                         'Pelajaran',
+                                        'Daftar Isi Materi',
+                                        'Kompetensi Dasar',
+                                        'Soal',
                                         'Profil',
                                         'Tipe Soal',
                                         'Model Soal',
@@ -175,7 +184,6 @@
                     <th>Nama</th>
                     <th>Username</th>
                     <th>Role / Status</th>
-                    <th style="width:130px; white-space:nowrap;">Statistik</th>
                     <th style="width:200px; white-space:nowrap;">Aksi</th>
                 </tr>
             </thead>
@@ -216,17 +224,14 @@
                             @endswitch
                         </td>
 
-                        {{-- Kolom Statistik — selalu tampil untuk semua --}}
-                        <td class="text-center align-middle">
-                            <button class="btn btn-sm btn-success"
-                                onclick="lihatStatistik('{{ $admin->id }}', '{{ $admin->name }}', '{{ $admin->position ?? $admin->username }}', {{ $admin->role }})">
-                                Statistik
-                            </button>
-                        </td>
-
-                        {{-- Kolom Aksi — hanya untuk admin lain --}}
                         <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-2">
+                                {{-- Statistik selalu tampil untuk semua --}}
+                                <button class="btn btn-sm btn-success d-none"
+                                    onclick="lihatStatistik('{{ $admin->id }}', '{{ $admin->name }}', '{{ $admin->position ?? $admin->username }}', {{ $admin->role }})">
+                                    Statistik
+                                </button>
+
                                 @if (auth()->user()->id !== $admin->id)
                                     <button class="btn btn-warning btn-sm" style="white-space:nowrap;"
                                         onclick="editAdmin('{{ $admin->id }}')">
@@ -236,21 +241,19 @@
                                         onclick="hapusAdmin('{{ $admin->id }}', '{{ $admin->name }}')">
                                         Hapus
                                     </button>
-                                @else
-                                    <span class="text-muted small fst-italic">Akun Anda</span>
                                 @endif
                             </div>
                         </td>
                     </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-muted text-center">Belum ada data admin.</td>
+                            <td colspan="5" class="text-muted text-center">Belum ada data admin.</td>
                         </tr>
                     @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="6"></th>
+                        <th colspan="5"></th>
                     </tr>
                 </tfoot>
             </table>

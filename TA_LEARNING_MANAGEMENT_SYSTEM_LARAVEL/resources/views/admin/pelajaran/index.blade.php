@@ -89,7 +89,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <button id="btnMateri" class="btn btn-primary w-100 mb-2">Materi Pelajaran</button>
+                    <button id="btnMateri" class="btn btn-primary w-100 mb-2">Daftar Isi Materi</button>
                     <button id="btnKD" class="btn btn-warning w-100 mb-2">Kompetensi Dasar</button>
                     <button id="btnSoal" class="btn  btn-danger w-100">Soal</button>
                 </div>
