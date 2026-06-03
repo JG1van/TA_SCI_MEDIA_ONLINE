@@ -216,7 +216,7 @@
                                     <div class="alert alert-info" role="alert">
                                         <div class="alert-left">
                                             <i class="fas fa-user-clock"></i>
-                                            <span><b>{{ $waitingAdmin }}</b> layanan pelanggan belum memiliki
+                                            <span><b>{{ $waitingAdmin }}</b> layanan pelanggan menunggu penanganan
                                                 admin</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
