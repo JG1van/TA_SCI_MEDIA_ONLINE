@@ -23,7 +23,7 @@
             'match' => 'admin.pelajaran.*',
             'label' => 'Pelajaran',
             'icon' => 'bi bi-journal-text',
-            'roles' => [1, 2, 3, 5],
+            'roles' => [1, 2, 3, 4],
         ],
         [
             'route' => 'admin.produk.index',
