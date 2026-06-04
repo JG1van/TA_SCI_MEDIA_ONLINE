@@ -93,7 +93,7 @@
                                     ],
                                 ],
                                 3 => [
-                                    'label' => 'Operasional',
+                                    'label' => 'Koordinator',
                                     'color' => 'success',
                                     'topColor' => '#198754',
                                     'menus' => [
@@ -214,7 +214,7 @@
 
                                 @case(3)
                                     <span
-                                        class="badge bg-success d-flex justify-content-center align-items-center">Operasional</span>
+                                        class="badge bg-success d-flex justify-content-center align-items-center">Koordinator</span>
                                 @break
 
                                 @case(4)
@@ -504,7 +504,7 @@
                                 <option value="0" selected>— Pilih Role —</option>
                                 <option value="1">Super-Admin</option>
                                 <option value="2">Admin</option>
-                                <option value="3">Operasional</option>
+                                <option value="3">Koordinator</option>
                                 <option value="4">Konten-Pembelajaran</option>
                                 <option value="5">Layanan-Pelanggan</option>
                             </select>
@@ -591,7 +591,7 @@
                                             <option value="0">Tidak Aktif</option>
                                             <option value="1">Super-Admin</option>
                                             <option value="2">Admin</option>
-                                            <option value="3">Operasional</option>
+                                            <option value="3">Koordinator</option>
                                             <option value="4">Konten-Pembelajaran</option>
                                             <option value="5">Layanan-Pelanggan</option>
                                         </select>
@@ -635,7 +635,7 @@
             const roleLabel = {
                 1: 'Super-Admin',
                 2: 'Admin',
-                3: 'Operasional',
+                3: 'Koordinator',
                 4: 'Konten-Pembelajaran',
                 5: 'Layanan-Pelanggan',
                 0: 'Tidak Aktif'

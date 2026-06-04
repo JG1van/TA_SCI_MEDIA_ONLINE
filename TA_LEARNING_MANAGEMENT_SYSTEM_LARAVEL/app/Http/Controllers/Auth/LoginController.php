@@ -37,7 +37,7 @@
 //             $roles = [
 //                 1 => 'Super-Admin',
 //                 2 => 'Admin',
-//                 3 => 'Operasional',
+//                 3 => 'Koordinator',
 //                 4 => 'Konten-Pembelajaran',
 //                 5 => 'Layanan-Pelanggan',
 //             ];

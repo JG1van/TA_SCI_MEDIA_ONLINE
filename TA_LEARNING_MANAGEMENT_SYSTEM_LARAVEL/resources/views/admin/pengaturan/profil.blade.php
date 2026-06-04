@@ -72,7 +72,7 @@
                                         @break
 
                                         @case(3)
-                                            Operasional
+                                            Koordinator
                                         @break
 
                                         @case(4)

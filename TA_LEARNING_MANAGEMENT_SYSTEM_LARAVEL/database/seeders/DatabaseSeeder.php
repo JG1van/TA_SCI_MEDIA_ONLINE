@@ -43,11 +43,11 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 3,
                 'name' => 'Admin C',
-                'username' => 'Operasional',
+                'username' => 'Koordinator',
                 'password' => Hash::make('Admin1234'),
                 'role' => 3,
                 'date_in' => now()->format('Y-m-d'),
-                'position' => 'Operasional',
+                'position' => 'Koordinator',
                 'phone' => '083333333333',
                 'img' => null,
                 'login_at' => null,

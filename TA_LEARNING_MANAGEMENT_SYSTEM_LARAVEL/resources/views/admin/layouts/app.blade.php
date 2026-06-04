@@ -299,7 +299,7 @@
                                                 @break
 
                                                 @case(3)
-                                                    <span class="badge bg-success px-3 py-2">Operasional</span>
+                                                    <span class="badge bg-success px-3 py-2">Koordinator</span>
                                                 @break
 
                                                 @case(4)
@@ -330,7 +330,7 @@
                                                     @break
 
                                                     @case(3)
-                                                        <span class="badge bg-success px-3 py-2 m-1">Operasional</span>
+                                                        <span class="badge bg-success px-3 py-2 m-1">Koordinator</span>
                                                     @break
 
                                                     @case(4)
