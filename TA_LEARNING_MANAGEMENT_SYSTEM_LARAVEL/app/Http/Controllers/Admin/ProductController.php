@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public const ALLOWED_ROLES = [1, 2, 3, 5];
+    public const ALLOWED_ROLES = [1, 2, 5];
     public function __construct()
     {
         $this->middleware(['auth']);

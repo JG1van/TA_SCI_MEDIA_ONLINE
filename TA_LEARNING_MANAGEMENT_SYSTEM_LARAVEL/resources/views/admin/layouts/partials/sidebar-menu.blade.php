@@ -30,7 +30,7 @@
             'match' => 'admin.produk.*',
             'label' => 'Produk',
             'icon' => 'bi bi-box-seam',
-            'roles' => [1, 2, 3, 5],
+            'roles' => [1, 2, 5],
         ],
         [
             'route' => 'admin.guru.index',
@@ -51,7 +51,7 @@
             'match' => 'admin.layanan-pelanggan.*',
             'label' => 'Layanan Pelanggan',
             'icon' => 'bi bi-chat-left-text',
-            'roles' => [1, 2, 5],
+            'roles' => [1, 2, 3, 5],
         ],
         [
             'route' => 'admin.pengaturan.index',

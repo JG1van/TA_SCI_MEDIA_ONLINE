@@ -15,7 +15,7 @@ use App\Models\CSFile;
 use Illuminate\Support\Facades\Validator;
 class CSAdminController extends Controller
 {
-    public const ALLOWED_ROLES = [1, 2, 5];
+    public const ALLOWED_ROLES = [1, 2, 3, 5];
     protected FirebaseService $firebase;
     public function __construct(FirebaseService $firebase)
     {
