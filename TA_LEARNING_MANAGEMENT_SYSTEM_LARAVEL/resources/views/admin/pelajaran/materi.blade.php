@@ -287,10 +287,10 @@
     </div>
 
     {{-- Modal Import --}}
-    <div class="modal fade p-5" id="importModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md mt-5 custom-modal">
-            <div class="modal-content p-3">
-                <div class="modal-header border-0">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title fw-bold">Import Materi dari Excel</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -302,13 +302,13 @@
                             <label class="form-label fw-semibold">Pilih File Excel (.xlsx)</label>
                             <input type="file" name="file" class="form-control" required>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-4">
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="bi bi-upload"></i> Upload & Import
-                            </button>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ asset('template/template_import_materi.xlsx') }}" class="btn btn-warning btn-sm">
                                 <i class="bi bi-download"></i> Download Template
                             </a>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-upload"></i> Upload & Import
+                            </button>
                         </div>
                     </form>
                 </div>
