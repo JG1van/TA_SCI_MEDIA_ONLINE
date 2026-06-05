@@ -204,15 +204,37 @@
                             </thead>
                             <tbody id="serialTableBody">
                                 @forelse ($serials as $s)
-                                    <tr>
-                                        <td>{{ $s->serial }}</td>
+                                    @php
+                                        $serialExpired =
+                                            $s->expired_at && \Carbon\Carbon::parse($s->expired_at)->isPast();
+                                    @endphp
+                                    <tr style="{{ $serialExpired ? 'opacity: 0.6;' : '' }}">
+                                        <td>
+                                            {{ $s->serial }}
+                                            @if ($serialExpired)
+                                                <br>
+                                                <small style="color:#c0392b; font-size:11px;">
+                                                    <i class="fas fa-circle-xmark me-1"></i>
+                                                    Expired
+                                                    {{ \Carbon\Carbon::parse($s->expired_at)->translatedFormat('d F Y') }}
+                                                </small>
+                                            @endif
+                                        </td>
                                         <td>{{ $s->user->name ?? 'Belum Ditentukan' }}</td>
                                         <td>{{ $s->paket ?? '-' }}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary"
-                                                onclick="pilihSerial('{{ $s->id }}', '{{ $s->serial }}', '{{ $s->user->name ?? 'Belum Ditentukan' }}')">
-                                                Pilih
-                                            </button>
+                                            @if (!$serialExpired)
+                                                <button class="btn btn-sm btn-primary"
+                                                    onclick="pilihSerial('{{ $s->id }}', '{{ $s->serial }}', '{{ $s->user->name ?? 'Belum Ditentukan' }}')">
+                                                    Pilih
+                                                </button>
+                                            @else
+                                                <button class="btn btn-sm btn-secondary" disabled
+                                                    style="opacity: 0.5; cursor: not-allowed;"
+                                                    title="Serial sudah expired">
+                                                    <i class="bi bi-lock-fill me-1"></i> Pilih
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
