@@ -336,12 +336,12 @@
             </div>
         </div>
     </div>
+
+    {{-- MODAL INFORMASI SERVER --}}
     @php
         // ───────────────────────────────────────
         // SUMBER DAYA HARDWARE
         // ───────────────────────────────────────
-
-        // Disk
         $drive = '/';
         $totalSpace = disk_total_space($drive);
         $freeSpace = disk_free_space($drive);
@@ -350,11 +350,9 @@
         $usedGB = round($totalGB - $freeGB, 2);
         $diskPercent = round(($usedGB / $totalGB) * 100);
 
-        // CPU
         $cpuLoad = sys_getloadavg();
         $cpuPercent = round(($cpuLoad[0] * 100) / (int) shell_exec('nproc'), 1);
 
-        // RAM
         $ramInfo = [];
         if (file_exists('/proc/meminfo')) {
             foreach (file('/proc/meminfo') as $line) {
@@ -369,7 +367,6 @@
             $ramTotal = $ramFree = $ramUsed = $ramPercent = 'N/A';
         }
 
-        // Uptime
         $uptime = 'N/A';
         if (file_exists('/proc/uptime')) {
             $uptimeSec = (int) explode(' ', file_get_contents('/proc/uptime'))[0];
@@ -383,29 +380,11 @@
         // STATUS LAYANAN
         // ───────────────────────────────────────
 
-        // Penjadwal Tugas (PM2)
-        try {
-            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
-            $schedulerData = json_decode($schedulerOutput, true);
-            $schedulerStatus = false;
-            if (is_array($schedulerData)) {
-                foreach ($schedulerData as $proc) {
-                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
-                        $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
-                        break;
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            $schedulerStatus = false;
-        }
-
-        // Daftar Jadwal dari Kernel.php
+        // Baca langsung dari Kernel.php
         try {
             $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
             $scheduledEvents = collect($schedule->events())->map(function ($event) {
                 $cmd = $event->command ?? '';
-                // Bersihkan path artisan dari command
                 $cmd = preg_replace("/'.+artisan'\s*/", '', $cmd);
                 $cmd = trim($cmd, "'\" ");
                 return [
@@ -416,11 +395,13 @@
                         : 'N/A',
                 ];
             });
+            // Scheduler aktif jika ada event terdaftar di Kernel
+            $schedulerStatus = $scheduledEvents->isNotEmpty();
         } catch (\Exception $e) {
             $scheduledEvents = collect();
+            $schedulerStatus = false;
         }
 
-        // Basis Data
         try {
             DB::connection()->getPdo();
             $dbStatus = true;
@@ -428,7 +409,6 @@
             $dbStatus = false;
         }
 
-        // N8N
         try {
             $socket = @fsockopen('127.0.0.1', 5679, $errno, $errstr, 2);
             if ($socket) {
@@ -441,9 +421,6 @@
             $n8nStatus = false;
         }
 
-        // ───────────────────────────────────────
-        // VERSI PERANGKAT LUNAK
-        // ───────────────────────────────────────
         $nodeVersion = trim(shell_exec('node -v 2>/dev/null') ?? 'N/A');
         $phpVersion = phpversion();
         $laravelVersion = app()->version();
@@ -462,16 +439,14 @@
 
                 <div class="modal-body">
 
-                    {{-- ═══════════════════════════════════════ --}}
-                    {{-- KELOMPOK 1 · Sumber Daya Hardware       --}}
-                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- ═══ KELOMPOK 1 · Sumber Daya Hardware ═══ --}}
                     <p class="text-uppercase fw-semibold small text-muted mb-2"
                         style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
                         Sumber Daya Hardware
                     </p>
                     <div class="row g-2 mb-3">
 
-                        {{-- 1. Kapasitas Disk --}}
+                        {{-- 1. Kapasitas Disk — Biru Baja --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#E6F1FB;border:1px solid #B5D4F4;">
@@ -481,7 +456,7 @@
                             </div>
                         </div>
 
-                        {{-- 2. Disk Terpakai --}}
+                        {{-- 2. Disk Terpakai — Merah Bata --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#FAECE7;border:1px solid #F5C4B3;">
@@ -496,7 +471,7 @@
                             </div>
                         </div>
 
-                        {{-- 3. Disk Tersedia --}}
+                        {{-- 3. Disk Tersedia — Hijau Daun --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#EAF3DE;border:1px solid #C0DD97;">
@@ -506,7 +481,7 @@
                             </div>
                         </div>
 
-                        {{-- 4. Penggunaan CPU --}}
+                        {{-- 4. Penggunaan CPU — Kuning Amber --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#FAEEDA;border:1px solid #FAC775;">
@@ -520,7 +495,7 @@
                             </div>
                         </div>
 
-                        {{-- 5. Penggunaan RAM --}}
+                        {{-- 5. Penggunaan RAM — Ungu Lavender --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#EEEDFE;border:1px solid #CECBF6;">
@@ -536,35 +511,33 @@
                             </div>
                         </div>
 
-                        {{-- 6. Lama Berjalan --}}
+                        {{-- 6. Lama Berjalan — Abu Cokelat --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#F1EFE8;border:1px solid #D3D1C7;">
-                                <i class="fas fa-clock fs-4 mb-2" style="color:#444441;"></i>
-                                <div class="small fw-semibold" style="color:#5F5E5A;">Lama Berjalan</div>
-                                <div class="fw-bold fs-5" style="color:#444441;">{{ $uptime }}</div>
+                                style="background:#F5F0E8;border:1px solid #D4C9B0;">
+                                <i class="fas fa-clock fs-4 mb-2" style="color:#6B4F1A;"></i>
+                                <div class="small fw-semibold" style="color:#8B6524;">Lama Berjalan</div>
+                                <div class="fw-bold fs-5" style="color:#6B4F1A;">{{ $uptime }}</div>
                             </div>
                         </div>
 
                     </div>
 
-                    {{-- ═══════════════════════════════════════ --}}
-                    {{-- KELOMPOK 2 · Status Layanan             --}}
-                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- ═══ KELOMPOK 2 · Status Layanan ═══ --}}
                     <p class="text-uppercase fw-semibold small text-muted mb-2"
                         style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
                         Status Layanan
                     </p>
                     <div class="row g-2 mb-3">
 
-                        {{-- 7. Penjadwal Tugas --}}
+                        {{-- 7. Penjadwal Tugas — Toska / Teal --}}
                         <div class="col-4">
                             @if ($schedulerStatus)
                                 <div class="p-3 rounded-3 text-center h-100"
-                                    style="background:#E1F5EE;border:1px solid #9FE1CB;">
-                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#085041;"></i>
-                                    <div class="small fw-semibold" style="color:#0F6E56;">Penjadwal Tugas</div>
-                                    <div class="fw-bold fs-5" style="color:#085041;">Aktif</div>
+                                    style="background:#E0F7F4;border:1px solid #80D8CF;">
+                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#00695C;"></i>
+                                    <div class="small fw-semibold" style="color:#00897B;">Penjadwal Tugas</div>
+                                    <div class="fw-bold fs-5" style="color:#00695C;">Aktif</div>
                                 </div>
                             @else
                                 <div class="p-3 rounded-3 text-center h-100"
@@ -576,14 +549,14 @@
                             @endif
                         </div>
 
-                        {{-- 8. Status Basis Data --}}
+                        {{-- 8. Basis Data — Pink Rose --}}
                         <div class="col-4">
                             @if ($dbStatus)
                                 <div class="p-3 rounded-3 text-center h-100"
-                                    style="background:#FBEAF0;border:1px solid #F4C0D1;">
-                                    <i class="fas fa-database fs-4 mb-2" style="color:#72243E;"></i>
-                                    <div class="small fw-semibold" style="color:#993556;">Basis Data</div>
-                                    <div class="fw-bold fs-5" style="color:#72243E;">Aktif</div>
+                                    style="background:#FCE4EC;border:1px solid #F48FB1;">
+                                    <i class="fas fa-database fs-4 mb-2" style="color:#880E4F;"></i>
+                                    <div class="small fw-semibold" style="color:#AD1457;">Basis Data</div>
+                                    <div class="fw-bold fs-5" style="color:#880E4F;">Aktif</div>
                                 </div>
                             @else
                                 <div class="p-3 rounded-3 text-center h-100"
@@ -595,14 +568,14 @@
                             @endif
                         </div>
 
-                        {{-- 9. Otomasi N8N --}}
+                        {{-- 9. Otomasi N8N — Biru Navy --}}
                         <div class="col-4">
                             @if ($n8nStatus)
                                 <div class="p-3 rounded-3 text-center h-100"
-                                    style="background:#E6F1FB;border:1px solid #85B7EB;">
-                                    <i class="fas fa-project-diagram fs-4 mb-2" style="color:#185FA5;"></i>
-                                    <div class="small fw-semibold" style="color:#378ADD;">Otomasi N8N</div>
-                                    <div class="fw-bold fs-5" style="color:#185FA5;">Aktif</div>
+                                    style="background:#E8EAF6;border:1px solid #9FA8DA;">
+                                    <i class="fas fa-project-diagram fs-4 mb-2" style="color:#1A237E;"></i>
+                                    <div class="small fw-semibold" style="color:#283593;">Otomasi N8N</div>
+                                    <div class="fw-bold fs-5" style="color:#1A237E;">Aktif</div>
                                 </div>
                             @else
                                 <div class="p-3 rounded-3 text-center h-100"
@@ -616,59 +589,55 @@
 
                     </div>
 
-                    {{-- ═══════════════════════════════════════ --}}
-                    {{-- KELOMPOK 3 · Versi Perangkat Lunak      --}}
-                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- ═══ KELOMPOK 3 · Versi Perangkat Lunak ═══ --}}
                     <p class="text-uppercase fw-semibold small text-muted mb-2"
                         style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
                         Versi Perangkat Lunak
                     </p>
                     <div class="row g-2 mb-3">
 
-                        {{-- 10. Node.js --}}
+                        {{-- 10. Node.js — Hijau Emerald --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#EAF3DE;border:1px solid #86efac;">
-                                <i class="fab fa-node-js fs-4 mb-2" style="color:#27500A;"></i>
-                                <div class="small fw-semibold" style="color:#3B6D11;">Node.js</div>
-                                <div class="fw-bold fs-5" style="color:#27500A;">{{ $nodeVersion }}</div>
+                                style="background:#E8F5E9;border:1px solid #A5D6A7;">
+                                <i class="fab fa-node-js fs-4 mb-2" style="color:#1B5E20;"></i>
+                                <div class="small fw-semibold" style="color:#2E7D32;">Node.js</div>
+                                <div class="fw-bold fs-5" style="color:#1B5E20;">{{ $nodeVersion }}</div>
                             </div>
                         </div>
 
-                        {{-- 11. PHP --}}
+                        {{-- 11. PHP — Indigo --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#EEEDFE;border:1px solid #AFA9EC;">
-                                <i class="fab fa-php fs-4 mb-2" style="color:#26215C;"></i>
-                                <div class="small fw-semibold" style="color:#3C3489;">PHP</div>
-                                <div class="fw-bold fs-5" style="color:#26215C;">{{ $phpVersion }}</div>
+                                style="background:#EDE7F6;border:1px solid #B39DDB;">
+                                <i class="fab fa-php fs-4 mb-2" style="color:#1A0070;"></i>
+                                <div class="small fw-semibold" style="color:#311B92;">PHP</div>
+                                <div class="fw-bold fs-5" style="color:#1A0070;">{{ $phpVersion }}</div>
                             </div>
                         </div>
 
-                        {{-- 12. Laravel --}}
+                        {{-- 12. Laravel — Oranye Merah --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#FAECE7;border:1px solid #F0997B;">
-                                <i class="fab fa-laravel fs-4 mb-2" style="color:#712B13;"></i>
-                                <div class="small fw-semibold" style="color:#993C1D;">Laravel</div>
-                                <div class="fw-bold fs-5" style="color:#712B13;">v{{ $laravelVersion }}</div>
+                                style="background:#FBE9E7;border:1px solid #FFAB91;">
+                                <i class="fab fa-laravel fs-4 mb-2" style="color:#BF360C;"></i>
+                                <div class="small fw-semibold" style="color:#D84315;">Laravel</div>
+                                <div class="fw-bold fs-5" style="color:#BF360C;">v{{ $laravelVersion }}</div>
                             </div>
                         </div>
 
                     </div>
 
-                    {{-- ═══════════════════════════════════════ --}}
-                    {{-- KELOMPOK 4 · Daftar Jadwal Tugas        --}}
-                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- ═══ KELOMPOK 4 · Daftar Jadwal Tugas dari Kernel.php ═══ --}}
                     @if ($scheduledEvents->isNotEmpty())
                         <p class="text-uppercase fw-semibold small text-muted mb-2"
                             style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
-                            Daftar Jadwal Tugas
+                            Daftar Jadwal Tugas (dari Kernel.php)
                         </p>
                         <div class="table-responsive">
                             <table class="table table-sm mb-0" style="font-size:.85rem;">
                                 <thead>
-                                    <tr style="background:#F1EFE8;">
+                                    <tr style="background:#EDE7F6;">
                                         <th class="fw-semibold text-muted ps-2">Command</th>
                                         <th class="fw-semibold text-muted">Jadwal (Cron)</th>
                                         <th class="fw-semibold text-muted">Jadwal Berikutnya</th>
@@ -677,13 +646,13 @@
                                 <tbody>
                                     @foreach ($scheduledEvents as $ev)
                                         <tr>
-                                            <td class="ps-2" style="color:#3C3489;font-weight:500;">
+                                            <td class="ps-2" style="color:#311B92;font-weight:500;">
                                                 <i class="fas fa-terminal me-1 small"></i>
                                                 {{ $ev['command'] }}
                                             </td>
                                             <td>
                                                 <code
-                                                    style="background:#EEEDFE;color:#3C3489;padding:2px 6px;border-radius:4px;font-size:.8rem;">
+                                                    style="background:#EDE7F6;color:#311B92;padding:2px 6px;border-radius:4px;font-size:.8rem;">
                                                     {{ $ev['expression'] }}
                                                 </code>
                                             </td>
@@ -699,9 +668,54 @@
                     @endif
 
                 </div>{{-- /.modal-body --}}
-
             </div>
         </div>
+    </div>
+    {{-- ═══════════════════════════════════════ --}}
+    {{-- KELOMPOK 4 · Daftar Jadwal Tugas        --}}
+    {{-- ═══════════════════════════════════════ --}}
+    @if ($scheduledEvents->isNotEmpty())
+        <p class="text-uppercase fw-semibold small text-muted mb-2"
+            style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
+            Daftar Jadwal Tugas
+        </p>
+        <div class="table-responsive">
+            <table class="table table-sm mb-0" style="font-size:.85rem;">
+                <thead>
+                    <tr style="background:#F1EFE8;">
+                        <th class="fw-semibold text-muted ps-2">Command</th>
+                        <th class="fw-semibold text-muted">Jadwal (Cron)</th>
+                        <th class="fw-semibold text-muted">Jadwal Berikutnya</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($scheduledEvents as $ev)
+                        <tr>
+                            <td class="ps-2" style="color:#3C3489;font-weight:500;">
+                                <i class="fas fa-terminal me-1 small"></i>
+                                {{ $ev['command'] }}
+                            </td>
+                            <td>
+                                <code
+                                    style="background:#EEEDFE;color:#3C3489;padding:2px 6px;border-radius:4px;font-size:.8rem;">
+                                    {{ $ev['expression'] }}
+                                </code>
+                            </td>
+                            <td style="color:#5F5E5A;">
+                                <i class="fas fa-clock me-1 small"></i>
+                                {{ $ev['nextRun'] }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+    </div>{{-- /.modal-body --}}
+
+    </div>
+    </div>
     </div>
     {{-- MODAL BACKUP DATABASE --}}
     <div class="modal fade" id="backupModal" tabindex="-1">
