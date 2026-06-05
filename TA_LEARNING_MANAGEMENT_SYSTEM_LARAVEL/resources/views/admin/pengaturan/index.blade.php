@@ -336,7 +336,6 @@
             </div>
         </div>
     </div>
-
     @php
         // ───────────────────────────────────────
         // SUMBER DAYA HARDWARE
@@ -379,14 +378,14 @@
         // STATUS LAYANAN
         // ───────────────────────────────────────
 
-        // Cek PM2 laravel-scheduler (aktif/tidak)
+        // 1. Cek PM2 laravel-scheduler → aktif/tidak
         try {
-            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
-            $schedulerData = json_decode($schedulerOutput, true);
+            $pm2Output = shell_exec('pm2 jlist 2>/dev/null');
+            $pm2Data = json_decode($pm2Output, true);
             $schedulerStatus = false;
-            if (is_array($schedulerData)) {
-                foreach ($schedulerData as $proc) {
-                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
+            if (is_array($pm2Data)) {
+                foreach ($pm2Data as $proc) {
+                    if (($proc['name'] ?? '') === 'laravel-scheduler') {
                         $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
                         break;
                     }
@@ -396,74 +395,58 @@
             $schedulerStatus = false;
         }
 
-        // Baca jadwal dari Kernel.php
-        // Baca jadwal langsung parse dari file Kernel.php
+        // 2. Baca jadwal dari file Kernel.php (parse regex)
         try {
-            $kernelPath = app_path('Console/Kernel.php');
-            $kernelContent = file_get_contents($kernelPath);
-
-            // Ambil semua ->command('...') dan ->dailyAt / ->cron / ->everyMinute dll
+            $kernelContent = file_get_contents(app_path('Console/Kernel.php'));
             preg_match_all(
-                '/->command\([\'"]([^\'"]+)[\'"]\).*?->(daily(?:At\([\'"]([^\'"]*)[\'"])?|cron\([\'"]([^\'"]*)[\'"]|everyMinute|hourly|weekly|monthly)[^;]*/s',
+                '/->command\([\'"]([^\'"]+)[\'"]\)\s*->(dailyAt\([\'"]([^\'"]+)[\'"]\)|cron\([\'"]([^\'"]+)[\'"]\)|everyMinute\(\)|hourly\(\)|daily\(\)|weekly\(\)|monthly\(\))/s',
                 $kernelContent,
                 $matches,
             );
 
             $scheduledEvents = collect();
-            if (!empty($matches[1])) {
-                foreach ($matches[1] as $i => $cmd) {
-                    $freq = $matches[2][$i] ?? '';
-                    $timeAt = $matches[3][$i] ?? '';
-                    $cronExpr = $matches[4][$i] ?? '';
+            foreach ($matches[1] as $i => $cmd) {
+                $method = $matches[2][$i];
+                $timeAt = $matches[3][$i] ?? '';
+                $cronExpr = $matches[4][$i] ?? '';
 
-                    if (str_starts_with($freq, 'dailyAt') && $timeAt) {
-                        $expression = '0 ' . explode(':', $timeAt)[1] . ' ' . explode(':', $timeAt)[0] . ' * * *';
-                        $label = 'Setiap hari ' . $timeAt . ' WIB';
-                    } elseif ($cronExpr) {
-                        $expression = $cronExpr;
-                        $label = $cronExpr;
-                    } elseif (str_starts_with($freq, 'everyMinute')) {
-                        $expression = '* * * * *';
-                        $label = 'Setiap menit';
-                    } elseif (str_starts_with($freq, 'hourly')) {
-                        $expression = '0 * * * *';
-                        $label = 'Setiap jam';
-                    } elseif (str_starts_with($freq, 'daily')) {
-                        $expression = '0 0 * * *';
-                        $label = 'Setiap hari 00:00';
-                    } else {
-                        $expression = '-';
-                        $label = $freq;
-                    }
-
-                    $scheduledEvents->push([
-                        'command' => $cmd,
-                        'expression' => $expression,
-                        'label' => $label,
-                    ]);
+                if (str_starts_with($method, 'dailyAt') && $timeAt) {
+                    $label = 'Setiap hari ' . $timeAt . ' WIB';
+                    $expression = 'dailyAt(' . $timeAt . ')';
+                } elseif (str_starts_with($method, 'cron') && $cronExpr) {
+                    $label = $cronExpr;
+                    $expression = $cronExpr;
+                } elseif (str_starts_with($method, 'everyMinute')) {
+                    $label = 'Setiap menit';
+                    $expression = '* * * * *';
+                } elseif (str_starts_with($method, 'hourly')) {
+                    $label = 'Setiap jam';
+                    $expression = '0 * * * *';
+                } elseif (str_starts_with($method, 'daily')) {
+                    $label = 'Setiap hari 00:00 WIB';
+                    $expression = '0 0 * * *';
+                } elseif (str_starts_with($method, 'weekly')) {
+                    $label = 'Setiap minggu';
+                    $expression = '0 0 * * 0';
+                } elseif (str_starts_with($method, 'monthly')) {
+                    $label = 'Setiap bulan';
+                    $expression = '0 0 1 * *';
+                } else {
+                    $label = $method;
+                    $expression = '-';
                 }
+
+                $scheduledEvents->push([
+                    'command' => $cmd,
+                    'expression' => $expression,
+                    'label' => $label,
+                ]);
             }
         } catch (\Exception $e) {
             $scheduledEvents = collect();
         }
 
-        // Cek PM2 laravel-scheduler
-        try {
-            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
-            $schedulerData = json_decode($schedulerOutput, true);
-            $schedulerStatus = false;
-            if (is_array($schedulerData)) {
-                foreach ($schedulerData as $proc) {
-                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
-                        $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
-                        break;
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            $schedulerStatus = false;
-        }
-
+        // 3. Database
         try {
             DB::connection()->getPdo();
             $dbStatus = true;
@@ -471,6 +454,7 @@
             $dbStatus = false;
         }
 
+        // 4. N8N
         try {
             $socket = @fsockopen('127.0.0.1', 5679, $errno, $errstr, 2);
             if ($socket) {
@@ -483,6 +467,7 @@
             $n8nStatus = false;
         }
 
+        // 5. Versi software
         $nodeVersion = trim(shell_exec('node -v 2>/dev/null') ?? 'N/A');
         $phpVersion = phpversion();
         $laravelVersion = app()->version();
@@ -573,7 +558,7 @@
                             </div>
                         </div>
 
-                        {{-- 6. Lama Berjalan — Abu Cokelat --}}
+                        {{-- 6. Lama Berjalan — Cokelat --}}
                         <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
                                 style="background:#F5F0E8;border:1px solid #D4C9B0;">
@@ -592,15 +577,13 @@
                     </p>
                     <div class="row g-2 mb-3">
 
-                        {{-- 7. Penjadwal Tugas — Toska/Teal (aktif) | Merah (tidak aktif) --}}
-                        {{-- 7. Penjadwal Tugas --}}
+                        {{-- 7. Penjadwal Tugas — Teal --}}
                         <div class="col-4">
                             @if ($schedulerStatus)
                                 <div class="p-3 rounded-3 text-center h-100"
                                     style="background:#E0F7F4;border:1px solid #80D8CF;">
                                     <i class="fas fa-calendar-check fs-4 mb-2" style="color:#00695C;"></i>
                                     <div class="small fw-semibold mb-1" style="color:#00897B;">Penjadwal Tugas</div>
-
                                     @if ($scheduledEvents->isNotEmpty())
                                         @foreach ($scheduledEvents as $ev)
                                             <div class="fw-bold" style="color:#00695C;font-size:.82rem;">
@@ -718,8 +701,7 @@
                                 <thead>
                                     <tr style="background:#E0F7F4;">
                                         <th class="fw-semibold text-muted ps-2">Command</th>
-                                        <th class="fw-semibold text-muted">Jadwal (Cron)</th>
-                                        <th class="fw-semibold text-muted">Jadwal Berikutnya</th>
+                                        <th class="fw-semibold text-muted">Jadwal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -732,12 +714,8 @@
                                             <td>
                                                 <code
                                                     style="background:#B2DFDB;color:#00695C;padding:2px 6px;border-radius:4px;font-size:.8rem;">
-                                                    {{ $ev['expression'] }}
+                                                    {{ $ev['label'] }}
                                                 </code>
-                                            </td>
-                                            <td style="color:#5F5E5A;">
-                                                <i class="fas fa-clock me-1 small"></i>
-                                                {{ $ev['nextRun'] }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -749,52 +727,6 @@
                 </div>{{-- /.modal-body --}}
             </div>
         </div>
-    </div>
-    {{-- ═══════════════════════════════════════ --}}
-    {{-- KELOMPOK 4 · Daftar Jadwal Tugas        --}}
-    {{-- ═══════════════════════════════════════ --}}
-    @if ($scheduledEvents->isNotEmpty())
-        <p class="text-uppercase fw-semibold small text-muted mb-2"
-            style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
-            Daftar Jadwal Tugas
-        </p>
-        <div class="table-responsive">
-            <table class="table table-sm mb-0" style="font-size:.85rem;">
-                <thead>
-                    <tr style="background:#F1EFE8;">
-                        <th class="fw-semibold text-muted ps-2">Command</th>
-                        <th class="fw-semibold text-muted">Jadwal (Cron)</th>
-                        <th class="fw-semibold text-muted">Jadwal Berikutnya</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($scheduledEvents as $ev)
-                        <tr>
-                            <td class="ps-2" style="color:#3C3489;font-weight:500;">
-                                <i class="fas fa-terminal me-1 small"></i>
-                                {{ $ev['command'] }}
-                            </td>
-                            <td>
-                                <code
-                                    style="background:#EEEDFE;color:#3C3489;padding:2px 6px;border-radius:4px;font-size:.8rem;">
-                                    {{ $ev['expression'] }}
-                                </code>
-                            </td>
-                            <td style="color:#5F5E5A;">
-                                <i class="fas fa-clock me-1 small"></i>
-                                {{ $ev['nextRun'] }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endif
-
-    </div>{{-- /.modal-body --}}
-
-    </div>
-    </div>
     </div>
     {{-- MODAL BACKUP DATABASE --}}
     <div class="modal fade" id="backupModal" tabindex="-1">
