@@ -336,8 +336,12 @@
             </div>
         </div>
     </div>
-    {{-- MODAL SISA MEMORI --}}
     @php
+        // ───────────────────────────────────────
+        // SUMBER DAYA HARDWARE
+        // ───────────────────────────────────────
+
+        // Disk
         $drive = '/';
         $totalSpace = disk_total_space($drive);
         $freeSpace = disk_free_space($drive);
@@ -346,11 +350,11 @@
         $usedGB = round($totalGB - $freeGB, 2);
         $diskPercent = round(($usedGB / $totalGB) * 100);
 
-        // Penggunaan CPU
+        // CPU
         $cpuLoad = sys_getloadavg();
         $cpuPercent = round(($cpuLoad[0] * 100) / (int) shell_exec('nproc'), 1);
 
-        // Penggunaan RAM
+        // RAM
         $ramInfo = [];
         if (file_exists('/proc/meminfo')) {
             foreach (file('/proc/meminfo') as $line) {
@@ -365,7 +369,7 @@
             $ramTotal = $ramFree = $ramUsed = $ramPercent = 'N/A';
         }
 
-        // Lama Berjalan
+        // Uptime
         $uptime = 'N/A';
         if (file_exists('/proc/uptime')) {
             $uptimeSec = (int) explode(' ', file_get_contents('/proc/uptime'))[0];
@@ -375,10 +379,11 @@
             $uptime = "{$days} hari {$hours} jam {$minutes} menit";
         }
 
-        // Versi Node.js
-        $nodeVersion = trim(shell_exec('node -v 2>/dev/null') ?? 'N/A');
+        // ───────────────────────────────────────
+        // STATUS LAYANAN
+        // ───────────────────────────────────────
 
-        // Status Penjadwal Laravel
+        // Penjadwal Tugas (PM2)
         try {
             $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
             $schedulerData = json_decode($schedulerOutput, true);
@@ -395,7 +400,27 @@
             $schedulerStatus = false;
         }
 
-        // Status Basis Data
+        // Daftar Jadwal dari Kernel.php
+        try {
+            $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
+            $scheduledEvents = collect($schedule->events())->map(function ($event) {
+                $cmd = $event->command ?? '';
+                // Bersihkan path artisan dari command
+                $cmd = preg_replace("/'.+artisan'\s*/", '', $cmd);
+                $cmd = trim($cmd, "'\" ");
+                return [
+                    'command' => $cmd ?: $event->description ?? 'Unknown',
+                    'expression' => $event->expression,
+                    'nextRun' => method_exists($event, 'nextRunDate')
+                        ? $event->nextRunDate()->format('d M Y H:i')
+                        : 'N/A',
+                ];
+            });
+        } catch (\Exception $e) {
+            $scheduledEvents = collect();
+        }
+
+        // Basis Data
         try {
             DB::connection()->getPdo();
             $dbStatus = true;
@@ -403,7 +428,7 @@
             $dbStatus = false;
         }
 
-        // Status Otomasi N8N
+        // N8N
         try {
             $socket = @fsockopen('127.0.0.1', 5679, $errno, $errstr, 2);
             if ($socket) {
@@ -416,7 +441,10 @@
             $n8nStatus = false;
         }
 
-        // Versi PHP & Laravel
+        // ───────────────────────────────────────
+        // VERSI PERANGKAT LUNAK
+        // ───────────────────────────────────────
+        $nodeVersion = trim(shell_exec('node -v 2>/dev/null') ?? 'N/A');
         $phpVersion = phpversion();
         $laravelVersion = app()->version();
     @endphp
@@ -426,167 +454,255 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-server me-2"></i>Informasi Server</h5>
+                    <h5 class="modal-title">
+                        <i class="fas fa-server me-2"></i>Informasi Server
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-                    <div class="row g-3">
 
-                        {{-- BARIS 1: Hardware Server --}}
+                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- KELOMPOK 1 · Sumber Daya Hardware       --}}
+                    {{-- ═══════════════════════════════════════ --}}
+                    <p class="text-uppercase fw-semibold small text-muted mb-2"
+                        style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
+                        Sumber Daya Hardware
+                    </p>
+                    <div class="row g-2 mb-3">
 
                         {{-- 1. Kapasitas Disk --}}
-                        <div class="col-6 col-md-3">
+                        <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f0f4ff;border:1px solid #d0d9ff;">
-                                <i class="fas fa-hdd fs-4 mb-2 text-primary"></i>
-                                <div class="small text-muted fw-semibold">Kapasitas Disk</div>
-                                <div class="fw-bold fs-5 text-primary">{{ $totalGB }} GB</div>
+                                style="background:#E6F1FB;border:1px solid #B5D4F4;">
+                                <i class="fas fa-hdd fs-4 mb-2" style="color:#0C447C;"></i>
+                                <div class="small fw-semibold" style="color:#185FA5;">Kapasitas Disk</div>
+                                <div class="fw-bold fs-5" style="color:#0C447C;">{{ $totalGB }} GB</div>
                             </div>
                         </div>
 
                         {{-- 2. Disk Terpakai --}}
-                        <div class="col-6 col-md-3">
+                        <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#fff4f4;border:1px solid #ffd0d0;">
-                                <i class="fas fa-database fs-4 mb-2 text-danger"></i>
-                                <div class="small text-muted fw-semibold">Disk Terpakai</div>
-                                <div class="fw-bold fs-5 text-danger">{{ $usedGB }} GB</div>
-                                <div class="progress mt-2" style="height:5px;">
-                                    <div class="progress-bar bg-danger" style="width:{{ $diskPercent }}%"></div>
+                                style="background:#FAECE7;border:1px solid #F5C4B3;">
+                                <i class="fas fa-database fs-4 mb-2" style="color:#993C1D;"></i>
+                                <div class="small fw-semibold" style="color:#D85A30;">Disk Terpakai</div>
+                                <div class="fw-bold fs-5" style="color:#993C1D;">{{ $usedGB }} GB</div>
+                                <div class="progress mt-2" style="height:4px;background:#F5C4B3;">
+                                    <div class="progress-bar" style="width:{{ $diskPercent }}%;background:#D85A30;">
+                                    </div>
                                 </div>
-                                <div class="small text-muted mt-1">{{ $diskPercent }}%</div>
+                                <div class="small mt-1" style="color:#993C1D;">{{ $diskPercent }}%</div>
                             </div>
                         </div>
 
                         {{-- 3. Disk Tersedia --}}
-                        <div class="col-6 col-md-3">
+                        <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f0fff8;border:1px solid #b6f0d8;">
-                                <i class="fas fa-hdd fs-4 mb-2 text-success"></i>
-                                <div class="small text-muted fw-semibold">Disk Tersedia</div>
-                                <div class="fw-bold fs-5 text-success">{{ $freeGB }} GB</div>
+                                style="background:#EAF3DE;border:1px solid #C0DD97;">
+                                <i class="fas fa-hdd fs-4 mb-2" style="color:#3B6D11;"></i>
+                                <div class="small fw-semibold" style="color:#639922;">Disk Tersedia</div>
+                                <div class="fw-bold fs-5" style="color:#3B6D11;">{{ $freeGB }} GB</div>
                             </div>
                         </div>
 
                         {{-- 4. Penggunaan CPU --}}
-                        <div class="col-6 col-md-3">
+                        <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#fffbf0;border:1px solid #ffe5a0;">
-                                <i class="fas fa-microchip fs-4 mb-2 text-warning"></i>
-                                <div class="small text-muted fw-semibold">Penggunaan CPU</div>
-                                <div class="fw-bold fs-5 text-warning">{{ $cpuPercent }}%</div>
-                                <div class="progress mt-2" style="height:5px;">
-                                    <div class="progress-bar bg-warning" style="width:{{ $cpuPercent }}%"></div>
+                                style="background:#FAEEDA;border:1px solid #FAC775;">
+                                <i class="fas fa-microchip fs-4 mb-2" style="color:#854F0B;"></i>
+                                <div class="small fw-semibold" style="color:#BA7517;">Penggunaan CPU</div>
+                                <div class="fw-bold fs-5" style="color:#854F0B;">{{ $cpuPercent }}%</div>
+                                <div class="progress mt-2" style="height:4px;background:#FAC775;">
+                                    <div class="progress-bar" style="width:{{ $cpuPercent }}%;background:#BA7517;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- BARIS 2: Kondisi Server --}}
-
                         {{-- 5. Penggunaan RAM --}}
-                        <div class="col-6 col-md-3">
+                        <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f8f0ff;border:1px solid #e0b6f0;">
-                                <i class="fas fa-memory fs-4 mb-2" style="color:#6f42c1;"></i>
-                                <div class="small text-muted fw-semibold">Penggunaan RAM</div>
-                                <div class="fw-bold fs-5" style="color:#6f42c1;">{{ $ramUsed }} /
+                                style="background:#EEEDFE;border:1px solid #CECBF6;">
+                                <i class="fas fa-memory fs-4 mb-2" style="color:#3C3489;"></i>
+                                <div class="small fw-semibold" style="color:#534AB7;">Penggunaan RAM</div>
+                                <div class="fw-bold fs-5" style="color:#3C3489;">{{ $ramUsed }} /
                                     {{ $ramTotal }} GB</div>
-                                <div class="progress mt-2" style="height:5px;">
-                                    <div class="progress-bar" style="width:{{ $ramPercent }}%;background:#6f42c1;">
+                                <div class="progress mt-2" style="height:4px;background:#CECBF6;">
+                                    <div class="progress-bar" style="width:{{ $ramPercent }}%;background:#7F77DD;">
                                     </div>
                                 </div>
-                                <div class="small text-muted mt-1">{{ $ramPercent }}%</div>
+                                <div class="small mt-1" style="color:#3C3489;">{{ $ramPercent }}%</div>
                             </div>
                         </div>
 
                         {{-- 6. Lama Berjalan --}}
-                        <div class="col-6 col-md-3">
+                        <div class="col-4">
                             <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f0faff;border:1px solid #b0e0ff;">
-                                <i class="fas fa-clock fs-4 mb-2 text-info"></i>
-                                <div class="small text-muted fw-semibold">Lama Berjalan</div>
-                                <div class="fw-bold fs-5 text-info">{{ $uptime }}</div>
-                            </div>
-                        </div>
-
-                        {{-- 7. Versi Node.js --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f0fdf4;border:1px solid #86efac;">
-                                <i class="fab fa-node-js fs-4 mb-2 text-success"></i>
-                                <div class="small text-muted fw-semibold">Versi Node.js</div>
-                                <div class="fw-bold fs-5 text-success">{{ $nodeVersion }}</div>
-                            </div>
-                        </div>
-
-                        {{-- 8. Penjadwal Tugas --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:{{ $schedulerStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $schedulerStatus ? '#b6f0d8' : '#ffd0d0' }};">
-                                <i
-                                    class="fas fa-calendar-check fs-4 mb-2 {{ $schedulerStatus ? 'text-success' : 'text-danger' }}"></i>
-                                <div class="small text-muted fw-semibold">Penjadwal Tugas</div>
-                                <div class="fw-bold fs-5 {{ $schedulerStatus ? 'text-success' : 'text-danger' }}">
-                                    {{ $schedulerStatus ? 'Aktif' : 'Tidak Aktif' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- BARIS 3: Status Layanan & Versi --}}
-
-                        {{-- 9. Status Basis Data --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:{{ $dbStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $dbStatus ? '#b6f0d8' : '#ffd0d0' }};">
-                                <i class="fas fa-database fs-4 mb-2 {{ $dbStatus ? 'text-success' : 'text-danger' }}"></i>
-                                <div class="small text-muted fw-semibold">Status Basis Data</div>
-                                <div class="fw-bold fs-5 {{ $dbStatus ? 'text-success' : 'text-danger' }}">
-                                    {{ $dbStatus ? 'Aktif' : 'Tidak Aktif' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- 10. Otomasi N8N --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:{{ $n8nStatus ? '#f0fff8' : '#fff4f4' }};border:1px solid {{ $n8nStatus ? '#b6f0d8' : '#ffd0d0' }};">
-                                <i
-                                    class="fas fa-project-diagram fs-4 mb-2 {{ $n8nStatus ? 'text-success' : 'text-danger' }}"></i>
-                                <div class="small text-muted fw-semibold">Otomasi N8N</div>
-                                <div class="fw-bold fs-5 {{ $n8nStatus ? 'text-success' : 'text-danger' }}">
-                                    {{ $n8nStatus ? 'Aktif' : 'Tidak Aktif' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- 11. Versi PHP --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#f5f0ff;border:1px solid #c8b6f0;">
-                                <i class="fab fa-php fs-4 mb-2" style="color:#4f46e5;"></i>
-                                <div class="small text-muted fw-semibold">Versi PHP</div>
-                                <div class="fw-bold fs-5" style="color:#4f46e5;">{{ $phpVersion }}</div>
-                            </div>
-                        </div>
-
-                        {{-- 12. Versi Laravel --}}
-                        <div class="col-6 col-md-3">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#fff5f0;border:1px solid #ffc8b0;">
-                                <i class="fab fa-laravel fs-4 mb-2 text-danger"></i>
-                                <div class="small text-muted fw-semibold">Versi Laravel</div>
-                                <div class="fw-bold fs-5 text-danger">v{{ $laravelVersion }}</div>
+                                style="background:#F1EFE8;border:1px solid #D3D1C7;">
+                                <i class="fas fa-clock fs-4 mb-2" style="color:#444441;"></i>
+                                <div class="small fw-semibold" style="color:#5F5E5A;">Lama Berjalan</div>
+                                <div class="fw-bold fs-5" style="color:#444441;">{{ $uptime }}</div>
                             </div>
                         </div>
 
                     </div>
-                </div>
+
+                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- KELOMPOK 2 · Status Layanan             --}}
+                    {{-- ═══════════════════════════════════════ --}}
+                    <p class="text-uppercase fw-semibold small text-muted mb-2"
+                        style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
+                        Status Layanan
+                    </p>
+                    <div class="row g-2 mb-3">
+
+                        {{-- 7. Penjadwal Tugas --}}
+                        <div class="col-4">
+                            @if ($schedulerStatus)
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#E1F5EE;border:1px solid #9FE1CB;">
+                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#085041;"></i>
+                                    <div class="small fw-semibold" style="color:#0F6E56;">Penjadwal Tugas</div>
+                                    <div class="fw-bold fs-5" style="color:#085041;">Aktif</div>
+                                </div>
+                            @else
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#FCEBEB;border:1px solid #F7C1C1;">
+                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#A32D2D;"></i>
+                                    <div class="small fw-semibold" style="color:#E24B4A;">Penjadwal Tugas</div>
+                                    <div class="fw-bold fs-5" style="color:#A32D2D;">Tidak Aktif</div>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- 8. Status Basis Data --}}
+                        <div class="col-4">
+                            @if ($dbStatus)
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#FBEAF0;border:1px solid #F4C0D1;">
+                                    <i class="fas fa-database fs-4 mb-2" style="color:#72243E;"></i>
+                                    <div class="small fw-semibold" style="color:#993556;">Basis Data</div>
+                                    <div class="fw-bold fs-5" style="color:#72243E;">Aktif</div>
+                                </div>
+                            @else
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#FCEBEB;border:1px solid #F7C1C1;">
+                                    <i class="fas fa-database fs-4 mb-2" style="color:#A32D2D;"></i>
+                                    <div class="small fw-semibold" style="color:#E24B4A;">Basis Data</div>
+                                    <div class="fw-bold fs-5" style="color:#A32D2D;">Tidak Aktif</div>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- 9. Otomasi N8N --}}
+                        <div class="col-4">
+                            @if ($n8nStatus)
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#E6F1FB;border:1px solid #85B7EB;">
+                                    <i class="fas fa-project-diagram fs-4 mb-2" style="color:#185FA5;"></i>
+                                    <div class="small fw-semibold" style="color:#378ADD;">Otomasi N8N</div>
+                                    <div class="fw-bold fs-5" style="color:#185FA5;">Aktif</div>
+                                </div>
+                            @else
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#FCEBEB;border:1px solid #F7C1C1;">
+                                    <i class="fas fa-project-diagram fs-4 mb-2" style="color:#A32D2D;"></i>
+                                    <div class="small fw-semibold" style="color:#E24B4A;">Otomasi N8N</div>
+                                    <div class="fw-bold fs-5" style="color:#A32D2D;">Tidak Aktif</div>
+                                </div>
+                            @endif
+                        </div>
+
+                    </div>
+
+                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- KELOMPOK 3 · Versi Perangkat Lunak      --}}
+                    {{-- ═══════════════════════════════════════ --}}
+                    <p class="text-uppercase fw-semibold small text-muted mb-2"
+                        style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
+                        Versi Perangkat Lunak
+                    </p>
+                    <div class="row g-2 mb-3">
+
+                        {{-- 10. Node.js --}}
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#EAF3DE;border:1px solid #86efac;">
+                                <i class="fab fa-node-js fs-4 mb-2" style="color:#27500A;"></i>
+                                <div class="small fw-semibold" style="color:#3B6D11;">Node.js</div>
+                                <div class="fw-bold fs-5" style="color:#27500A;">{{ $nodeVersion }}</div>
+                            </div>
+                        </div>
+
+                        {{-- 11. PHP --}}
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#EEEDFE;border:1px solid #AFA9EC;">
+                                <i class="fab fa-php fs-4 mb-2" style="color:#26215C;"></i>
+                                <div class="small fw-semibold" style="color:#3C3489;">PHP</div>
+                                <div class="fw-bold fs-5" style="color:#26215C;">{{ $phpVersion }}</div>
+                            </div>
+                        </div>
+
+                        {{-- 12. Laravel --}}
+                        <div class="col-4">
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#FAECE7;border:1px solid #F0997B;">
+                                <i class="fab fa-laravel fs-4 mb-2" style="color:#712B13;"></i>
+                                <div class="small fw-semibold" style="color:#993C1D;">Laravel</div>
+                                <div class="fw-bold fs-5" style="color:#712B13;">v{{ $laravelVersion }}</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{-- ═══════════════════════════════════════ --}}
+                    {{-- KELOMPOK 4 · Daftar Jadwal Tugas        --}}
+                    {{-- ═══════════════════════════════════════ --}}
+                    @if ($scheduledEvents->isNotEmpty())
+                        <p class="text-uppercase fw-semibold small text-muted mb-2"
+                            style="letter-spacing:.6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
+                            Daftar Jadwal Tugas
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0" style="font-size:.85rem;">
+                                <thead>
+                                    <tr style="background:#F1EFE8;">
+                                        <th class="fw-semibold text-muted ps-2">Command</th>
+                                        <th class="fw-semibold text-muted">Jadwal (Cron)</th>
+                                        <th class="fw-semibold text-muted">Jadwal Berikutnya</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($scheduledEvents as $ev)
+                                        <tr>
+                                            <td class="ps-2" style="color:#3C3489;font-weight:500;">
+                                                <i class="fas fa-terminal me-1 small"></i>
+                                                {{ $ev['command'] }}
+                                            </td>
+                                            <td>
+                                                <code
+                                                    style="background:#EEEDFE;color:#3C3489;padding:2px 6px;border-radius:4px;font-size:.8rem;">
+                                                    {{ $ev['expression'] }}
+                                                </code>
+                                            </td>
+                                            <td style="color:#5F5E5A;">
+                                                <i class="fas fa-clock me-1 small"></i>
+                                                {{ $ev['nextRun'] }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+
+                </div>{{-- /.modal-body --}}
 
             </div>
         </div>
     </div>
-
     {{-- MODAL BACKUP DATABASE --}}
     <div class="modal fade" id="backupModal" tabindex="-1">
         <div class="modal-dialog custom-modal modal-md">
