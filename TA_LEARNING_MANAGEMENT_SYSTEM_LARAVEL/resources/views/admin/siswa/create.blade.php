@@ -12,8 +12,25 @@
             <a href="{{ route('admin.kelas.index') }}" class="btn btn-primary btn-sm mt-2">Kembali ke Data Kelas</a>
         </div>
     @else
-        <div class="col-lg-12 col-md-12 bg-white p-3 shadow mb-3 rounded">
-            <h5 class="fw-bold mb-3">Informasi Kelas</h5>
+        @php
+            $isExpired =
+                $classroom->serial->expired_at && \Carbon\Carbon::parse($classroom->serial->expired_at)->isPast();
+        @endphp
+
+        <div class="col-lg-12 col-md-12 bg-white p-3 shadow mb-3 rounded"
+            style="{{ $isExpired ? 'border: 1.5px solid #c0392b;' : '' }}">
+
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold mb-0">Informasi Kelas</h5>
+                @if ($isExpired)
+                    <span
+                        style="background:#fdecea; color:#c0392b; border:1px solid #c0392b;
+                         font-size:12px; font-weight:600; padding:4px 12px; border-radius:20px;">
+                        <i class="fas fa-circle-xmark me-1"></i> Serial Expired
+                    </span>
+                @endif
+            </div>
+
             <div class="row g-3">
                 <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="hidden"
                     id="classroom_id" value="{{ $classroom->id }}">
@@ -31,7 +48,16 @@
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Kode Serial</label>
                     <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
-                        class="form-control" value="{{ $classroom->serial->serial }}" readonly>
+                        class="form-control fw-bold"
+                        style="{{ $isExpired ? 'background:#fdecea; border-color:#c0392b; color:#c0392b;' : '' }}"
+                        value="{{ $classroom->serial->serial }}" readonly>
+                    @if ($isExpired)
+                        <small style="color:#c0392b;" class="mt-1 d-block">
+                            <i class="fas fa-circle-xmark me-1"></i>
+                            Expired sejak
+                            {{ \Carbon\Carbon::parse($classroom->serial->expired_at)->translatedFormat('d F Y') }}
+                        </small>
+                    @endif
                 </div>
 
                 <div class="col-md-4">
@@ -49,7 +75,15 @@
                     type="text" class="form-control" placeholder="Cari Nama Siswa...">
             </div>
             <div class="col-md-4 text-end">
-                <button class="btn btn-primary w-100" id="btnTambah" data-bs-toggle="modal" data-bs-target="#modalTambah">
+                <button class="btn btn-primary w-100" id="btnTambah"
+                    @if (!$isExpired) data-bs-toggle="modal" data-bs-target="#modalTambah"
+        @else
+            disabled
+            style="opacity: 0.5; cursor: not-allowed;"
+            title="Serial sudah expired, tidak dapat menambah siswa" @endif>
+                    @if ($isExpired)
+                        <i class="bi bi-lock-fill me-1"></i>
+                    @endif
                     <i class="fas fa-plus me-2"></i>Tambah Siswa
                 </button>
             </div>
@@ -74,12 +108,28 @@
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
                                     <button class="btn btn-warning btn-sm"
-                                        onclick="editStudent('{{ $student->id }}')">Detail /
-                                        Edit</button>
+                                        @if (!$isExpired) onclick="editStudent('{{ $student->id }}')"
+            @else
+                disabled
+                style="opacity: 0.5; cursor: not-allowed;"
+                title="Serial sudah expired" @endif>
+                                        @if ($isExpired)
+                                            <i class="bi bi-lock-fill me-1"></i>
+                                        @endif
+                                        Detail / Edit
+                                    </button>
                                     <button class="btn btn-danger btn-sm"
-                                        onclick="hapusStudent('{{ $student->id }}', '{{ $student->name }}')">Hapus</button>
+                                        @if (!$isExpired) onclick="hapusStudent('{{ $student->id }}', '{{ $student->name }}')"
+            @else
+                disabled
+                style="opacity: 0.5; cursor: not-allowed;"
+                title="Serial sudah expired" @endif>
+                                        @if ($isExpired)
+                                            <i class="bi bi-lock-fill me-1"></i>
+                                        @endif
+                                        Hapus
+                                    </button>
                                 </div>
-
                             </td>
                         </tr>
                     @empty
