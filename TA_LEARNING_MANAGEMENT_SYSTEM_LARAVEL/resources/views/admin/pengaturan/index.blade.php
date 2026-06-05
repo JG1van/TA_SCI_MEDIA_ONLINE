@@ -397,22 +397,71 @@
         }
 
         // Baca jadwal dari Kernel.php
+        // Baca jadwal langsung parse dari file Kernel.php
         try {
-            $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
-            $scheduledEvents = collect($schedule->events())->map(function ($event) {
-                $cmd = $event->command ?? '';
-                $cmd = preg_replace("/'.+artisan'\s*/", '', $cmd);
-                $cmd = trim($cmd, "'\" ");
-                return [
-                    'command' => $cmd ?: $event->description ?? 'Unknown',
-                    'expression' => $event->expression,
-                    'nextRun' => method_exists($event, 'nextRunDate')
-                        ? $event->nextRunDate()->format('d M Y H:i')
-                        : 'N/A',
-                ];
-            });
+            $kernelPath = app_path('Console/Kernel.php');
+            $kernelContent = file_get_contents($kernelPath);
+
+            // Ambil semua ->command('...') dan ->dailyAt / ->cron / ->everyMinute dll
+            preg_match_all(
+                '/->command\([\'"]([^\'"]+)[\'"]\).*?->(daily(?:At\([\'"]([^\'"]*)[\'"])?|cron\([\'"]([^\'"]*)[\'"]|everyMinute|hourly|weekly|monthly)[^;]*/s',
+                $kernelContent,
+                $matches,
+            );
+
+            $scheduledEvents = collect();
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $i => $cmd) {
+                    $freq = $matches[2][$i] ?? '';
+                    $timeAt = $matches[3][$i] ?? '';
+                    $cronExpr = $matches[4][$i] ?? '';
+
+                    if (str_starts_with($freq, 'dailyAt') && $timeAt) {
+                        $expression = '0 ' . explode(':', $timeAt)[1] . ' ' . explode(':', $timeAt)[0] . ' * * *';
+                        $label = 'Setiap hari ' . $timeAt . ' WIB';
+                    } elseif ($cronExpr) {
+                        $expression = $cronExpr;
+                        $label = $cronExpr;
+                    } elseif (str_starts_with($freq, 'everyMinute')) {
+                        $expression = '* * * * *';
+                        $label = 'Setiap menit';
+                    } elseif (str_starts_with($freq, 'hourly')) {
+                        $expression = '0 * * * *';
+                        $label = 'Setiap jam';
+                    } elseif (str_starts_with($freq, 'daily')) {
+                        $expression = '0 0 * * *';
+                        $label = 'Setiap hari 00:00';
+                    } else {
+                        $expression = '-';
+                        $label = $freq;
+                    }
+
+                    $scheduledEvents->push([
+                        'command' => $cmd,
+                        'expression' => $expression,
+                        'label' => $label,
+                    ]);
+                }
+            }
         } catch (\Exception $e) {
             $scheduledEvents = collect();
+        }
+
+        // Cek PM2 laravel-scheduler
+        try {
+            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
+            $schedulerData = json_decode($schedulerOutput, true);
+            $schedulerStatus = false;
+            if (is_array($schedulerData)) {
+                foreach ($schedulerData as $proc) {
+                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
+                        $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $schedulerStatus = false;
         }
 
         try {
@@ -544,12 +593,14 @@
                     <div class="row g-2 mb-3">
 
                         {{-- 7. Penjadwal Tugas — Toska/Teal (aktif) | Merah (tidak aktif) --}}
+                        {{-- 7. Penjadwal Tugas --}}
                         <div class="col-4">
                             @if ($schedulerStatus)
                                 <div class="p-3 rounded-3 text-center h-100"
                                     style="background:#E0F7F4;border:1px solid #80D8CF;">
                                     <i class="fas fa-calendar-check fs-4 mb-2" style="color:#00695C;"></i>
                                     <div class="small fw-semibold mb-1" style="color:#00897B;">Penjadwal Tugas</div>
+
                                     @if ($scheduledEvents->isNotEmpty())
                                         @foreach ($scheduledEvents as $ev)
                                             <div class="fw-bold" style="color:#00695C;font-size:.82rem;">
@@ -558,11 +609,8 @@
                                             <div class="small my-1">
                                                 <code
                                                     style="background:#B2DFDB;color:#00695C;padding:1px 5px;border-radius:3px;font-size:.75rem;">
-                                                    {{ $ev['expression'] }}
+                                                    {{ $ev['label'] }}
                                                 </code>
-                                            </div>
-                                            <div class="small" style="color:#004D40;">
-                                                <i class="fas fa-clock me-1"></i>{{ $ev['nextRun'] }}
                                             </div>
                                         @endforeach
                                     @else
