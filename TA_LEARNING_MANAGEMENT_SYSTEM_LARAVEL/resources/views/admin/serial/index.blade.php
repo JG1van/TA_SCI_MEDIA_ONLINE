@@ -500,7 +500,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($expiredSerials as $s)
+                                @foreach ($expiredMoreThan14Months as $s)
                                     <tr>
                                         <td>
                                             <input type="checkbox" class="expired-check" value="{{ $s->id }}">

@@ -224,13 +224,13 @@
                                         <td>{{ $s->paket ?? '-' }}</td>
                                         <td>
                                             @if (!$serialExpired)
-                                                <button class="btn btn-sm btn-primary"
+                                                <button class="btn btn-sm btn-primary" style="width:80px;"
                                                     onclick="pilihSerial('{{ $s->id }}', '{{ $s->serial }}', '{{ $s->user->name ?? 'Belum Ditentukan' }}')">
                                                     Pilih
                                                 </button>
                                             @else
                                                 <button class="btn btn-sm btn-secondary" disabled
-                                                    style="opacity: 0.5; cursor: not-allowed;"
+                                                    style="width:80px; opacity:0.5; cursor:not-allowed;"
                                                     title="Serial sudah expired">
                                                     <i class="bi bi-lock-fill me-1"></i> Pilih
                                                 </button>
