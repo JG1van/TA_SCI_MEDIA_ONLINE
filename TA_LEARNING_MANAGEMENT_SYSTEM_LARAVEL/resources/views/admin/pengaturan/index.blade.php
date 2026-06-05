@@ -532,21 +532,30 @@
 
                         {{-- 7. Penjadwal Tugas — Toska / Teal --}}
                         <div class="col-4">
-                            @if ($schedulerStatus)
-                                <div class="p-3 rounded-3 text-center h-100"
-                                    style="background:#E0F7F4;border:1px solid #80D8CF;">
-                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#00695C;"></i>
-                                    <div class="small fw-semibold" style="color:#00897B;">Penjadwal Tugas</div>
-                                    <div class="fw-bold fs-5" style="color:#00695C;">Aktif</div>
-                                </div>
-                            @else
-                                <div class="p-3 rounded-3 text-center h-100"
-                                    style="background:#FCEBEB;border:1px solid #F7C1C1;">
-                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#A32D2D;"></i>
-                                    <div class="small fw-semibold" style="color:#E24B4A;">Penjadwal Tugas</div>
-                                    <div class="fw-bold fs-5" style="color:#A32D2D;">Tidak Aktif</div>
-                                </div>
-                            @endif
+                            <div class="p-3 rounded-3 text-center h-100"
+                                style="background:#E0F7F4;border:1px solid #80D8CF;">
+                                <i class="fas fa-calendar-check fs-4 mb-2" style="color:#00695C;"></i>
+                                <div class="small fw-semibold" style="color:#00897B;">Penjadwal Tugas</div>
+
+                                @if ($scheduledEvents->isNotEmpty())
+                                    @foreach ($scheduledEvents as $ev)
+                                        <div class="fw-bold" style="color:#00695C;font-size:.85rem;">
+                                            {{ $ev['command'] }}
+                                        </div>
+                                        <div class="small" style="color:#00897B;">
+                                            <code
+                                                style="background:#B2DFDB;color:#00695C;padding:1px 5px;border-radius:3px;font-size:.75rem;">
+                                                {{ $ev['expression'] }}
+                                            </code>
+                                        </div>
+                                        <div class="small mt-1" style="color:#004D40;">
+                                            <i class="fas fa-clock me-1"></i>{{ $ev['nextRun'] }}
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="fw-bold fs-5" style="color:#A32D2D;">Tidak Ada Jadwal</div>
+                                @endif
+                            </div>
                         </div>
 
                         {{-- 8. Basis Data — Pink Rose --}}
