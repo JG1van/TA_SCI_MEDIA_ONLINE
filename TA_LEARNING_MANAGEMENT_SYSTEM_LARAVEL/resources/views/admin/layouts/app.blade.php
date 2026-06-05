@@ -30,6 +30,8 @@
 </head>
 
 <body>
+
+
     @php
         $currentAction = request()->route()->getActionName();
         $controller = explode('@', class_basename($currentAction))[0];
@@ -88,6 +90,16 @@
 
         $totalUnansweredCount = DB::table('unanswered_questions')->sum('count');
     @endphp
+    @php
+        $classroomsOver45 = App\Models\Classroom::withCount([
+            'students' => function ($q) {
+                $q->whereNull('deleted_at');
+            },
+        ])
+            ->having('students_count', '>', 45)
+            ->get();
+        $classroomsOver45Count = $classroomsOver45->count();
+    @endphp
 
     <!-- Mobile sidebar overlay -->
     <div id="sidebarOverlay"></div>
@@ -120,9 +132,8 @@
 
                         <!-- Spacer -->
                         <div class="flex-grow-1"></div>
-
-                        <!-- Tombol Toggle Notifikasi -->
-                        @php $hasAnyAlertNav = ($expired14Months > 0 || $warningNoEmail > 0 || $waitingAdmin > 0 || $totalUnansweredCount > 20 ||    $warningSerialCount > 0 ); @endphp
+                        {{-- BARU --}}
+                        @php $hasAnyAlertNav = ($expired14Months > 0 || $warningNoEmail > 0 || $waitingAdmin > 0 || $totalUnansweredCount > 20 || $warningSerialCount > 0 || $classroomsOver45Count > 0); @endphp
                         @if ($hasAnyAlertNav)
                             <button id="navAlertToggleBtn" title="Notifikasi" class="navbar-icon-btn position-relative">
                                 <i class="bi bi-bell" id="navBellIcon"></i>
@@ -177,17 +188,18 @@
                         {{-- ═══ GLOBAL ALERT BOX ═══ --}}
                         @if ($hasAnyAlertNav)
                             <div id="globalAlertBox">
-
+                                {{-- 1. MERAH — Serial expired >14 bulan --}}
                                 @if ($expired14Months > 0)
-                                    <div class="alert alert-danger" role="alert">
+                                    <div class="alert" role="alert"
+                                        style="background:#fdecea; border-left:4px solid #c0392b; color:#7b1a12;">
                                         <div class="alert-left">
-                                            <i class="fas fa-circle-xmark"></i>
+                                            <i class="fas fa-circle-xmark" style="color:#c0392b;"></i>
                                             <span><b>{{ $expired14Months }}</b> serial expired lebih dari 14
                                                 bulan</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.serial.index') }}"
-                                                class="btn btn-sm btn-danger">Lihat</a>
+                                            <a href="{{ route('admin.serial.index') }}" class="btn btn-sm"
+                                                style="background:#c0392b; color:#fff; border:none;">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
@@ -195,50 +207,18 @@
                                     </div>
                                 @endif
 
-                                @if ($warningSerialCount > 0)
-                                    <div class="alert alert-warning" role="alert">
-                                        <div class="alert-left">
-                                            <i class="fas fa-triangle-exclamation"></i>
-                                            <span><b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
-                                                diizinkan</span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.kelas.index') }}"
-                                                class="btn btn-sm btn-warning">Lihat</a>
-                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                @if ($waitingAdmin > 0)
-                                    <div class="alert alert-info" role="alert">
-                                        <div class="alert-left">
-                                            <i class="fas fa-user-clock"></i>
-                                            <span><b>{{ $waitingAdmin }}</b> layanan pelanggan menunggu penanganan
-                                                admin</span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.layanan-pelanggan.index') }}"
-                                                class="btn btn-sm btn-info text-white">Lihat</a>
-                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endif
-
+                                {{-- 2. ORANYE — Serial gagal kirim, email kosong --}}
                                 @if ($warningNoEmail > 0)
-                                    <div class="alert alert-secondary" role="alert">
+                                    <div class="alert" role="alert"
+                                        style="background:#fef0e6; border-left:4px solid #e0621a; color:#7a3210;">
                                         <div class="alert-left">
-                                            <i class="fas fa-envelope-open-text"></i>
+                                            <i class="fas fa-envelope-open-text" style="color:#e0621a;"></i>
                                             <span><b>{{ $warningNoEmail }}</b> serial gagal kirim peringatan — email
                                                 kosong</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <a href="{{ route('admin.serial.index') }}"
-                                                class="btn btn-sm btn-secondary text-white">Lihat</a>
+                                            <a href="{{ route('admin.serial.index') }}" class="btn btn-sm"
+                                                style="background:#e0621a; color:#fff; border:none;">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
@@ -246,15 +226,85 @@
                                     </div>
                                 @endif
 
-                                @if ($totalUnansweredCount > 20)
-                                    <div class="alert alert-dark" role="alert">
+                                {{-- 3. KUNING — Serial melebihi batas kelas --}}
+                                @if ($warningSerialCount > 0)
+                                    <div class="alert" role="alert"
+                                        style="background:#fefbe6; border-left:4px solid #c9a800; color:#6b5700;">
                                         <div class="alert-left">
-                                            <i class="fas fa-circle-question"></i>
+                                            <i class="fas fa-triangle-exclamation" style="color:#c9a800;"></i>
+                                            <span><b>{{ $warningSerialCount }}</b> serial melebihi batas kelas yang
+                                                diizinkan</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ route('admin.kelas.index') }}" class="btn btn-sm"
+                                                style="background:#c9a800; color:#fff; border:none;">Lihat</a>
+                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- 4. HIJAU MUDA — Kelas lebih dari 45 siswa --}}
+                                @if ($classroomsOver45Count > 0)
+                                    <div class="alert" role="alert"
+                                        style="background:#edfaf3; border-left:4px solid #27ae60; color:#145c32;">
+                                        <div class="alert-left">
+                                            <i class="fas fa-users" style="color:#27ae60;"></i>
+                                            <span>
+                                                <b>{{ $classroomsOver45Count }}</b> kelas melebihi batas 45 siswa —
+                                                @foreach ($classroomsOver45->take(3) as $cls)
+                                                    <em>{{ $cls->name }}</em> ({{ $cls->students_count }})
+                                                    @if (!$loop->last)
+                                                        ,
+                                                    @endif
+                                                @endforeach
+                                                @if ($classroomsOver45->count() > 3)
+                                                    <em> …dan {{ $classroomsOver45->count() - 3 }} lainnya</em>
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ route('admin.kelas.index') }}" class="btn btn-sm"
+                                                style="background:#27ae60; color:#fff; border:none;">Lihat</a>
+                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- 5. BIRU — CS menunggu admin --}}
+                                @if ($waitingAdmin > 0)
+                                    <div class="alert" role="alert"
+                                        style="background:#e8f2fd; border-left:4px solid #1a6ec0; color:#0d3d6b;">
+                                        <div class="alert-left">
+                                            <i class="fas fa-user-clock" style="color:#1a6ec0;"></i>
+                                            <span><b>{{ $waitingAdmin }}</b> layanan pelanggan menunggu penanganan
+                                                admin</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ route('admin.layanan-pelanggan.index') }}" class="btn btn-sm"
+                                                style="background:#1a6ec0; color:#fff; border:none;">Lihat</a>
+                                            <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- 6. UNGU — Pertanyaan tidak terjawab --}}
+                                @if ($totalUnansweredCount > 20)
+                                    <div class="alert" role="alert"
+                                        style="background:#f3eefe; border-left:4px solid #6d3ec9; color:#3a1a72;">
+                                        <div class="alert-left">
+                                            <i class="fas fa-circle-question" style="color:#6d3ec9;"></i>
                                             <span>Total pertanyaan tidak terjawab melebihi batas maksimum</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <a href="{{ route('admin.pertanyaan-tidak-terjawab.index') }}"
-                                                class="btn btn-sm btn-dark">Lihat</a>
+                                                class="btn btn-sm"
+                                                style="background:#6d3ec9; color:#fff; border:none;">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
