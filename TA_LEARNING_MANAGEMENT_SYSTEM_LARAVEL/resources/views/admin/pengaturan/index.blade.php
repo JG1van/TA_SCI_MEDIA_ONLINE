@@ -337,7 +337,6 @@
         </div>
     </div>
 
-    {{-- MODAL INFORMASI SERVER --}}
     @php
         // ───────────────────────────────────────
         // SUMBER DAYA HARDWARE
@@ -380,7 +379,24 @@
         // STATUS LAYANAN
         // ───────────────────────────────────────
 
-        // Baca langsung dari Kernel.php
+        // Cek PM2 laravel-scheduler (aktif/tidak)
+        try {
+            $schedulerOutput = shell_exec('pm2 jlist 2>/dev/null');
+            $schedulerData = json_decode($schedulerOutput, true);
+            $schedulerStatus = false;
+            if (is_array($schedulerData)) {
+                foreach ($schedulerData as $proc) {
+                    if (isset($proc['name']) && $proc['name'] === 'laravel-scheduler') {
+                        $schedulerStatus = ($proc['pm2_env']['status'] ?? '') === 'online';
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $schedulerStatus = false;
+        }
+
+        // Baca jadwal dari Kernel.php
         try {
             $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
             $scheduledEvents = collect($schedule->events())->map(function ($event) {
@@ -395,11 +411,8 @@
                         : 'N/A',
                 ];
             });
-            // Scheduler aktif jika ada event terdaftar di Kernel
-            $schedulerStatus = $scheduledEvents->isNotEmpty();
         } catch (\Exception $e) {
             $scheduledEvents = collect();
-            $schedulerStatus = false;
         }
 
         try {
@@ -530,32 +543,41 @@
                     </p>
                     <div class="row g-2 mb-3">
 
-                        {{-- 7. Penjadwal Tugas — Toska / Teal --}}
+                        {{-- 7. Penjadwal Tugas — Toska/Teal (aktif) | Merah (tidak aktif) --}}
                         <div class="col-4">
-                            <div class="p-3 rounded-3 text-center h-100"
-                                style="background:#E0F7F4;border:1px solid #80D8CF;">
-                                <i class="fas fa-calendar-check fs-4 mb-2" style="color:#00695C;"></i>
-                                <div class="small fw-semibold" style="color:#00897B;">Penjadwal Tugas</div>
-
-                                @if ($scheduledEvents->isNotEmpty())
-                                    @foreach ($scheduledEvents as $ev)
-                                        <div class="fw-bold" style="color:#00695C;font-size:.85rem;">
-                                            {{ $ev['command'] }}
-                                        </div>
-                                        <div class="small" style="color:#00897B;">
-                                            <code
-                                                style="background:#B2DFDB;color:#00695C;padding:1px 5px;border-radius:3px;font-size:.75rem;">
-                                                {{ $ev['expression'] }}
-                                            </code>
-                                        </div>
-                                        <div class="small mt-1" style="color:#004D40;">
-                                            <i class="fas fa-clock me-1"></i>{{ $ev['nextRun'] }}
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div class="fw-bold fs-5" style="color:#A32D2D;">Tidak Ada Jadwal</div>
-                                @endif
-                            </div>
+                            @if ($schedulerStatus)
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#E0F7F4;border:1px solid #80D8CF;">
+                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#00695C;"></i>
+                                    <div class="small fw-semibold mb-1" style="color:#00897B;">Penjadwal Tugas</div>
+                                    @if ($scheduledEvents->isNotEmpty())
+                                        @foreach ($scheduledEvents as $ev)
+                                            <div class="fw-bold" style="color:#00695C;font-size:.82rem;">
+                                                {{ $ev['command'] }}
+                                            </div>
+                                            <div class="small my-1">
+                                                <code
+                                                    style="background:#B2DFDB;color:#00695C;padding:1px 5px;border-radius:3px;font-size:.75rem;">
+                                                    {{ $ev['expression'] }}
+                                                </code>
+                                            </div>
+                                            <div class="small" style="color:#004D40;">
+                                                <i class="fas fa-clock me-1"></i>{{ $ev['nextRun'] }}
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="fw-bold fs-6 mt-1" style="color:#00695C;">Aktif</div>
+                                        <div class="small" style="color:#00897B;">Tidak ada jadwal terdaftar</div>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="p-3 rounded-3 text-center h-100"
+                                    style="background:#FCEBEB;border:1px solid #F7C1C1;">
+                                    <i class="fas fa-calendar-check fs-4 mb-2" style="color:#A32D2D;"></i>
+                                    <div class="small fw-semibold" style="color:#E24B4A;">Penjadwal Tugas</div>
+                                    <div class="fw-bold fs-5" style="color:#A32D2D;">Tidak Aktif</div>
+                                </div>
+                            @endif
                         </div>
 
                         {{-- 8. Basis Data — Pink Rose --}}
@@ -646,7 +668,7 @@
                         <div class="table-responsive">
                             <table class="table table-sm mb-0" style="font-size:.85rem;">
                                 <thead>
-                                    <tr style="background:#EDE7F6;">
+                                    <tr style="background:#E0F7F4;">
                                         <th class="fw-semibold text-muted ps-2">Command</th>
                                         <th class="fw-semibold text-muted">Jadwal (Cron)</th>
                                         <th class="fw-semibold text-muted">Jadwal Berikutnya</th>
@@ -655,13 +677,13 @@
                                 <tbody>
                                     @foreach ($scheduledEvents as $ev)
                                         <tr>
-                                            <td class="ps-2" style="color:#311B92;font-weight:500;">
+                                            <td class="ps-2" style="color:#00695C;font-weight:500;">
                                                 <i class="fas fa-terminal me-1 small"></i>
                                                 {{ $ev['command'] }}
                                             </td>
                                             <td>
                                                 <code
-                                                    style="background:#EDE7F6;color:#311B92;padding:2px 6px;border-radius:4px;font-size:.8rem;">
+                                                    style="background:#B2DFDB;color:#00695C;padding:2px 6px;border-radius:4px;font-size:.8rem;">
                                                     {{ $ev['expression'] }}
                                                 </code>
                                             </td>
