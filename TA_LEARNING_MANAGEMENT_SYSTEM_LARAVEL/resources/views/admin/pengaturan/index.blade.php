@@ -474,7 +474,7 @@
     @endphp
 
     <div class="modal fade" id="memoryModal" tabindex="-1">
-        <div class="modal-dialog modal-lg custom-modal">
+        <div class="modal-dialog custom-modal" style="max-height:300px;">
             <div class="modal-content">
 
                 <div class="modal-header">
