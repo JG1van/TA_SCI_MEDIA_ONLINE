@@ -86,7 +86,7 @@
 
     {{--   Tabel Serial --}}
     <div class="table-responsive">
-        <table class="table table-striped table-bordered table-hover align-middle text-center ">
+        <table class="table table-striped table-bordered table-hover align-middle text-center">
             <thead>
                 <tr>
                     <th>No</th>
@@ -94,9 +94,10 @@
                     <th>Produk</th>
                     <th>Paket Kelas</th>
                     <th>Aktif (bulan)</th>
+                    <th>Log</th>
                     <th>Kedaluwarsa</th>
                     <th>Sisa Hari</th>
-                    <th>pelanggan</th>
+                    <th>Pelanggan</th>
                     <th>Pemberitahuan</th>
                     <th>Aksi</th>
                 </tr>
@@ -119,6 +120,11 @@
                         <td>{{ $s->paket }}</td>
                         <td>{{ $s->active }}</td>
                         <td>
+                            <span class="badge bg-primary" title="Total riwayat: {{ $s->logs_count }}x">
+                                {{ $s->logs_count }}x
+                            </span>
+                        </td>
+                        <td>
                             @if ($s->expired_at)
                                 {{ \Carbon\Carbon::parse($s->expired_at)->format('d/m/Y') }}
                             @else
@@ -133,13 +139,12 @@
                                         false,
                                     );
                                 @endphp
-
                                 @if ($diff > 0)
-                                    <span class="badge bg-success">+{{ $diff }} </span>
+                                    <span class="badge bg-success">+{{ $diff }}</span>
                                 @elseif ($diff == 0)
-                                    <span class="badge bg-warning text-dark">0 </span>
+                                    <span class="badge bg-warning text-dark">0</span>
                                 @else
-                                    <span class="badge bg-danger">{{ $diff }} </span>
+                                    <span class="badge bg-danger">{{ $diff }}</span>
                                 @endif
                             @else
                                 <span class="text-muted">-</span>
@@ -177,11 +182,12 @@
 
                                 <!-- PERPANJANG -->
                                 @if ($s->expired_at)
-                                    <button class="btn btn-info btn-sm" onclick="perpanjangSerial({{ $s->id }})">
+                                    <button class="btn btn-info btn-sm" style="min-width: 90px;"
+                                        onclick="perpanjangSerial({{ $s->id }})">
                                         Perpanjang
                                     </button>
                                 @else
-                                    <button class="btn btn-secondary btn-sm" disabled>
+                                    <button class="btn btn-secondary btn-sm" style="min-width: 90px;" disabled>
                                         Belum Aktif
                                     </button>
                                 @endif
@@ -193,17 +199,16 @@
 
                             </div>
                         </td>
-
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="text-muted text-center">Tidak ada data serial.</td>
+                        <td colspan="11" class="text-muted text-center">Tidak ada data serial.</td>
                     </tr>
                 @endforelse
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="8"></th>
+                    <th colspan="11"></th>
                 </tr>
             </tfoot>
         </table>
