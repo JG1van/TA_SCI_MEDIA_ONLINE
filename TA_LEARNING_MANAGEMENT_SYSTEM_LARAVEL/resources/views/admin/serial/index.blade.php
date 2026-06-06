@@ -120,8 +120,8 @@
                         <td>{{ $s->paket }}</td>
                         <td>{{ $s->active }}</td>
                         <td>
-                            <span class="badge bg-primary" title="Total riwayat: {{ $s->logs_count }}x">
-                                {{ $s->logs_count }}x
+                            <span class="badge bg-primary" title="Total riwayat: {{ $s->serial_logs_count }}x">
+                                {{ $s->serial_logs_count }}x
                             </span>
                         </td>
                         <td>
