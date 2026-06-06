@@ -193,7 +193,8 @@
                                 @endif
 
                                 <!-- KIRIM EMAIL -->
-                                <button class="btn btn-success btn-sm" onclick="openEmailModal({{ $s->id }})">
+                                <button class="btn btn-success btn-sm" style="min-width: 85px;"
+                                    onclick="openEmailModal({{ $s->id }})">
                                     Kirim Email
                                 </button>
 
