@@ -97,8 +97,8 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="text" name="email" class="form-control" autocomplete="off" inputmode="email"
-                            spellcheck="false" placeholder="Opsional" onfocus="this.removeAttribute('readonly')" readonly>
+                        <input type="email" name="email" class="form-control" autocomplete="new-email" autocorrect="off"
+                            autocapitalize="off" inputmode="email" spellcheck="false">
                     </div>
                     {{-- Password diisi otomatis oleh backend --}}
                     <input type="hidden" name="role" value="1">
