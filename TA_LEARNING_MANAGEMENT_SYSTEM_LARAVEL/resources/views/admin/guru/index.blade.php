@@ -98,7 +98,7 @@
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control" autocomplete="off" autocorrect="off"
-                            autocapitalize="off" spellcheck="false" placeholder="Opsional">
+                            autocapitalize="off" inputmode="email" spellcheck="false" placeholder="Opsional">
                     </div>
                     {{-- Password diisi otomatis oleh backend --}}
                     <input type="hidden" name="role" value="1">
