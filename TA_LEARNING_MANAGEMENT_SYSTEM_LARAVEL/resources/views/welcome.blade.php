@@ -482,6 +482,7 @@
                         <div class="step-title">Melalui Browser</div>
                         <div class="step-desc">Akses langsung melalui <strong>scimediaonline.com</strong> dari browser
                             favorit Anda.</div>
+                        <div class="step-desc"> </div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
@@ -518,6 +519,7 @@
                         <div class="step-title">Buat / Dapatkan Akun</div>
                         <div class="step-desc">Daftarkan akun melalui halaman registrasi atau hubungi admin untuk
                             dibuatkan akun.</div>
+                        <div class="step-desc"> </div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">

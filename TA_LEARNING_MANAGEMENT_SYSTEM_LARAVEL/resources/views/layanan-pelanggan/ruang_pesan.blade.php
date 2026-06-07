@@ -303,7 +303,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body" style="max-height:500px; overflow-y:auto; overflow-x:auto;">
-                        <div id="problemSolution" class="mb-4"></div>
+                        <div id="problemSolution" style="color: black" class="mb-4"></div>
                         <div id="videoWrapper" class="mb-4" style="display:none;">
                             <h6 class="fw-bold mb-2"><i class="bi bi-play-circle me-1"
                                     style="color:var(--primary)"></i>Video Panduan</h6>
