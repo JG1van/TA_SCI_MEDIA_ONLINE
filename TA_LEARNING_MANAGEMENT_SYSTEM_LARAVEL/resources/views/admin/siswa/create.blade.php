@@ -107,9 +107,13 @@
                             <td>{{ $student->username }}</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
+                                    {{-- ✅ Benar --}}
                                     <button class="btn btn-warning btn-sm"
                                         style="min-width: 85px; {{ $isExpired ? 'opacity: 0.5; cursor: not-allowed;' : '' }}"
                                         @if (!$isExpired) onclick="editStudent('{{ $student->id }}')" @else disabled title="Serial sudah expired" @endif>
+                                        @if ($isExpired)
+                                            <i class="bi bi-lock-fill me-1"></i>
+                                        @endif
                                         Detail / Edit
                                     </button>
                                     <button class="btn btn-danger btn-sm"
