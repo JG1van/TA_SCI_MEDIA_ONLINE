@@ -102,7 +102,7 @@
 
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-warning btn-sm" style="min-width: 85px;"
+                                <button class="btn btn-warning btn-sm" style="min-width: 100px;"
                                     onclick="editCategory('{{ $item->id }}')">Detail
                                     / Edit</button>
                                 <button class="btn btn-danger btn-sm"
