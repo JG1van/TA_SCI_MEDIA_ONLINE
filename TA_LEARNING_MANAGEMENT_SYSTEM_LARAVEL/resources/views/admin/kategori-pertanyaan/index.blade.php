@@ -66,7 +66,7 @@
                     <th>Status</th>
                     <th>File Panduan</th>
                     <th>Video Panduan</th>
-                    <th style="width:180px;">Aksi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody id="categoryBody">
