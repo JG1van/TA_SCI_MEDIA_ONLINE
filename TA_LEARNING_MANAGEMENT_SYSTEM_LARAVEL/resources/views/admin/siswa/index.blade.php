@@ -64,23 +64,54 @@
 
             <tbody id="studentBody">
                 @forelse ($students as $index => $student)
+                    @php
+                        $isExpired =
+                            $student->serial &&
+                            $student->serial->expired_at &&
+                            \Carbon\Carbon::parse($student->serial->expired_at)->isPast();
+                    @endphp
+
                     <tr id="row{{ $student->id }}">
                         <td>{{ $index + 1 }}</td>
                         <td class="student-name">{{ $student->name }}</td>
                         <td>{{ $student->username }}</td>
                         <td>{{ $student->classroom->name ?? '-' }}</td>
-                        <td>{{ $student->serial->serial ?? '-' }}</td>
+                        <td>
+                            {{ $student->serial->serial ?? '-' }}
+                            @if ($isExpired)
+                                <span
+                                    style="background:#fdecea; color:#c0392b; border:1px solid #c0392b;
+                            font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px;">
+                                    <i class="fas fa-circle-xmark me-1"></i> Expired
+                                </span>
+                            @endif
+                        </td>
                         <td>{{ $student->user->name ?? '-' }}</td>
 
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-warning btn-sm" onclick="editStudent('{{ $student->id }}')">
+
+                                <button class="btn btn-warning btn-sm"
+                                    style="min-width: 85px; {{ $isExpired ? 'opacity: 0.5; cursor: not-allowed;' : '' }}"
+                                    @if (!$isExpired) onclick="editStudent('{{ $student->id }}')" @else disabled title="Serial sudah expired" @endif>
+                                    @if ($isExpired)
+                                        <i class="bi bi-lock-fill me-1"></i>
+                                    @endif
                                     Detail / Edit
                                 </button>
+
                                 <button class="btn btn-danger btn-sm"
-                                    onclick="hapusStudent('{{ $student->id }}', '{{ $student->name }}')">
+                                    @if (!$isExpired) onclick="hapusStudent('{{ $student->id }}', '{{ $student->name }}')"
+                            @else
+                                disabled
+                                style="opacity: 0.5; cursor: not-allowed;"
+                                title="Serial sudah expired" @endif>
+                                    @if ($isExpired)
+                                        <i class="bi bi-lock-fill me-1"></i>
+                                    @endif
                                     Hapus
                                 </button>
+
                             </div>
                         </td>
                     </tr>
@@ -309,10 +340,9 @@
                     // ===== SET FOTO =====
                     document.getElementById("editPhotoPreview").src =
                         s.photo ?
-                        `http://siswa.tak-scimediaonline.my.id/storage/students/${s.photo}` :
+                        `http://151.243.222.93:30083/api/files/students/${s.photo}` :
                         `{{ asset('images/logo.webp') }}`;
                     document.getElementById("editNameCard").textContent = s.name;
-
                     // ===== OPEN MODAL =====
                     new bootstrap.Modal(document.getElementById("modalEdit")).show();
                 })

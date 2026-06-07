@@ -108,22 +108,12 @@
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
                                     <button class="btn btn-warning btn-sm"
-                                        @if (!$isExpired) onclick="editStudent('{{ $student->id }}')"
-            @else
-                disabled
-                style="opacity: 0.5; cursor: not-allowed;"
-                title="Serial sudah expired" @endif>
-                                        @if ($isExpired)
-                                            <i class="bi bi-lock-fill me-1"></i>
-                                        @endif
+                                        style="min-width: 85px; {{ $isExpired ? 'opacity: 0.5; cursor: not-allowed;' : '' }}"
+                                        @if (!$isExpired) onclick="editStudent('{{ $student->id }}')" @else disabled title="Serial sudah expired" @endif>
                                         Detail / Edit
                                     </button>
                                     <button class="btn btn-danger btn-sm"
-                                        @if (!$isExpired) onclick="hapusStudent('{{ $student->id }}', '{{ $student->name }}')"
-            @else
-                disabled
-                style="opacity: 0.5; cursor: not-allowed;"
-                title="Serial sudah expired" @endif>
+                                        @if (!$isExpired) onclick="hapusStudent('{{ $student->id }}', '{{ $student->name }}')" @else disabled style="opacity: 0.5; cursor: not-allowed;" title="Serial sudah expired" @endif>
                                         @if ($isExpired)
                                             <i class="bi bi-lock-fill me-1"></i>
                                         @endif
@@ -487,7 +477,7 @@
                             // 🔥 FOTO
                             document.getElementById("editPhotoPreview").src =
                                 s.photo ?
-                                `http://siswa.tak-scimediaonline.my.id/storage/students/${s.photo}` :
+                                `http://151.243.222.93:30083/api/files/students/${s.photo}` :
                                 `{{ asset('images/logo.webp') }}`;
 
                             document.getElementById("editNameCard").innerText = s.name;
