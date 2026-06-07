@@ -202,16 +202,21 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/backup/restore', [BackupController::class, 'restore'])
         ->name('backup.restore');
 
-    // routes/web.php
-// Ganti route proxy jadi lebih fleksibel
     Route::get('/proxy/{path}', function ($path) {
-        $url = 'http://151.243.222.93:30083/api/files/' . $path;
-        $response = \Illuminate\Support\Facades\Http::get($url);
-        return response($response->body(), 200)
-            ->header('Content-Type', $response->header('Content-Type'));
+        try {
+            $url = 'http://151.243.222.93:30083/api/files/' . $path;
+            $response = \Illuminate\Support\Facades\Http::timeout(10)->get($url);
+
+            if ($response->failed()) {
+                return response('File not found', 404);
+            }
+
+            return response($response->body(), 200)
+                ->header('Content-Type', $response->header('Content-Type'));
+        } catch (\Exception $e) {
+            return response('Error: ' . $e->getMessage(), 500);
+        }
     })->where('path', '.*');
-
-
 });
 
 /*
