@@ -129,9 +129,9 @@
         <div class="main-wrapper-card mb-4 shadow" id="main-content" style="{{ $isAdminMode ? 'display:none;' : '' }}">
 
             <!-- Header -->
-            <div class="main-wrapper-header" style="display:flex; flex-direction:column; gap:6px; position:relative;">
+            <div class="main-wrapper-header" style="flex-direction:column; gap:6px;">
                 <!-- Baris 1: judul kiri, selesai kanan -->
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                     <div class="main-wrapper-title">
                         <div class="title-icon"><i class="bi bi-headset"></i></div>
                         Ruang Layanan Pelanggan
@@ -140,9 +140,9 @@
                         <i class="bi bi-check-circle"></i> Selesai
                     </button>
                 </div>
-                <!-- Baris 2: kode center absolut -->
-                <div style="width:100%; text-align:center;">
-                    <div class="room-code-pill" style="display:inline-flex; white-space:nowrap;">
+                <!-- Baris 2: kode tengah -->
+                <div style="display:flex; justify-content:center; width:100%;">
+                    <div class="room-code-pill" style="white-space:nowrap;">
                         <i class="bi bi-hash"></i>
                         <span id="RoomCode">{{ $room->room_code }}</span>
                     </div>
@@ -150,8 +150,7 @@
             </div>
 
             <div class="card-body p-4">
-
-                <!-- ══ TABS — REDESIGNED ══ -->
+                <!-- ══ TABS ══ -->
                 <ul class="nav tab-nav-wrap" role="tablist">
                     <li class="nav-item">
                         <button class="nav-link active" id="tab-umum-btn" data-bs-toggle="tab"
@@ -179,7 +178,7 @@
                     </li>
                 </ul>
 
-                <!-- ══ QNA CARD — REDESIGNED ══ -->
+                <!-- ══ QNA CARD ══ -->
                 <div class="qna-card">
                     <div class="qna-header open" id="qnaHeaderEl" onclick="toggleQna()">
                         <div class="qna-icon-wrap">
