@@ -451,6 +451,15 @@
             cursor: not-allowed;
         }
 
+        .spinner-ring {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
 
         /* ─── FOOTER ─── */
         .login-footer {
