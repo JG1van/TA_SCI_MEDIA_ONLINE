@@ -340,7 +340,7 @@
                     // ===== SET FOTO =====
                     document.getElementById("editPhotoPreview").src =
                         s.photo ?
-                        `http://151.243.222.93:30083/api/files/students/${s.photo}` :
+                        `http://151.243.222.93:30083/api/files/${s.photo}` :
                         `{{ asset('images/logo.webp') }}`;
                     document.getElementById("editNameCard").textContent = s.name;
                     // ===== OPEN MODAL =====
