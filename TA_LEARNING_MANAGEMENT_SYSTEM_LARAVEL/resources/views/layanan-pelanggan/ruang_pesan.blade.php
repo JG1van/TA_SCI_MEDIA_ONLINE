@@ -130,6 +130,7 @@
 
             <!-- Header -->
             <div class="main-wrapper-header" style="display:flex; flex-direction:column; gap:6px;">
+                <!-- Baris 1: judul kiri, selesai kanan -->
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div class="main-wrapper-title">
                         <div class="title-icon"><i class="bi bi-headset"></i></div>
@@ -139,9 +140,12 @@
                         <i class="bi bi-check-circle"></i> Selesai
                     </button>
                 </div>
-                <div class="room-code-pill" style="align-self:center; white-space:nowrap;">
-                    <i class="bi bi-hash"></i>
-                    <span id="RoomCode">{{ $room->room_code }}</span>
+                <!-- Baris 2: kode di tengah -->
+                <div style="text-align:center;">
+                    <div class="room-code-pill" style="display:inline-flex; white-space:nowrap;">
+                        <i class="bi bi-hash"></i>
+                        <span id="RoomCode">{{ $room->room_code }}</span>
+                    </div>
                 </div>
             </div>
 
