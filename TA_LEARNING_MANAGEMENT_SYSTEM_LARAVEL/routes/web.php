@@ -203,12 +203,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->name('backup.restore');
 
     // routes/web.php
-    Route::get('/proxy/students/{filename}', function ($filename) {
-        $url = 'http://151.243.222.93:30083/api/files/students/' . $filename;
-        $response = Http::get($url);
+// Ganti route proxy jadi lebih fleksibel
+    Route::get('/proxy/{path}', function ($path) {
+        $url = 'http://151.243.222.93:30083/api/files/' . $path;
+        $response = \Illuminate\Support\Facades\Http::get($url);
         return response($response->body(), 200)
             ->header('Content-Type', $response->header('Content-Type'));
-    });
+    })->where('path', '.*');
+
+
 });
 
 /*

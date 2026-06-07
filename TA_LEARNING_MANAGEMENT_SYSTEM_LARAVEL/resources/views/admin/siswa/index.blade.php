@@ -340,7 +340,7 @@
                     // ===== SET FOTO =====
                     document.getElementById("editPhotoPreview").src =
                         s.photo ?
-                        `/admin/proxy/students/${s.photo}` :
+                        `/admin/proxy/${s.photo}` :
                         `{{ asset('images/logo.webp') }}`;
                     document.getElementById("editNameCard").textContent = s.name;
                     // ===== OPEN MODAL =====
