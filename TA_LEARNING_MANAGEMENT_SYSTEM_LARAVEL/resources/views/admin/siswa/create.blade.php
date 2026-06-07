@@ -477,7 +477,7 @@
                             // 🔥 FOTO
                             document.getElementById("editPhotoPreview").src =
                                 s.photo ?
-                                `http://151.243.222.93:30083/api/files/${s.photo}` :
+                                `/admin/proxy/${s.photo}` :
                                 `{{ asset('images/logo.webp') }}`;
 
                             document.getElementById("editNameCard").innerText = s.name;
