@@ -537,8 +537,9 @@
                             </div>
                         </div>
                         <div class="modal-footer" style="border-top:1px solid var(--border);">
-                            <button type="submit" class="btn-selesai w-100">
-                                <i class="bi bi-check-circle"></i> Selesai &amp; Kirim Ulasan
+                            <button type="submit" id="btnSelesaiSubmit" class="btn-selesai w-100">
+                                <i class="bi bi-check-circle" id="btnSelesaiIcon"></i>
+                                <span id="btnSelesaiLabel"> Selesai &amp; Kirim Ulasan</span>
                             </button>
                         </div>
                     </form>
@@ -996,6 +997,21 @@
                 chatBox.classList.add('border-admin');
             }
         }
+        document.addEventListener("DOMContentLoaded", function() {
+            const finishForm = document.querySelector('#finishModal form');
+            if (!finishForm) return;
+
+            finishForm.addEventListener('submit', function() {
+                const btn = document.getElementById('btnSelesaiSubmit');
+                const icon = document.getElementById('btnSelesaiIcon');
+                const label = document.getElementById('btnSelesaiLabel');
+                if (!btn) return;
+
+                btn.disabled = true;
+                icon.className = 'bi bi-arrow-repeat spin-icon';
+                label.textContent = ' Memproses...';
+            });
+        });
     </script>
 
     <script class="fitur login jika antara kolom siswa atau guru terisi">
