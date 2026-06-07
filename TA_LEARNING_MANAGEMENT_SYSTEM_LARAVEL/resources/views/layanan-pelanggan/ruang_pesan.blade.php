@@ -129,19 +129,20 @@
         <div class="main-wrapper-card mb-4 shadow" id="main-content" style="{{ $isAdminMode ? 'display:none;' : '' }}">
 
             <!-- Header -->
-            <div class="main-wrapper-header">
+            <div class="main-wrapper-header"
+                style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div class="main-wrapper-title">
                     <div class="title-icon"><i class="bi bi-headset"></i></div>
                     Ruang Layanan Pelanggan
                 </div>
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex flex-column align-items-end gap-2">
+                    <button type="button" class="btn-selesai" data-bs-toggle="modal" data-bs-target="#finishModal">
+                        <i class="bi bi-check-circle"></i> Selesai
+                    </button>
                     <div class="room-code-pill">
                         <i class="bi bi-hash"></i>
                         <span id="RoomCode">{{ $room->room_code }}</span>
                     </div>
-                    <button type="button" class="btn-selesai" data-bs-toggle="modal" data-bs-target="#finishModal">
-                        <i class="bi bi-check-circle"></i> Selesai
-                    </button>
                 </div>
             </div>
 
