@@ -94,7 +94,7 @@
                     <th>Produk</th>
                     <th>Paket Kelas</th>
                     <th>Aktif (bulan)</th>
-                    <th>Log</th>
+                    <th>Perpanjang</th>
                     <th>Kedaluwarsa</th>
                     <th>Sisa Hari</th>
                     <th>Pelanggan</th>

@@ -102,8 +102,9 @@
 
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-warning btn-sm"
-                                    onclick="editCategory('{{ $item->id }}')">Edit</button>
+                                <button class="btn btn-warning btn-sm" style="min-width: 85px;"
+                                    onclick="editCategory('{{ $item->id }}')">Detail
+                                    / Edit</button>
                                 <button class="btn btn-danger btn-sm"
                                     onclick="hapusCategory('{{ $item->id }}','{{ $item->name }}')">Hapus</button>
                             </div>
@@ -184,7 +185,7 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-header mb-3">
-                    <h5 class="modal-title">Edit Kategori Pertanyaan</h5>
+                    <h5 class="modal-title">Detail / Edit Kategori Pertanyaan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body row g-3" style="max-height:600px; overflow-y:auto; overflow-x:auto;">
