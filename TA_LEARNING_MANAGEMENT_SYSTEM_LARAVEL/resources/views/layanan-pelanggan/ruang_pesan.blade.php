@@ -129,7 +129,7 @@
         <div class="main-wrapper-card mb-4 shadow" id="main-content" style="{{ $isAdminMode ? 'display:none;' : '' }}">
 
             <!-- Header -->
-            <div class="main-wrapper-header" style="display:flex; flex-direction:column; gap:6px;">
+            <div class="main-wrapper-header" style="display:flex; flex-direction:column; gap:6px; position:relative;">
                 <!-- Baris 1: judul kiri, selesai kanan -->
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div class="main-wrapper-title">
@@ -140,8 +140,8 @@
                         <i class="bi bi-check-circle"></i> Selesai
                     </button>
                 </div>
-                <!-- Baris 2: kode di tengah -->
-                <div style="text-align:center;">
+                <!-- Baris 2: kode center absolut -->
+                <div style="width:100%; text-align:center;">
                     <div class="room-code-pill" style="display:inline-flex; white-space:nowrap;">
                         <i class="bi bi-hash"></i>
                         <span id="RoomCode">{{ $room->room_code }}</span>
