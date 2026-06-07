@@ -476,31 +476,32 @@
                     </h4>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="50">
-                    <div class="step-card">
+                    <div class="step-card h-100 d-flex flex-column">
                         <div class="step-number">01</div>
                         <div class="step-icon"><i class="bi bi-globe"></i></div>
                         <div class="step-title">Melalui Browser</div>
                         <div class="step-desc">Akses langsung melalui <strong>scimediaonline.com</strong> dari browser
-                            favorit Anda.</div>
-                        <div class="step-desc"> </div>
+                            favorit Anda — tanpa perlu instalasi apapun, cukup buka dan mulai belajar.</div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="step-card">
+                    <div class="step-card h-100 d-flex flex-column">
                         <div class="step-number">02</div>
                         <div class="step-icon"><i class="bi bi-phone"></i></div>
                         <div class="step-title">Aplikasi Android</div>
                         <div class="step-desc">Download <strong>"SCI Media Online"</strong> di Google Play Store untuk
-                            pengalaman lebih praktis dari genggaman.</div>
+                            pengalaman lebih praktis dari genggaman. Notifikasi materi & tugas langsung masuk ke HP
+                            Anda.</div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
-                    <div class="step-card">
+                    <div class="step-card h-100 d-flex flex-column">
                         <div class="step-number">03</div>
                         <div class="step-icon"><i class="bi bi-wifi"></i></div>
                         <div class="step-title">Koneksi Internet</div>
                         <div class="step-desc">Pastikan perangkat Anda terhubung dengan koneksi internet yang stabil
-                            untuk pengalaman terbaik.</div>
+                            untuk pengalaman terbaik. Direkomendasikan minimal 1 Mbps untuk streaming materi video.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -513,31 +514,30 @@
                     </h4>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="50">
-                    <div class="step-card">
+                    <div class="step-card h-100 d-flex flex-column">
                         <div class="step-number">01</div>
                         <div class="step-icon"><i class="bi bi-person-plus"></i></div>
                         <div class="step-title">Buat / Dapatkan Akun</div>
                         <div class="step-desc">Daftarkan akun melalui halaman registrasi atau hubungi admin untuk
-                            dibuatkan akun.</div>
-                        <div class="step-desc"> </div>
+                            dibuatkan akun. Proses pendaftaran cepat, hanya butuh beberapa menit.</div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="step-card">
+                    <div class="step-card h-100 d-flex flex-column">
                         <div class="step-number">02</div>
                         <div class="step-icon"><i class="bi bi-chat-dots"></i></div>
                         <div class="step-title">Hubungi Admin SCI</div>
                         <div class="step-desc">Setelah memiliki akun, hubungi admin SCI Media untuk mengajukan
-                            permintaan kode serial.</div>
+                            permintaan kode serial. Admin siap membantu Anda setiap hari kerja.</div>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
-                    <div class="step-card">
+                    <div class="step-card h-100 d-flex flex-column">
                         <div class="step-number">03</div>
                         <div class="step-icon"><i class="bi bi-key"></i></div>
                         <div class="step-title">Dapatkan Kode Serial</div>
                         <div class="step-desc">Kirim bukti pembelian jika sudah memiliki produk, atau ikuti arahan
-                            admin untuk mendapatkan serial.</div>
+                            admin untuk mendapatkan serial. Kode serial aktif segera setelah verifikasi selesai.</div>
                     </div>
                 </div>
             </div>
