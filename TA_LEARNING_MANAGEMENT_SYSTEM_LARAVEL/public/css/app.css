@@ -4203,3 +4203,49 @@ footer {
 #problemSolution p {
     margin-bottom: 0.75rem;
 }
+
+/* Override Sneat untuk input di #loginModal */
+#loginModal .form-control,
+#loginModal .form-select {
+    padding: 0.6rem 0.875rem !important;
+    font-size: 0.875rem !important;
+    border-radius: 8px !important;
+    border: 1px solid #d0d5dd !important;
+    background: #f9fafb !important;
+    color: #1e2140 !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+#loginModal .form-control:focus,
+#loginModal .form-select:focus {
+    border-color: #696CFF !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.12) !important;
+    outline: none !important;
+}
+
+#loginModal .form-label {
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    color: #566a7f !important;
+    margin-bottom: 0.4rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.02em !important;
+}
+
+#loginModal .btn.btn-primary {
+    padding: 0.72rem 1rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #696CFF, #4F46E5) !important;
+    border: none !important;
+    box-shadow: 0 4px 16px rgba(105, 108, 255, 0.35) !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+#loginModal .btn.btn-primary:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(105, 108, 255, 0.45) !important;
+}
