@@ -689,8 +689,9 @@
         // ── Loading State on Submit ──
         document.getElementById('loginForm').addEventListener('submit', function() {
             const btn = document.getElementById('btnLogin');
-            btn.classList.add('loading');
             btn.disabled = true;
+            btn.innerHTML =
+                '<span style="display:inline-flex;align-items:center;gap:8px;"><span class="spinner-ring"></span> Memproses...</span>';
         });
     </script>
 
