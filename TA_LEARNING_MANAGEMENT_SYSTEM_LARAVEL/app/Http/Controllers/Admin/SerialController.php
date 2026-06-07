@@ -30,7 +30,14 @@ class SerialController extends Controller
             return response()->json(['data' => $data]);
         }
         // Controller - index()
-        $data = Serial::with(['product', 'user'])->withCount('serial_logs')->orderBy('id', 'asc')->get();
+        $data = Serial::with(['product', 'user'])
+            ->withCount([
+                'serial_logs as serial_logs_count' => function ($q) {
+                    $q->where('status', 'Perpanjang');
+                }
+            ])
+            ->orderBy('id', 'asc')
+            ->get();
         $products = Product::orderBy('id', 'asc')->get();
         $users = User::orderBy('id', 'asc')->get();
         $expiredSerials = Serial::with('user')
