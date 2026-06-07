@@ -695,7 +695,7 @@
             }).catch(() => {});
             document.getElementById('problemTitle').textContent = `${cat.title} (${cat.level})`;
             document.getElementById('problemSolution').innerHTML =
-                `<p>${cat.solution ?? 'Silakan baca panduan dan tonton video.'}</p>`;
+                cat.solution ?? '<p>Silakan baca panduan dan tonton video.</p>';
             const videoWrapper = document.getElementById('videoWrapper');
             const videoBox = document.getElementById('problemVideoContainer');
             if (cat.video) {
