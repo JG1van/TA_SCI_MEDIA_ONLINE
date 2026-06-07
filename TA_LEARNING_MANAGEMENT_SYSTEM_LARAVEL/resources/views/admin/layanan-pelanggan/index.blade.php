@@ -26,7 +26,7 @@
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover align-middle text-center" id="pengaduanTable">
             <thead>
-                <tr>
+                <tr class="align-middle text-center">
                     <th style="width:60px;">No</th>
                     <th>Kode Ruangan</th>
                     <th>Aktivitas Terakhir</th>

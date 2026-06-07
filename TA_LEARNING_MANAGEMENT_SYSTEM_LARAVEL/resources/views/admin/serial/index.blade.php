@@ -88,7 +88,7 @@
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover align-middle text-center">
             <thead>
-                <tr>
+                <tr class="align-middle text-center">
                     <th>No</th>
                     <th>Serial</th>
                     <th>Produk</th>

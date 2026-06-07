@@ -59,7 +59,7 @@
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover align-middle text-center" id="categoryTable">
             <thead>
-                <tr>
+                <tr class="align-middle text-center">
                     <th>No</th>
                     <th>Nama Kategori</th>
                     <th>Tingkat Masalah</th>
@@ -188,7 +188,7 @@
                     <h5 class="modal-title">Detail / Edit Kategori Pertanyaan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body row g-3" style="max-height:600px; overflow-y:auto; overflow-x:auto;">
+                <div class="modal-body row g-3" style="max-height:500px; overflow-y:auto; overflow-x:auto;">
                     <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="hidden"
                         id="editId" name="id">
                     <div class="col-md-12">
