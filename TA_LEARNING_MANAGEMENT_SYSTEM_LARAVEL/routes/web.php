@@ -204,7 +204,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::get('/proxy/{path}', function ($path) {
         try {
-            $url = 'http://151.243.222.93:30083/api/files/' . $path;
+            $url = 'http://127.0.0.1:30083/api/files/' . $path;  // ← ganti ke 127.0.0.1
             $response = \Illuminate\Support\Facades\Http::timeout(10)->get($url);
 
             if ($response->failed()) {
