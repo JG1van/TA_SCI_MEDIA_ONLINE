@@ -28,7 +28,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\BackupController;
 use Kreait\Firebase\Factory;
 
-
+use Illuminate\Support\Facades\Http;
 
 //  ROUTE AWAL
 Route::get('/', fn() => view('welcome'));
@@ -201,6 +201,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::post('/backup/restore', [BackupController::class, 'restore'])
         ->name('backup.restore');
+
+    // routes/web.php
+    Route::get('/proxy/students/{filename}', function ($filename) {
+        $url = 'http://151.243.222.93:30083/api/files/students/' . $filename;
+        $response = Http::get($url);
+        return response($response->body(), 200)
+            ->header('Content-Type', $response->header('Content-Type'));
+    });
 });
 
 /*
@@ -288,3 +296,4 @@ Route::get('/clear-cache-test', function () {
     \Cache::forget('expiry-reminder-lock');
     return 'Cache cleared! Silakan login sekarang.';
 });
+
