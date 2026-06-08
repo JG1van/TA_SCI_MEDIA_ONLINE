@@ -9,7 +9,7 @@
         @method('PUT')
 
         {{-- ID Produk --}}
-        <div class="mb-3">
+        <div class="mb-3" style="display: none;">
             <label class="form-label">ID Produk</label>
             <input type="text" class="form-control" value="{{ $product->id }}" readonly>
         </div>
@@ -111,7 +111,7 @@
                         <input type="text" id="searchLesson" class="form-control" placeholder="Cari pelajaran...">
                     </div>
 
-                    <div class="table-responsive table-wrapper" style="max-height:560px; overflow-y:auto; overflow-x:auto;">
+                    <div class="table-responsive table-wrapper" style="max-height:450px; overflow-y:auto; overflow-x:auto;">
                         <table class="table table-striped table-bordered table-hover align-middle text-center"
                             id="tabelLesson">
                             <thead>

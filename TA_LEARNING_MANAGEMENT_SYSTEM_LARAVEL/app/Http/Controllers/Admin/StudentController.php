@@ -152,19 +152,24 @@ class StudentController extends Controller
                 'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             ]);
 
-            $student->update([
-                'serial_id' => $request->serial_id,
-                'user_id' => $request->user_id,
-                'classroom_id' => $request->classroom_id,
-                'name' => $request->name,
-                'username' => $request->username,
-                'nis' => $request->nis,
-                'email' => $request->email,
-                'phone' => $request->phone,
-
-                // ✅ TAMBAHAN
-                'absen_number' => $request->absen_number,
-            ]);
+            $student->update(
+                [
+                    'serial_id' => $request->serial_id,
+                    'user_id' => $request->user_id,
+                    'classroom_id' => $request->classroom_id,
+                    'name' => $request->name,
+                    'username' => $request->username,
+                    'nis' => $request->nis,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'absen_number' => $request->absen_number,
+                ],
+                [
+                    'name.required' => 'Nama wajib diisi.',
+                    'username.required' => 'Username wajib diisi.',
+                    'username.unique' => 'Username sudah digunakan, silakan pilih yang lain.',
+                ]
+            );
 
             // ✅ HANDLE PHOTO (upload + replace lama)
             if ($request->hasFile('photo')) {
