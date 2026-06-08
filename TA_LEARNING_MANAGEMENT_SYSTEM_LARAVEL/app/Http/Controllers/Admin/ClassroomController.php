@@ -25,10 +25,10 @@ class ClassroomController extends Controller
     {
         $data = Classroom::with(['serial.user', 'students', 'user'])
             ->withCount('students')
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->get();
-        $serials = Serial::with('classrooms')->orderBy('id', 'asc')->get();
-        $users = User::orderBy('id', 'asc')->get();
+        $serials = Serial::with('classrooms')->orderBy('id', 'desc')->get();
+        $users = User::orderBy('id', 'desc')->get();
         $warningSerials = [];
         $serialBermasalah = [];
         foreach ($serials as $serial) {

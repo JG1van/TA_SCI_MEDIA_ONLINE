@@ -21,10 +21,10 @@ class AdminController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $admins = Admin::orderBy('id', 'asc')->get();
+            $admins = Admin::orderBy('id', 'desc')->get();
             return response()->json(['data' => $admins]);
         }
-        $admins = Admin::orderBy('id', 'asc')->get();
+        $admins = Admin::orderBy('id', 'desc')->get();
         return view('admin.admin.index', compact('admins'));
     }
     public function store(Request $request)
@@ -264,7 +264,7 @@ class AdminController extends Controller
                 ->where('created_at', '>=', now()->subMonths(12)->startOfMonth())
                 ->selectRaw("DATE_FORMAT(created_at, '%b %Y') as label, DATE_FORMAT(created_at, '%Y-%m') as sort_key, COUNT(*) as total")
                 ->groupBy('label', 'sort_key')
-                ->orderBy('sort_key', 'asc')
+                ->orderBy('sort_key', 'desc')
                 ->get()
                 ->map(fn($row) => ['label' => $row->label, 'total' => (int) $row->total])
                 ->values()

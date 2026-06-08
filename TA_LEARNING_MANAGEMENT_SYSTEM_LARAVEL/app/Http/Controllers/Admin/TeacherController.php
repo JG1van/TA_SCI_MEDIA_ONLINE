@@ -20,10 +20,10 @@ class TeacherController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $teachers = User::orderBy('id', 'asc')->get();
+            $teachers = User::orderBy('id', 'desc')->get();
             return response()->json(['data' => $teachers]);
         }
-        $teachers = User::orderBy('id', 'asc')->get();
+        $teachers = User::orderBy('id', 'desc')->get();
         return view('admin.guru.index', compact('teachers'));
     }
     public function store(Request $request)

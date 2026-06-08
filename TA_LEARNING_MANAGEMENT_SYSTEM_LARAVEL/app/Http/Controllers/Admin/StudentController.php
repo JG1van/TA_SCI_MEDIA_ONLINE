@@ -21,11 +21,11 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $students = \App\Models\Student::orderBy('id', 'asc')->get();
+            $students = \App\Models\Student::orderBy('id', 'desc')->get();
             return response()->json(['data' => $students]);
         }
-        $students = \App\Models\Student::orderBy('id', 'asc')->get();
-        $classrooms = \App\Models\Classroom::with(['serial.user'])->orderBy('name', 'asc')->get();
+        $students = \App\Models\Student::orderBy('id', 'desc')->get();
+        $classrooms = \App\Models\Classroom::with(['serial.user'])->orderBy('name', 'desc')->get();
         return view('admin.siswa.index', compact('students', 'classrooms'));
     }
     public function create(Request $request)
@@ -37,11 +37,11 @@ class StudentController extends Controller
                 return redirect()->route('siswa.index')->with('error', 'Kelas tidak ditemukan.');
             }
             $students = Student::where('classroom_id', $classroom->id)
-                ->orderBy('id', 'asc')
+                ->orderBy('id', 'desc')
                 ->get();
             return view('admin.siswa.create', compact('classroom', 'students'));
         }
-        $classrooms = Classroom::with(['serial.user'])->orderBy('id', 'asc')->get();
+        $classrooms = Classroom::with(['serial.user'])->orderBy('id', 'desc')->get();
         $students = collect();
         return view('admin.siswa.create', compact('classrooms', 'students'));
     }

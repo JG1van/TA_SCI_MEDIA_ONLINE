@@ -29,16 +29,16 @@ class ExerciseController extends Controller
         if ($request->ajax()) {
             $data = Exercise::with(['exercise_type', 'serial', 'lesson'])
                 ->where('lesson_id', $lesson_id)
-                ->orderBy('id', 'asc')
+                ->orderBy('id', 'desc')
                 ->get();
             return response()->json(['success' => true, 'data' => $data]);
         }
         $data = Exercise::with(['exercise_type', 'serial'])
             ->where('lesson_id', $lesson_id)
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->get();
-        $types = ExerciseType::orderBy('id', 'asc')->get();
-        $serials = Serial::orderBy('id', 'asc')->get();
+        $types = ExerciseType::orderBy('id', 'desc')->get();
+        $serials = Serial::orderBy('id', 'desc')->get();
         return view('admin.pelajaran.judul_soal', compact('lesson', 'data', 'types', 'serials'));
     }
     public function store(Request $request, $lesson_id)

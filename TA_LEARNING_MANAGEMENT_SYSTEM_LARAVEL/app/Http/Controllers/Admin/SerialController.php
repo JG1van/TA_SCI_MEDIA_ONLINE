@@ -25,7 +25,7 @@ class SerialController extends Controller
     {
         if ($request->ajax()) {
             $data = Serial::with(['product', 'user'])
-                ->orderBy('id', 'asc')
+                ->orderBy('id', 'desc')
                 ->get();
             return response()->json(['data' => $data]);
         }
@@ -36,25 +36,25 @@ class SerialController extends Controller
                     $q->where('status', 'Perpanjang');
                 }
             ])
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->get();
-        $products = Product::orderBy('id', 'asc')->get();
-        $users = User::orderBy('id', 'asc')->get();
+        $products = Product::orderBy('id', 'desc')->get();
+        $users = User::orderBy('id', 'desc')->get();
         $expiredSerials = Serial::with('user')
             ->whereNotNull('expired_at')
             ->whereDate('expired_at', '<=', now())
-            ->orderBy('expired_at', 'asc')
+            ->orderBy('expired_at', 'desc')
             ->get();
         $expiredMoreThan14Months = Serial::with('user')
             ->whereNotNull('expired_at')
             ->whereDate('expired_at', '<=', now()->subMonths(14))
-            ->orderBy('expired_at', 'asc')
+            ->orderBy('expired_at', 'desc')
             ->get();
         $expiringSoonSerials = Serial::with('user')
             ->whereNotNull('expired_at')
             ->whereDate('expired_at', '>', now())
             ->whereDate('expired_at', '<=', now()->addDays(30))
-            ->orderBy('expired_at', 'asc')
+            ->orderBy('expired_at', 'desc')
             ->get();
         $notificationSerials = $expiredSerials
             ->merge($expiringSoonSerials)

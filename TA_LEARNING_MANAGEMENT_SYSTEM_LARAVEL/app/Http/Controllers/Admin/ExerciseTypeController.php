@@ -17,10 +17,10 @@ class ExerciseTypeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = ExerciseType::orderBy('id', 'asc')->get();
+            $data = ExerciseType::orderBy('id', 'desc')->get();
             return response()->json(['data' => $data]);
         }
-        $data = ExerciseType::orderBy('id', 'asc')->get();
+        $data = ExerciseType::orderBy('id', 'desc')->get();
         return view('admin.pra-soal.tipe', compact('data'));
     }
     public function store(Request $request)

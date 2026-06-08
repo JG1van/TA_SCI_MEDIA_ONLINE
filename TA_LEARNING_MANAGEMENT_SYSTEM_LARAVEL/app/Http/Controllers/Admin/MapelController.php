@@ -17,10 +17,10 @@ class MapelController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $mapels = Mapel::orderBy('id', 'asc')->get();
+            $mapels = Mapel::orderBy('id', 'desc')->get();
             return response()->json(['data' => $mapels]);
         }
-        $data = Mapel::orderBy('id', 'asc')->get();
+        $data = Mapel::orderBy('id', 'desc')->get();
         return view('admin.mapel.index', compact('data'));
     }
     public function store(Request $request)

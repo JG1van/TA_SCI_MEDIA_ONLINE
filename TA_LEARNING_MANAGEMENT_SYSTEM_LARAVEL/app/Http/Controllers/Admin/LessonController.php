@@ -19,11 +19,11 @@ class LessonController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Lesson::with('mapel')->orderBy('id', 'asc')->get();
+            $data = Lesson::with('mapel')->orderBy('id', 'desc')->get();
             return response()->json(['data' => $data]);
         }
-        $data = Lesson::with('mapel')->orderBy('id', 'asc')->get();
-        $mapels = Mapel::orderBy('id', 'asc')->get();
+        $data = Lesson::with('mapel')->orderBy('id', 'desc')->get();
+        $mapels = Mapel::orderBy('id', 'desc')->get();
         return view('admin.pelajaran.index', compact('data', 'mapels'));
     }
     public function store(Request $request)

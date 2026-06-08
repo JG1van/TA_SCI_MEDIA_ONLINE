@@ -17,10 +17,10 @@ class ExerciseModelController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = ExerciseModel::orderBy('id', 'asc')->get();
+            $data = ExerciseModel::orderBy('id', 'desc')->get();
             return response()->json(['data' => $data]);
         }
-        $data = ExerciseModel::orderBy('id', 'asc')->get();
+        $data = ExerciseModel::orderBy('id', 'desc')->get();
         return view('admin.pra-soal.model', compact('data'));
     }
     public function store(Request $request)

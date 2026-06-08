@@ -17,7 +17,7 @@ class ProductController extends Controller
     }
     public function index(Request $request)
     {
-        $products = Product::orderBy('id', 'asc')->get();
+        $products = Product::orderBy('id', 'desc')->get();
         $lessons = Lesson::pluck('name', 'id')->toArray();
         foreach ($products as $product) {
             $lessonIds = json_decode($product->lesson_id) ?? [];

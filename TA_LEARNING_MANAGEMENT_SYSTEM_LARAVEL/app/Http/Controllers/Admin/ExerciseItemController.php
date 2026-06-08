@@ -30,7 +30,7 @@ class ExerciseItemController extends Controller
         }
         $exerciseItems = ExerciseItem::with(['competence', 'admin', 'user'])
             ->where('exercise_id', $exercise_id)
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->get();
         $exerciseModels = \App\Models\ExerciseModel::all();
         return view('admin.pelajaran.soal_index', compact(

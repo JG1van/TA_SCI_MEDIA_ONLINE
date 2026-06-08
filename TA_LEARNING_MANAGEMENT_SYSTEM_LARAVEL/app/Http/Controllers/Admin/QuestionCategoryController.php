@@ -20,7 +20,7 @@ class QuestionCategoryController extends Controller
     }
     public function index(Request $request)
     {
-        $data = QuestionCategory::orderBy('id', 'asc')->get();
+        $data = QuestionCategory::orderBy('id', 'desc')->get();
         if ($request->ajax()) {
             return response()->json(['data' => $data]);
         }
