@@ -137,20 +137,27 @@ class StudentController extends Controller
         try {
             $student = Student::findOrFail($id);
 
-            $request->validate([
-                'serial_id' => 'required|integer',
-                'user_id' => 'required|integer',
-                'classroom_id' => 'required|integer',
-                'name' => 'required|string|max:200',
-                'username' => 'required|string|max:100|unique:students,username,' . $id,
-                'nis' => 'nullable|string|max:20',
-                'email' => 'nullable|email|max:100',
-                'phone' => 'nullable|string|max:20',
+            $request->validate(
+                [
+                    'serial_id' => 'required|integer',
+                    'user_id' => 'required|integer',
+                    'classroom_id' => 'required|integer',
+                    'name' => 'required|string|max:200',
+                    'username' => 'required|string|max:100|unique:students,username,' . $id,
+                    'nis' => 'nullable|string|max:20',
+                    'email' => 'nullable|email|max:100',
+                    'phone' => 'nullable|string|max:20',
 
-                // ✅ TAMBAHAN
-                'absen_number' => 'nullable|integer',
-                'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            ]);
+                    // ✅ TAMBAHAN
+                    'absen_number' => 'nullable|integer',
+                    'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+                ],
+                [
+                    'name.required' => 'Nama wajib diisi.',
+                    'username.required' => 'Username wajib diisi.',
+                    'username.unique' => 'Username sudah digunakan, silakan pilih yang lain.',
+                ]
+            );
 
             $student->update(
                 [
@@ -163,11 +170,6 @@ class StudentController extends Controller
                     'email' => $request->email,
                     'phone' => $request->phone,
                     'absen_number' => $request->absen_number,
-                ],
-                [
-                    'name.required' => 'Nama wajib diisi.',
-                    'username.required' => 'Username wajib diisi.',
-                    'username.unique' => 'Username sudah digunakan, silakan pilih yang lain.',
                 ]
             );
 

@@ -31,7 +31,7 @@ class TeacherController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
             'username' => 'required|string|max:100|unique:users,username',
-            'email' => 'nullable|email|max:100',
+            'email' => 'nullable|email|max:100|unique:users,email',
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
             'img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -39,6 +39,7 @@ class TeacherController extends Controller
             'name.required' => 'Nama wajib diisi.',
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
+            'email.unique' => 'Email sudah digunakan.',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -95,7 +96,7 @@ class TeacherController extends Controller
             [
                 'name' => 'required|string|max:100',
                 'username' => 'required|string|max:100|unique:users,username,' . $id,
-                'email' => 'nullable|email|max:100',
+                'email' => 'nullable|email|max:100|unique:users,email,' . $id,
                 'phone' => 'nullable|string|max:20',
                 'address' => 'nullable|string',
                 'role' => 'required|in:0,1',
@@ -105,6 +106,7 @@ class TeacherController extends Controller
                 'name.required' => 'Nama wajib diisi.',
                 'username.required' => 'Username wajib diisi.',
                 'username.unique' => 'Username sudah digunakan, silakan pilih yang lain.',
+                'email.unique' => 'Email sudah digunakan.',
             ]
         );
         if ($validator->fails()) {
