@@ -4,6 +4,132 @@
 @section('page_title', 'Edit Soal ')
 
 @section('content')
+    <style>
+        .ql-editor img {
+            cursor: pointer;
+            max-width: 100%;
+        }
+
+        .ql-editor img.img-selected {
+            outline: 2px dashed #696CFF;
+            outline-offset: 2px;
+        }
+
+        #img-resize-overlay {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            border: 2px dashed #696CFF;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        .resize-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #696CFF;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            pointer-events: all;
+        }
+
+        .resize-handle.tl {
+            top: -6px;
+            left: -6px;
+            cursor: nwse-resize;
+        }
+
+        .resize-handle.tm {
+            top: -6px;
+            left: calc(50% - 5px);
+            cursor: ns-resize;
+        }
+
+        .resize-handle.tr {
+            top: -6px;
+            right: -6px;
+            cursor: nesw-resize;
+        }
+
+        .resize-handle.ml {
+            top: calc(50% - 5px);
+            left: -6px;
+            cursor: ew-resize;
+        }
+
+        .resize-handle.mr {
+            top: calc(50% - 5px);
+            right: -6px;
+            cursor: ew-resize;
+        }
+
+        .resize-handle.bl {
+            bottom: -6px;
+            left: -6px;
+            cursor: nesw-resize;
+        }
+
+        .resize-handle.bm {
+            bottom: -6px;
+            left: calc(50% - 5px);
+            cursor: ns-resize;
+        }
+
+        .resize-handle.br {
+            bottom: -6px;
+            right: -6px;
+            cursor: nwse-resize;
+        }
+
+        #img-resize-toolbar {
+            position: fixed;
+            background: #212529;
+            color: #fff;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 12px;
+            display: none;
+            gap: 8px;
+            align-items: center;
+            z-index: 10000;
+            white-space: nowrap;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+        }
+
+        #img-resize-toolbar input[type=number] {
+            width: 54px;
+            background: #343a40;
+            color: #fff;
+            border: 1px solid #6c757d;
+            border-radius: 4px;
+            padding: 2px 4px;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        #img-resize-toolbar button {
+            background: #495057;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        #img-resize-toolbar button:hover {
+            background: #6c757d;
+        }
+
+        #img-resize-toolbar .btn-lock-on {
+            background: #198754;
+        }
+
+        #img-resize-toolbar .btn-del {
+            background: #dc3545;
+        }
+    </style>
     <div class="container-fluid">
         <form id="formSoal"
             action="{{ route('admin.pelajaran.judul_soal.soal.update', [$lesson->id, $exercise->id, $item->id]) }}"
@@ -113,6 +239,158 @@
             ["image", "clean"]
         ];
         let editors = [];
+
+        function initImageResizer() {
+            const overlay = document.createElement('div');
+            overlay.id = 'img-resize-overlay';
+
+            ['tl', 'tm', 'tr', 'ml', 'mr', 'bl', 'bm', 'br'].forEach(pos => {
+                const h = document.createElement('div');
+                h.className = `resize-handle ${pos}`;
+                h.dataset.pos = pos;
+                overlay.appendChild(h);
+            });
+
+            const bar = document.createElement('div');
+            bar.id = 'img-resize-toolbar';
+            bar.innerHTML = `
+        <span>W:<input type="number" id="rz-w" min="20"> px</span>
+        <span>H:<input type="number" id="rz-h" min="20"> px</span>
+        <button id="rz-lock">🔒 Rasio</button>
+        <button id="rz-ori">Asli</button>
+        <button class="btn-del" id="rz-del">Hapus</button>`;
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(bar);
+
+            let sel = null,
+                locked = false,
+                isDrag = false,
+                aH = '';
+            let sx, sy, sw, sh, natW = 0,
+                natH = 0;
+
+            function updatePos() {
+                if (!sel) return;
+                const r = sel.getBoundingClientRect();
+                overlay.style.display = 'block';
+                overlay.style.left = r.left + 'px';
+                overlay.style.top = r.top + 'px';
+                overlay.style.width = r.width + 'px';
+                overlay.style.height = r.height + 'px';
+
+                bar.style.display = 'flex';
+                let bTop = r.top - 40;
+                if (bTop < 4) bTop = r.bottom + 6;
+                bar.style.top = bTop + 'px';
+                bar.style.left = r.left + 'px';
+
+                document.getElementById('rz-w').value = Math.round(r.width);
+                document.getElementById('rz-h').value = Math.round(r.height);
+            }
+
+            function deselect() {
+                if (sel) sel.classList.remove('img-selected');
+                sel = null;
+                overlay.style.display = 'none';
+                bar.style.display = 'none';
+            }
+
+            document.addEventListener('click', e => {
+                if (e.target.tagName === 'IMG' && e.target.closest('.ql-editor')) {
+                    if (sel) sel.classList.remove('img-selected');
+                    sel = e.target;
+                    sel.classList.add('img-selected');
+                    natW = sel.naturalWidth || sel.offsetWidth;
+                    natH = sel.naturalHeight || sel.offsetHeight;
+                    updatePos();
+                } else if (!overlay.contains(e.target) && !bar.contains(e.target)) {
+                    deselect();
+                }
+            });
+
+            overlay.addEventListener('mousedown', e => {
+                if (!e.target.dataset.pos) return;
+                e.preventDefault();
+                isDrag = true;
+                aH = e.target.dataset.pos;
+                sx = e.clientX;
+                sy = e.clientY;
+                sw = sel.offsetWidth;
+                sh = sel.offsetHeight;
+            });
+
+            document.addEventListener('mousemove', e => {
+                if (!isDrag || !sel) return;
+                const dx = e.clientX - sx,
+                    dy = e.clientY - sy;
+                const ratio = sh / sw;
+                let nw = sw,
+                    nh = sh;
+
+                if (aH.includes('r')) nw = Math.max(20, sw + dx);
+                if (aH.includes('l')) nw = Math.max(20, sw - dx);
+                if (aH === 'bm' || (aH.includes('b') && !aH.includes('l') && !aH.includes('r')))
+                    nh = Math.max(20, sh + dy);
+                if (aH === 'tm' || (aH.includes('t') && !aH.includes('l') && !aH.includes('r')))
+                    nh = Math.max(20, sh - dy);
+                if (aH.includes('b') && (aH.includes('l') || aH.includes('r')))
+                    nh = locked ? nw * ratio : Math.max(20, sh + dy);
+                if (aH.includes('t') && (aH.includes('l') || aH.includes('r')))
+                    nh = locked ? nw * ratio : Math.max(20, sh - dy);
+                if ((aH === 'ml' || aH === 'mr') && locked) nh = nw * ratio;
+                if (aH === 'bm' || aH === 'tm') nw = sw;
+
+                sel.style.width = Math.round(nw) + 'px';
+                sel.style.height = Math.round(nh) + 'px';
+                updatePos();
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDrag = false;
+            });
+
+            document.getElementById('rz-w').addEventListener('change', function() {
+                if (!sel) return;
+                const w = Math.max(20, parseInt(this.value) || 20);
+                sel.style.width = w + 'px';
+                if (locked) sel.style.height = Math.round(w * sel.offsetHeight / sel.offsetWidth) + 'px';
+                updatePos();
+            });
+
+            document.getElementById('rz-h').addEventListener('change', function() {
+                if (!sel) return;
+                const h = Math.max(20, parseInt(this.value) || 20);
+                sel.style.height = h + 'px';
+                if (locked) sel.style.width = Math.round(h * sel.offsetWidth / sel.offsetHeight) + 'px';
+                updatePos();
+            });
+
+            document.getElementById('rz-lock').addEventListener('click', function() {
+                locked = !locked;
+                this.textContent = locked ? '🔒 Rasio ON' : '🔓 Rasio';
+                this.className = locked ? 'btn-lock-on' : '';
+            });
+
+            document.getElementById('rz-ori').addEventListener('click', () => {
+                if (!sel) return;
+                sel.style.width = natW + 'px';
+                sel.style.height = natH + 'px';
+                updatePos();
+            });
+
+            document.getElementById('rz-del').addEventListener('click', () => {
+                if (sel && confirm('Hapus gambar ini?')) {
+                    sel.remove();
+                    deselect();
+                }
+            });
+
+            window.addEventListener('scroll', updatePos, true);
+            window.addEventListener('resize', () => {
+                if (sel) updatePos();
+            });
+        }
 
         function imageHandler() {
 
@@ -286,7 +564,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             loadExistingForm();
-
+            initImageResizer();
             document.getElementById('formSoal').addEventListener('submit', e => {
                 const qEditor = editors.find(q => q.container.id === "editorQuestion");
                 if (qEditor) document.getElementById("hiddenQuestion").value = qEditor.root.innerHTML
