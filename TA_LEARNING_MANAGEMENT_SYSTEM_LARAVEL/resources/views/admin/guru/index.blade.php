@@ -27,6 +27,7 @@
                     <th>Nama</th>
                     <th>Username</th>
                     {{-- <th>Status</th> --}}
+                    <th>Email</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -50,6 +51,7 @@
                                     <span class="badge bg-danger">Unknown</span>
                             @endswitch
                         </td> --}}
+                        <td class="teacher-email">{{ $teacher->email ?? '-' }}</td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-warning btn-sm" onclick="editTeacher('{{ $teacher->id }}')">Detail /
@@ -61,13 +63,13 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-muted text-center">Belum ada data guru.</td>
+                        <td colspan="5" class="text-muted text-center">Belum ada data guru.</td>
                     </tr>
                 @endforelse
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="4"></th>
+                    <th colspan="5"></th>
                 </tr>
             </tfoot>
         </table>
@@ -252,7 +254,10 @@
                 document.querySelectorAll('#teacherBody tr').forEach(row => {
                     const namaEl = row.querySelector('.teacher-name');
                     const nama = namaEl ? namaEl.textContent.toLowerCase() : '';
-                    row.style.display = nama.includes(keyword) ? '' : 'none';
+                    const email = row.querySelector('.teacher-email')?.textContent.toLowerCase() ??
+                        '';
+                    row.style.display = (nama.includes(keyword) || email.includes(keyword)) ? '' :
+                        'none';
                 });
             });
 
