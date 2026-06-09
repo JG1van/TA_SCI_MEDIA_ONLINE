@@ -91,13 +91,13 @@
                 <tr class="align-middle text-center">
                     <th>No</th>
                     <th>Serial</th>
+                    <th>Pelanggan</th>
                     <th>Produk</th>
-                    <th>Paket Kelas</th>
-                    <th>Aktif (bulan)</th>
-                    <th>Perpanjang</th>
+                    <th>Kelas</th>
                     <th>Kedaluwarsa</th>
                     <th>Sisa Hari</th>
-                    <th>Pelanggan</th>
+                    <th>Total Aktif (bln)</th>
+                    <th>Perpanjang</th>
                     <th>Pemberitahuan</th>
                     <th>Aksi</th>
                 </tr>
@@ -111,17 +111,22 @@
                             {{ $s->serial }}
                         </td>
                         <td>
+                            @if ($s->user)
+                                {{ $s->user->name }}
+                            @else
+                                <span class="text-muted">Belum Ditentukan</span>
+                            @endif
+                        </td>
+                        <td>
                             @if ($s->product)
                                 {{ $s->product->name }}
                             @else
                                 <span class="text-muted">Belum Ditentukan</span>
                             @endif
                         </td>
-                        <td>{{ $s->paket }}</td>
-                        <td>{{ $s->active }}</td>
                         <td>
-                            <span class="badge bg-primary" title="Total riwayat: {{ $s->serial_logs_count }}x">
-                                {{ $s->serial_logs_count }}x
+                            <span class="badge {{ $s->kelas_dibuat >= $s->paket ? 'bg-danger' : 'bg-success' }}">
+                                {{ $s->kelas_dibuat }} / {{ $s->paket }}
                             </span>
                         </td>
                         <td>
@@ -150,12 +155,11 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        <td>{{ $s->active }}</td>
                         <td>
-                            @if ($s->user)
-                                {{ $s->user->name }}
-                            @else
-                                <span class="text-muted">Belum Ditentukan</span>
-                            @endif
+                            <span class="badge bg-primary" title="Total riwayat: {{ $s->serial_logs_count }}x">
+                                {{ $s->serial_logs_count }}x
+                            </span>
                         </td>
                         <td>
                             @if ($s->notif == 'Tidak_ada')
@@ -168,19 +172,13 @@
                         </td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-
-                                <!-- EDIT -->
                                 <button class="btn btn-warning btn-sm" onclick="editSerial({{ $s->id }})">
                                     Edit
                                 </button>
-
-                                <!-- HAPUS -->
                                 <button class="btn btn-danger btn-sm"
                                     onclick="hapusSerial({{ $s->id }}, '{{ $s->serial }}')">
                                     Hapus
                                 </button>
-
-                                <!-- PERPANJANG -->
                                 @if ($s->expired_at)
                                     <button class="btn btn-info btn-sm" style="min-width: 90px;"
                                         onclick="perpanjangSerial({{ $s->id }})">
@@ -191,13 +189,10 @@
                                         Belum Aktif
                                     </button>
                                 @endif
-
-                                <!-- KIRIM EMAIL -->
                                 <button class="btn btn-success btn-sm" style="min-width: 85px;"
                                     onclick="openEmailModal({{ $s->id }})">
                                     Kirim Email
                                 </button>
-
                             </div>
                         </td>
                     </tr>
@@ -253,9 +248,10 @@
                         </select>
                     </div>
                     <div class="col-12">
+                        <label class="form-label">Pelanggan</label>
                         <div class="input-group">
-                            <input type="text" id="tambahUserName" class="form-control" placeholder="Belum dipilih"
-                                readonly>
+                            <input type="text" id="tambahUserName" class="form-control"
+                                placeholder="Belum dipilih pelanggan" readonly>
                             <input type="hidden" id="tambahUserId" name="user_id">
                             <button type="button" class="btn btn-primary btn-sm" onclick="openUserPopup('tambah')">
                                 Pilih
@@ -300,9 +296,10 @@
                         </select>
                     </div>
                     <div class="col-12">
+                        <label class="form-label">Pelanggan</label>
                         <div class="input-group">
-                            <input type="text" id="editUserName" class="form-control" placeholder="Belum dipilih"
-                                readonly>
+                            <input type="text" id="editUserName" class="form-control"
+                                placeholder="Belum dipilih Pelanggan" readonly>
                             <input type="hidden" id="editUserId" name="user_id">
                             <button type="button" class="btn btn-primary btn-sm" onclick="openUserPopup('edit')">
                                 Pilih
@@ -423,7 +420,8 @@
                 <div class="modal-body">
                     <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
                         id="searchUserInput" class="form-control mb-3" placeholder="Cari nama user...">
-                    <div class="table-responsive">
+                    <div class="table-responsive table-wrapper"
+                        style="max-height:450px; overflow-y:auto; overflow-x:auto;">
                         <table class="table table-striped table-bordered table-hover align-middle text-center"
                             id="studentTable">
                             <thead>

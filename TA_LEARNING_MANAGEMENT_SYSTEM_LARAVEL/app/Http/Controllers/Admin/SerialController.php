@@ -34,7 +34,8 @@ class SerialController extends Controller
             ->withCount([
                 'serial_logs as serial_logs_count' => function ($q) {
                     $q->where('status', 'Perpanjang');
-                }
+                },
+                'classrooms as kelas_dibuat'  // tambah ini
             ])
             ->orderBy('id', 'desc')
             ->get();
