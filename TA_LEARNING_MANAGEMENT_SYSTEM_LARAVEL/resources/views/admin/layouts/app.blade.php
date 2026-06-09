@@ -292,19 +292,18 @@
                                         </div>
                                     </div>
                                 @endif
-
-                                {{-- 6. UNGU — Pertanyaan tidak terjawab --}}
+                                {{-- 6. SLATE — Pertanyaan tidak terjawab --}}
                                 @if ($totalUnansweredCount > 20)
                                     <div class="alert" role="alert"
-                                        style="background:#f3eefe; border-left:4px solid #6d3ec9; color:#3a1a72;">
+                                        style="background:#eaecef; border-left:4px solid #4a5568; color:#2d3748;">
                                         <div class="alert-left">
-                                            <i class="fas fa-circle-question" style="color:#6d3ec9;"></i>
+                                            <i class="fas fa-circle-question" style="color:#4a5568;"></i>
                                             <span>Total pertanyaan tidak terjawab melebihi batas maksimum</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <a href="{{ route('admin.pertanyaan-tidak-terjawab.index') }}"
                                                 class="btn btn-sm"
-                                                style="background:#6d3ec9; color:#fff; border:none;">Lihat</a>
+                                                style="background:#4a5568; color:#fff; border:none;">Lihat</a>
                                             <button class="alert-close" onclick="closeAlert(this)" title="Tutup">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
