@@ -430,33 +430,38 @@
                 }
             };
         }
-async function handleImagePaste(e) {
-    const items = (e.clipboardData || e.dataTransfer)?.items;
-    if (!items) return;
-    for (const item of items) {
-        if (item.type.startsWith('image/')) {
-            e.preventDefault();
-            e.stopPropagation();
-            const file = item.getAsFile();
-            const formData = new FormData();
-            formData.append("image", file);
-            formData.append("_token", "{{ csrf_token() }}");
-            const res = await fetch(
-                "{{ route('admin.pelajaran.judul_soal.soal.uploadImage', [$lesson_id, $exercise_id]) }}",
-                { method: "POST", body: formData }
-            );
-            const data = await res.json();
-            if (data.url) {
-                const quill = editors.find(q => q.root === e.currentTarget);
-                if (quill) {
-                    const range = quill.getSelection(true) || { index: quill.getLength() };
-                    quill.insertEmbed(range.index, "image", data.url);
+        async function handleImagePaste(e) {
+            const items = (e.clipboardData || e.dataTransfer)?.items;
+            if (!items) return;
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const file = item.getAsFile();
+                    const formData = new FormData();
+                    formData.append("image", file);
+                    formData.append("_token", "{{ csrf_token() }}");
+                    const res = await fetch(
+                        "{{ route('admin.pelajaran.judul_soal.soal.uploadImage', [$lesson_id, $exercise_id]) }}", {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+                    const data = await res.json();
+                    if (data.url) {
+                        const quill = editors.find(q => q.root === e.currentTarget);
+                        if (quill) {
+                            const range = quill.getSelection(true) || {
+                                index: quill.getLength()
+                            };
+                            quill.insertEmbed(range.index, "image", data.url);
+                        }
+                    }
+                    break;
                 }
             }
-            break;
         }
-    }
-}
+
         function createEditor(id, height = 200) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -475,8 +480,8 @@ async function handleImagePaste(e) {
                 placeholder: "Tulis pertanyaan atau pilihan..."
             });
             editors.push(q);
-q.root.addEventListener('paste', handleImagePaste, true);
-q.root.addEventListener('drop', handleImagePaste, true);
+            q.root.addEventListener('paste', handleImagePaste, true);
+            q.root.addEventListener('drop', handleImagePaste, true);
         }
 
         function resetEditors() {
@@ -583,9 +588,7 @@ q.root.addEventListener('drop', handleImagePaste, true);
                     <label>Pertanyaan:</label>
                     <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
-                    <label class="mt-3">Argumen / Jawaban:</label>
-                    <div id="editorAnswer" class="border p-2 rounded"></div>
-                    <input type="hidden" name="answer" id="hiddenAnswer" required>`;
+                    <input type="hidden" name="answer" id="hiddenAnswer" value="-">`;
                     break;
                 default:
                     html = `
@@ -600,7 +603,7 @@ q.root.addEventListener('drop', handleImagePaste, true);
             if (["1", "2", "3", "4", "5", "6", "7"].includes(model)) {
                 createEditor("editorQuestion", 180);
                 if (model == "1" || model == "2") buatPilihan();
-                if (model == "5" || model == "7") createEditor("editorAnswer", 150);
+                if (model == "5") createEditor("editorAnswer", 150);
             }
         }
 
@@ -683,7 +686,19 @@ q.root.addEventListener('drop', handleImagePaste, true);
 
             const aEditor = editors.find(q => q.container.id === "editorAnswer");
             if (aEditor && document.getElementById("hiddenAnswer")) {
-                document.getElementById("hiddenAnswer").value = aEditor.root.innerHTML.trim();
+                const model = document.getElementById("exercise_model_id").value;
+                const answerHTML = aEditor.root.innerHTML.trim();
+
+                // Uraian (model 5): panduan penilaian wajib diisi
+                if (model === "5" && (!answerHTML || answerHTML === "<p><br></p>")) {
+                    e.preventDefault();
+                    alert("Panduan penilaian wajib diisi untuk soal Uraian!");
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    return false;
+                }
+
+                document.getElementById("hiddenAnswer").value = answerHTML;
             }
 
             const choiceInput = document.getElementById("exercise_choice");
