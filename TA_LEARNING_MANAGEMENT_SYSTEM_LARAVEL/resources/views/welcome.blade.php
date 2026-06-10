@@ -60,7 +60,7 @@
                     <a href="http://guru.tak-scimediaonline.my.id/login" class="modal-login-btn guru">
                         <i class="bi bi-person-badge me-2"></i>Login sebagai Guru
                     </a>
-                    <a href="" class="modal-login-btn siswa">
+                    <a href="https://drive.google.com/file/d/1HYD4m3kS_WGLL39gqPNPuqULhxpKpMJe/view?usp=sharing" class="modal-login-btn siswa">
                         <i class="bi bi-backpack me-2"></i>Login sebagai Siswa
                     </a>
                 </div>
