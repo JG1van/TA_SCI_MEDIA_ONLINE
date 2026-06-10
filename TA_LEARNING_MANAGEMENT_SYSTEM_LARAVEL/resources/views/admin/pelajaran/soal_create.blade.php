@@ -430,7 +430,33 @@
                 }
             };
         }
-
+async function handleImagePaste(e) {
+    const items = (e.clipboardData || e.dataTransfer)?.items;
+    if (!items) return;
+    for (const item of items) {
+        if (item.type.startsWith('image/')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const file = item.getAsFile();
+            const formData = new FormData();
+            formData.append("image", file);
+            formData.append("_token", "{{ csrf_token() }}");
+            const res = await fetch(
+                "{{ route('admin.pelajaran.judul_soal.soal.uploadImage', [$lesson_id, $exercise_id]) }}",
+                { method: "POST", body: formData }
+            );
+            const data = await res.json();
+            if (data.url) {
+                const quill = editors.find(q => q.root === e.currentTarget);
+                if (quill) {
+                    const range = quill.getSelection(true) || { index: quill.getLength() };
+                    quill.insertEmbed(range.index, "image", data.url);
+                }
+            }
+            break;
+        }
+    }
+}
         function createEditor(id, height = 200) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -448,8 +474,9 @@
                 },
                 placeholder: "Tulis pertanyaan atau pilihan..."
             });
-
             editors.push(q);
+q.root.addEventListener('paste', handleImagePaste, true);
+q.root.addEventListener('drop', handleImagePaste, true);
         }
 
         function resetEditors() {
