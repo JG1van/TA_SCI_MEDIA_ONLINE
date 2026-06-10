@@ -415,7 +415,7 @@
 
                     // Pilih path sesuai penyimpanan public storage: /storage/users/{filename}
                     if (t.img && t.img !== '') {
-                        imgPreview.src = `http://guru.tak-scimediaonline.my.id/storage/avatars/${t.img}`;
+                        imgPreview.src = `/admin/proxy/avatars/${t.img}`;
                     } else {
                         imgPreview.src = '{{ asset('images/logo.webp') }}';
                     }

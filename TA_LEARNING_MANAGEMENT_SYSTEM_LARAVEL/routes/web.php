@@ -203,8 +203,16 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->name('backup.restore');
 
     Route::get('/proxy/{path}', function ($path) {
+        // Cek file di storage guru dulu
+        $guruPath = '/var/www/Dashboard_Guru_App/dashboard-guru-app/storage/app/public/' . $path;
+        if (file_exists($guruPath)) {
+            $mimeType = mime_content_type($guruPath);
+            return response()->file($guruPath, ['Content-Type' => $mimeType]);
+        }
+
+        // Fallback ke storage siswa via HTTP
         try {
-            $url = 'http://127.0.0.1:30083/api/files/' . $path;  // ← ganti ke 127.0.0.1
+            $url = 'http://127.0.0.1:30083/api/files/' . $path;
             $response = \Illuminate\Support\Facades\Http::timeout(10)->get($url);
 
             if ($response->failed()) {
