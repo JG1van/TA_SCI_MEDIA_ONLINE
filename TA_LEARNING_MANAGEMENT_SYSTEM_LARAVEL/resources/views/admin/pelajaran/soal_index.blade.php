@@ -162,14 +162,15 @@
 
                         <b>Kunci Jawaban:</b>
                         <span class="text-danger">{{ $ans_val }}</span>
-                    @elseif (in_array($item->exercise_model_id, [5, 7]))
-                        <p class="fw-bold mb-1">Kunci Jawaban:</p>
+                    @elseif ($item->exercise_model_id == 5)
+                        <p class="fw-bold mb-1">Panduan Penilaian:</p>
                         @php
                             $ans = json_decode($item->answer, true);
                             $ans_text = is_array($ans) ? $ans[0] ?? '' : $item->answer;
                         @endphp
-
                         <div class="bg-light p-2 rounded">{!! $ans_text !!}</div>
+                    @elseif ($item->exercise_model_id == 7)
+                        {{-- Argumen: tidak perlu tampilkan jawaban --}}
                     @endif
                 </div>
             </div>

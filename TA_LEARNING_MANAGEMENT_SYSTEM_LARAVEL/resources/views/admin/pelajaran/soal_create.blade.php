@@ -588,7 +588,7 @@
                     <label>Pertanyaan:</label>
                     <div id="editorQuestion" class="border p-2 rounded"></div>
                     <input type="hidden" name="question" id="hiddenQuestion">
-                    <input type="hidden" name="answer" id="hiddenAnswer" value="-">`;
+                    <input type="hidden" name="answer" id="hiddenAnswer" value="soal berjenis Argumen">`;
                     break;
                 default:
                     html = `
