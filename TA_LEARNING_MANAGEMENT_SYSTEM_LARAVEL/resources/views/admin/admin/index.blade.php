@@ -199,7 +199,7 @@
             <tbody id="adminBody">
                 @forelse ($admins as $admin)
                     <tr id="row{{ $admin->id }}">
-                        <td>{{ $admin + 1 }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td class="admin-name">{{ $admin->name }}</td>
                         <td>{{ $admin->username }}</td>
                         <td class="text-center align-middle">
