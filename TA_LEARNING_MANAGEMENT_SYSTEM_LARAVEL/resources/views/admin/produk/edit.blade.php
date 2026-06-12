@@ -11,8 +11,8 @@
         {{-- Nama Produk --}}
         <div class="mb-3">
             <label for="name" class="form-label required">Nama Produk</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $product->name }}"
-                placeholder="Masukkan nama produk" required>
+            <input autocomplete="off" type="text" class="form-control" id="name" name="name"
+                value="{{ $product->name }}" placeholder="Masukkan nama produk" required>
         </div>
 
         {{-- Tabel Materi --}}
@@ -193,24 +193,16 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
-            // ── Data awal dari produk yang sedang diedit ──────────────
-            // Ambil data lesson lengkap (termasuk grade/semester/category) dari $lessons
-            const allLessons = @json(
-                $lessons->keyBy('id')->map(
-                    fn($l) => [
-                        'id' => $l->id,
-                        'nama' => $l->name,
-                        'grade' => $l->grade,
-                        'semester' => $l->semester,
-                        'category' => $l->category,
-                    ]));
-
-            const savedIds = @json($product->lesson_id ?? []);
-
-            // Bangun materiData awal lengkap dengan grade/semester/category
-            const materiData = savedIds
-                .filter(id => allLessons[id])
-                .map(id => allLessons[id]);
+            // ── Pre-fill dari data produk existing ────────────────────
+            // Ambil lesson yang ada di product.lesson_id, lengkap dengan grade/semester/category
+            const materiData = @json(collect($lessons)->whereIn('id', $product->lesson_id ?? [])->sortBy(fn($l) => array_search($l->id, $product->lesson_id ?? []))->map(
+                        fn($l) => [
+                            'id' => (string) $l->id,
+                            'nama' => $l->name,
+                            'grade' => $l->grade,
+                            'semester' => $l->semester,
+                            'category' => $l->category,
+                        ])->values());
 
             const tabelBody = document.querySelector("#tabelMateri tbody");
 
@@ -314,7 +306,7 @@
                 renderTabelMateri();
                 bootstrap.Modal.getInstance(document.getElementById("modalMateri")).hide();
 
-                const pesanDuplikat = (checked.length - ditambah) > 0 ?
+                const pesanDuplikat = checked.length - ditambah > 0 ?
                     ` (${checked.length - ditambah} sudah ada, dilewati)` : '';
                 Swal.fire({
                     icon: 'success',
@@ -367,9 +359,14 @@
                 const semester = document.getElementById("filterSemester").value;
 
                 document.querySelectorAll("#tabelLesson tbody tr").forEach(row => {
-                    const matchNama = (row.dataset.nama?.toLowerCase() ?? '').includes(search);
-                    const matchKelas = kelas === '' || row.dataset.grade == kelas;
-                    const matchSem = semester === '' || row.dataset.semester == semester;
+                    const nama = row.dataset.nama?.toLowerCase() ?? '';
+                    const grade = row.dataset.grade ?? '';
+                    const sem = row.dataset.semester ?? '';
+
+                    const matchNama = nama.includes(search);
+                    const matchKelas = kelas === '' || grade == kelas;
+                    const matchSem = semester === '' || sem == semester;
+
                     row.style.display = (matchNama && matchKelas && matchSem) ? '' : 'none';
                 });
                 updateCheckAll();
