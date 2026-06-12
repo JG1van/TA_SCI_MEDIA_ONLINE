@@ -117,7 +117,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive" style="overflow-x: auto; max-height: 420px; overflow-y: auto;">
+                    <div class="table-responsive" style="overflow-x: auto; max-height: 300px; overflow-y: auto;">
                         <table class="table table-striped table-bordered table-hover align-middle text-center"
                             id="tabelLesson" style="min-width: 650px;">
                             <thead class="sticky-top table-light">
