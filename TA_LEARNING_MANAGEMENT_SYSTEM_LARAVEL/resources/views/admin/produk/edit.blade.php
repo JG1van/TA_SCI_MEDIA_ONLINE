@@ -195,7 +195,7 @@
 
             // ── Pre-fill dari data produk existing ────────────────────
             // Ambil lesson yang ada di product.lesson_id, lengkap dengan grade/semester/category
-            const materiData = @json(collect($lessons)->whereIn('id', $product->lesson_id ?? [])->sortBy(fn($l) => array_search($l->id, $product->lesson_id ?? []))->map(
+            const materiData = @json(collect($lessons)->whereIn('id', $product->lesson_id ?? [])->sortBy(fn($l) => array_search((int) $l->id, array_map('intval', $product->lesson_id ?? [])))->map(
                         fn($l) => [
                             'id' => (string) $l->id,
                             'nama' => $l->name,
