@@ -92,9 +92,26 @@ class ProductController extends Controller
             return redirect()->route('admin.produk.index')->with('error', 'Produk tidak ditemukan.');
         }
         $lessons = Lesson::orderBy('id')->get();
-        $product->lesson_id = json_decode($product->lesson_id, true) ?? [];
+
+        $lessonIds = json_decode($product->lesson_id, true) ?? [];
+        $product->lesson_id = $lessonIds;
         $product->grade_category = json_decode($product->grade_category, true) ?? [];
-        return view('admin.produk.edit', compact('product', 'lessons'));
+
+        // Pre-fill materiData — kirim terpisah, hindari logic kompleks di Blade
+        $materiData = collect($lessonIds)->map(function ($lid) use ($lessons) {
+            $l = $lessons->firstWhere('id', (int) $lid);
+            if (!$l)
+                return null;
+            return [
+                'id' => (string) $l->id,
+                'nama' => $l->name,
+                'grade' => $l->grade,
+                'semester' => $l->semester,
+                'category' => $l->category,
+            ];
+        })->filter()->values()->toArray();
+
+        return view('admin.produk.edit', compact('product', 'lessons', 'materiData'));
     }
     public function update(Request $request, $id)
     {
