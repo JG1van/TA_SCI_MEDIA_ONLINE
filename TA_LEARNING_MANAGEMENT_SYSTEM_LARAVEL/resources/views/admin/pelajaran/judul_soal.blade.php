@@ -128,7 +128,8 @@
                             <option value="">-- Tidak ada --</option>
                             @foreach ($serials as $serial)
                                 <option value="{{ $serial->id }}">
-                                    {{ $serial->serial }} - {{ $serial->user->name ?? 'Tanpa Pemilik' }}
+                                    {{ $serial->serial }} #(guru:
+                                    {{ $exercise->serial->user->name ?? 'Tanpa Pemilik' }})
                                 </option>
                             @endforeach
                         </select>
@@ -177,7 +178,8 @@
                             <option value="">-- Tidak ada --</option>
                             @foreach ($serials as $serial)
                                 <option value="{{ $serial->id }}">
-                                    {{ $serial->serial }} - {{ $serial->user->name ?? 'Tanpa Pemilik' }}
+                                    {{ $serial->serial }} #(guru:
+                                    {{ $exercise->serial->user->name ?? 'Tanpa Pemilik' }})
                                 </option>
                             @endforeach
                         </select>
