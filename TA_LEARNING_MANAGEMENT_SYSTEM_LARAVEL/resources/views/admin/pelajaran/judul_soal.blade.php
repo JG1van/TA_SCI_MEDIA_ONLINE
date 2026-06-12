@@ -59,7 +59,8 @@
                             <td>{{ $exercise->exercise_type->name ?? '-' }}</td>
                             <td>
                                 @if ($exercise->serial)
-                                    {{ $exercise->serial->serial }} - {{ $exercise->serial->user->name ?? 'Tanpa Pemilik' }}
+                                    {{ $exercise->serial->serial }} #(guru:
+                                    {{ $exercise->serial->user->name ?? 'Tanpa Pemilik' }})
                                 @else
                                     <span class="text-muted fst-italic">Belum Ditentukan</span>
                                 @endif

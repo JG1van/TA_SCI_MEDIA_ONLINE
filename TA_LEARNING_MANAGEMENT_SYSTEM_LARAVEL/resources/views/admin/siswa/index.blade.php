@@ -148,7 +148,7 @@
                         <option value="">-- Pilih Kelas --</option>
                         @foreach ($classrooms as $class)
                             <option value="{{ $class->id }}">
-                                {{ $class->name }} - (Guru: {{ $class->serial->user->name ?? '-' }})
+                                {{ $class->name }} #(Guru: {{ $class->serial->user->name ?? 'Tanpa Pemilik' }})
                             </option>
                         @endforeach
                     </select>
