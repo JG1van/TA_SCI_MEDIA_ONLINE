@@ -59,7 +59,7 @@
                             <td>{{ $exercise->exercise_type->name ?? '-' }}</td>
                             <td>
                                 @if ($exercise->serial)
-                                    {{ $exercise->serial->serial }}
+                                    {{ $exercise->serial->serial }} - {{ $exercise->serial->user->name ?? 'Tanpa Pemilik' }}
                                 @else
                                     <span class="text-muted fst-italic">Belum Ditentukan</span>
                                 @endif
@@ -126,7 +126,9 @@
                         <select name="serial_id" class="form-select">
                             <option value="">-- Tidak ada --</option>
                             @foreach ($serials as $serial)
-                                <option value="{{ $serial->id }}">{{ $serial->serial }}</option>
+                                <option value="{{ $serial->id }}">
+                                    {{ $serial->serial }} - {{ $serial->user->name ?? 'Tanpa Pemilik' }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -173,7 +175,9 @@
                         <select id="editSerial" name="serial_id" class="form-select">
                             <option value="">-- Tidak ada --</option>
                             @foreach ($serials as $serial)
-                                <option value="{{ $serial->id }}">{{ $serial->serial }}</option>
+                                <option value="{{ $serial->id }}">
+                                    {{ $serial->serial }} - {{ $serial->user->name ?? 'Tanpa Pemilik' }}
+                                </option>
                             @endforeach
                         </select>
                     </div>

@@ -27,18 +27,18 @@ class ExerciseController extends Controller
             ], 404);
         }
         if ($request->ajax()) {
-            $data = Exercise::with(['exercise_type', 'serial', 'lesson'])
+            $data = Exercise::with(['exercise_type', 'serial.user', 'lesson'])
                 ->where('lesson_id', $lesson_id)
                 ->orderBy('id', 'desc')
                 ->get();
             return response()->json(['success' => true, 'data' => $data]);
         }
-        $data = Exercise::with(['exercise_type', 'serial'])
+        $data = Exercise::with(['exercise_type', 'serial.user'])
             ->where('lesson_id', $lesson_id)
             ->orderBy('id', 'desc')
             ->get();
         $types = ExerciseType::orderBy('id', 'desc')->get();
-        $serials = Serial::orderBy('id', 'desc')->get();
+        $serials = Serial::with('user')->orderBy('id', 'desc')->get();
         return view('admin.pelajaran.judul_soal', compact('lesson', 'data', 'types', 'serials'));
     }
     public function store(Request $request, $lesson_id)
