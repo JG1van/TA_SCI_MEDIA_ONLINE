@@ -6,13 +6,14 @@
 @section('content')
 
     <div class="row g-3 align-items-end mb-3">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <label class="form-label">Pencarian</label>
-            <input id="searchInput" type="text" class="form-control" placeholder="Cari Pertanyaan..." />
+            <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="searchInput" type="text"
+                class="form-control" placeholder="Cari Pertanyaan...">
         </div>
-        <div class="col-md-12">
-            <button class="btn btn-outline-secondary btn-sm" onclick="toggleDiagram()">
-                <i class="bx bx-sitemap me-1"></i> Lihat Alur Sistem
+        <div class="col-md-4 text-end">
+            <button class="btn btn-outline-secondary w-100" onclick="toggleDiagram()">
+                <i class="bx bx-sitemap me-1"></i> Ketentuan
             </button>
         </div>
     </div>
