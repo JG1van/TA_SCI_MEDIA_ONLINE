@@ -32,6 +32,21 @@ class ExerciseItemController extends Controller
             ->where('exercise_id', $exercise_id)
             ->orderBy('id', 'desc')
             ->get();
+
+        // ✅ Replace URL gambar guru → proxy admin
+        $exerciseItems->transform(function ($item) {
+            $replace = fn($html) => preg_replace(
+                '#http://guru\.tak-scimediaonline\.my\.id/storage/soal/#',
+                '/admin/proxy/soal/',
+                $html ?? ''
+            );
+            $item->question = $replace($item->question);
+            if (is_string($item->selection)) {
+                $item->selection = $replace($item->selection);
+            }
+            return $item;
+        });
+
         $exerciseModels = \App\Models\ExerciseModel::all();
         return view('admin.pelajaran.soal_index', compact(
             'lesson',
