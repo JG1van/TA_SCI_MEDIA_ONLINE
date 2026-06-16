@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alur Sistem Chatbot</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f0f4f8;
+        color: #1e293b;
+        padding: 32px;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 4px;
+      }
+      .subtitle {
+        text-align: center;
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 32px;
+      }
+
+      /* LEGEND */
+      .legend {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      .leg {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: #475569;
+        font-weight: 600;
+      }
+      .leg-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        flex-shrink: 0;
+      }
+
+      /* SECTION */
+      .section {
+        margin-bottom: 28px;
+      }
+      .section-title {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #fff;
+        background: #334155;
+        display: inline-block;
+        padding: 4px 14px;
+        border-radius: 4px;
+        margin-bottom: 16px;
+      }
+
+      /* FLOW ROW */
+      .flow {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0;
+        margin-bottom: 12px;
+      }
+
+      /* NODE */
+      .box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.4;
+        min-width: 100px;
+        min-height: 52px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      .box .icon {
+        font-size: 18px;
+        margin-bottom: 2px;
+      }
+      .box .label {
+        font-size: 11px;
+      }
+
+      .b-user {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 2px solid #93c5fd;
+      }
+      .b-check {
+        background: #fef9c3;
+        color: #854d0e;
+        border: 2px solid #fde047;
+      }
+      .b-ai {
+        background: #dcfce7;
+        color: #166534;
+        border: 2px solid #86efac;
+      }
+      .b-save {
+        background: #ede9fe;
+        color: #5b21b6;
+        border: 2px solid #c4b5fd;
+      }
+      .b-admin {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 2px solid #fca5a5;
+      }
+      .b-show {
+        background: #e0f2fe;
+        color: #075985;
+        border: 2px solid #7dd3fc;
+      }
+      .b-log {
+        background: #fce7f3;
+        color: #9d174d;
+        border: 2px solid #f9a8d4;
+      }
+      .b-end {
+        background: #d1fae5;
+        color: #065f46;
+        border: 2px solid #6ee7b7;
+        border-radius: 24px;
+      }
+      .b-chat {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 2px solid #60a5fa;
+        border-radius: 24px;
+      }
+
+      /* ARROW */
+      .arr {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        min-width: 30px;
+      }
+      .arr-line {
+        height: 2px;
+        width: 100%;
+        background: #94a3b8;
+      }
+      .arr-label {
+        font-size: 9px;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 1px;
+        white-space: nowrap;
+      }
+      .arr-row {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+      .arr-h {
+        height: 2px;
+        flex: 1;
+        background: #94a3b8;
+      }
+      .arr-head {
+        width: 0;
+        height: 0;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-left: 8px solid #94a3b8;
+      }
+
+      /* VERTICAL ARROW */
+      .v-arr {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 50px;
+        margin: 2px 0;
+      }
+      .v-arr-line {
+        width: 2px;
+        height: 20px;
+        background: #94a3b8;
+      }
+      .v-arr-head {
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 8px solid #94a3b8;
+        margin-left: -3px;
+      }
+      .v-label {
+        font-size: 9px;
+        color: #64748b;
+        font-weight: 600;
+        margin-left: 6px;
+        margin-top: 4px;
+      }
+
+      /* PARALLEL BLOCK */
+      .parallel {
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 14px 18px;
+        background: #f8fafc;
+        position: relative;
+        margin-top: 4px;
+      }
+      .parallel-tag {
+        position: absolute;
+        top: -12px;
+        left: 16px;
+        background: #f0f4f8;
+        font-size: 10px;
+        font-weight: 700;
+        color: #64748b;
+        padding: 0 8px;
+        letter-spacing: 1px;
+      }
+      .p-row {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin-bottom: 10px;
+      }
+      .p-row:last-child {
+        margin-bottom: 0;
+      }
+      .p-tag {
+        font-size: 10px;
+        font-weight: 700;
+        color: #475569;
+        background: #e2e8f0;
+        border-radius: 4px;
+        padding: 2px 8px;
+        min-width: 80px;
+        text-align: center;
+        flex-shrink: 0;
+        margin-right: 10px;
+      }
+
+      /* KETERANGAN */
+      .notes {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .note {
+        font-size: 11px;
+        color: #475569;
+        background: #fff;
+        border-left: 3px solid #94a3b8;
+        padding: 6px 10px;
+        border-radius: 0 6px 6px 0;
+      }
+      .note b {
+        color: #1e293b;
+      }
+
+      /* GOAL */
+      .goal-box {
+        background: linear-gradient(135deg, #1e3a5f, #134e4a);
+        border-radius: 12px;
+        padding: 18px 24px;
+        color: #fff;
+        text-align: center;
+        margin-top: 8px;
+      }
+      .goal-box .goal-title {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+        color: #7dd3fc;
+      }
+      .goal-flow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        flex-wrap: wrap;
+      }
+      .gbox {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #e2e8f0;
+        text-align: center;
+      }
+      .garr {
+        color: #7dd3fc;
+        font-size: 18px;
+        padding: 0 6px;
+      }
+
+      hr {
+        border: none;
+        border-top: 2px dashed #cbd5e1;
+        margin: 24px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🤖 Alur Sistem Chatbot</h1>
+    <div class="subtitle">
+      Bagaimana chatbot menangani pertanyaan user sampai ke admin
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend">
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: #dbeafe; border: 2px solid #93c5fd"
+        ></div>
+        User / Chatbot
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: #fef9c3; border: 2px solid #fde047"
+        ></div>
+        Pengecekan
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: #dcfce7; border: 2px solid #86efac"
+        ></div>
+        AI Agent
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: #ede9fe; border: 2px solid #c4b5fd"
+        ></div>
+        Simpan Data
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: #fee2e2; border: 2px solid #fca5a5"
+        ></div>
+        Admin / CS
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: #fce7f3; border: 2px solid #f9a8d4"
+        ></div>
+        CS Log
+      </div>
+    </div>
+
+    <!-- ===== ALUR 1 ===== -->
+    <div class="section">
+      <div class="section-title">📩 Alur 1 — Pertanyaan Baru</div>
+
+      <!-- Row: User → Cek QnA → (Ada) → Chatbot Jawab → Selesai -->
+      <div class="flow">
+        <div class="box b-user">
+          <div class="icon">👤</div>
+          <div class="label">User Tanya</div>
+        </div>
+        <div class="arr" style="min-width: 36px">
+          <div class="arr-row">
+            <div class="arr-h"></div>
+            <div class="arr-head"></div>
+          </div>
+        </div>
+        <div class="box b-check">
+          <div class="icon">🔍</div>
+          <div class="label">Cek QnA</div>
+        </div>
+        <div class="arr" style="min-width: 50px">
+          <div class="arr-label">✅ Ada</div>
+          <div class="arr-row">
+            <div class="arr-h"></div>
+            <div class="arr-head"></div>
+          </div>
+        </div>
+        <div class="box b-chat">
+          <div class="icon">💬</div>
+          <div class="label">Chatbot<br />Jawab Sendiri</div>
+        </div>
+        <div class="arr" style="min-width: 36px">
+          <div class="arr-row">
+            <div class="arr-h"></div>
+            <div class="arr-head"></div>
+          </div>
+        </div>
+        <div class="box b-end">
+          <div class="icon">✅</div>
+          <div class="label">Selesai</div>
+        </div>
+      </div>
+
+      <!-- Arrow down: Tidak Ada -->
+      <div class="v-arr" style="padding-left: 168px">
+        <div style="display: flex; align-items: center">
+          <div>
+            <div class="v-arr-line"></div>
+            <div class="v-arr-head"></div>
+          </div>
+          <div class="v-label">❌ Tidak Ada di QnA</div>
+        </div>
+      </div>
+
+      <!-- PARALLEL BLOCK -->
+      <div class="parallel">
+        <div class="parallel-tag">⚡ DUA PROSES BERJALAN BERSAMAAN</div>
+
+        <!-- Jalur User -->
+        <div class="p-row">
+          <div class="p-tag">👤 User</div>
+          <div class="box b-admin" style="min-width: 130px">
+            <div class="icon">🎧</div>
+            <div class="label">Diminta Beralih<br />ke Admin</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-admin" style="min-width: 110px">
+            <div class="icon">✍️</div>
+            <div class="label">Admin<br />Jawab</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-show" style="min-width: 110px">
+            <div class="icon">📲</div>
+            <div class="label">Tampilkan<br />ke User</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-end">
+            <div class="icon">✅</div>
+            <div class="label">Selesai</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-log" style="min-width: 100px">
+            <div class="icon">💾</div>
+            <div class="label">Simpan<br />ke CS Log</div>
+          </div>
+        </div>
+
+        <!-- Jalur AI Agent -->
+        <div class="p-row">
+          <div class="p-tag">🤖 AI Agent</div>
+          <div class="box b-check" style="min-width: 120px">
+            <div class="icon">🔍</div>
+            <div class="label">Cek CS Log</div>
+          </div>
+          <div class="arr" style="min-width: 40px">
+            <div class="arr-label">❌ Kosong</div>
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-ai" style="min-width: 130px">
+            <div class="icon">🌐</div>
+            <div class="label">Generate AI<br />dari Internet</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-save" style="min-width: 150px">
+            <div class="icon">📋</div>
+            <div class="label">Simpan ke Tabel<br />Tdk Terjawab</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          💡 <b>Chatbot tidak bisa jawab</b> karena tidak ada data di QnA → user
+          diminta beralih ke admin
+        </div>
+        <div class="note">
+          💡 <b>AI Agent bekerja di background</b> — cek CS log dulu, kalau
+          kosong baru ambil dari internet, lalu simpan ke tabel
+        </div>
+        <div class="note">
+          💡 <b>CS Log diisi SETELAH percakapan selesai</b> — urutan: Admin
+          jawab → Tampilkan ke user → Selesai → Baru simpan ke CS Log
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- ===== ALUR 2 ===== -->
+    <div class="section">
+      <div class="section-title">🔁 Alur 2 — Pertanyaan Berulang</div>
+
+      <!-- Row: User → Cek QnA → (Ada) → Chatbot Jawab → Selesai -->
+      <div class="flow">
+        <div class="box b-user">
+          <div class="icon">👤</div>
+          <div class="label">Pertanyaan<br />Sama Masuk</div>
+        </div>
+        <div class="arr" style="min-width: 36px">
+          <div class="arr-row">
+            <div class="arr-h"></div>
+            <div class="arr-head"></div>
+          </div>
+        </div>
+        <div class="box b-check">
+          <div class="icon">🔍</div>
+          <div class="label">Cek QnA</div>
+        </div>
+        <div class="arr" style="min-width: 50px">
+          <div class="arr-label">✅ Ada</div>
+          <div class="arr-row">
+            <div class="arr-h"></div>
+            <div class="arr-head"></div>
+          </div>
+        </div>
+        <div class="box b-chat">
+          <div class="icon">💬</div>
+          <div class="label">Chatbot<br />Jawab Sendiri</div>
+        </div>
+        <div class="arr" style="min-width: 36px">
+          <div class="arr-row">
+            <div class="arr-h"></div>
+            <div class="arr-head"></div>
+          </div>
+        </div>
+        <div class="box b-end">
+          <div class="icon">✅</div>
+          <div class="label">Selesai</div>
+        </div>
+      </div>
+
+      <!-- Arrow down -->
+      <div class="v-arr" style="padding-left: 168px">
+        <div style="display: flex; align-items: center">
+          <div>
+            <div class="v-arr-line"></div>
+            <div class="v-arr-head"></div>
+          </div>
+          <div class="v-label">❌ Tidak Ada di QnA</div>
+        </div>
+      </div>
+
+      <!-- PARALLEL BLOCK -->
+      <div class="parallel">
+        <div class="parallel-tag">⚡ DUA PROSES BERJALAN BERSAMAAN</div>
+
+        <!-- Jalur User -->
+        <div class="p-row">
+          <div class="p-tag">👤 User</div>
+          <div class="box b-admin" style="min-width: 130px">
+            <div class="icon">🎧</div>
+            <div class="label">Diminta Beralih<br />ke Admin</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-admin" style="min-width: 110px">
+            <div class="icon">✍️</div>
+            <div class="label">Admin<br />Jawab</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-show" style="min-width: 110px">
+            <div class="icon">📲</div>
+            <div class="label">Tampilkan<br />ke User</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-end">
+            <div class="icon">✅</div>
+            <div class="label">Selesai</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-log" style="min-width: 100px">
+            <div class="icon">💾</div>
+            <div class="label">Simpan<br />ke CS Log</div>
+          </div>
+        </div>
+
+        <!-- Jalur AI Agent -->
+        <div class="p-row">
+          <div class="p-tag">🤖 AI Agent</div>
+          <div class="box b-check" style="min-width: 120px">
+            <div class="icon">🔍</div>
+            <div class="label">Cek CS Log</div>
+          </div>
+          <div class="arr" style="min-width: 40px">
+            <div class="arr-label">✅ Ada</div>
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-ai" style="min-width: 130px">
+            <div class="icon">📂</div>
+            <div class="label">Generate AI<br />dari CS Log</div>
+          </div>
+          <div class="arr" style="min-width: 30px">
+            <div class="arr-row">
+              <div class="arr-h"></div>
+              <div class="arr-head"></div>
+            </div>
+          </div>
+          <div class="box b-save" style="min-width: 160px">
+            <div class="icon">📋</div>
+            <div class="label">Update Tabel<br />+ Count +1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          💡 <b>Pertanyaan sama datang lagi</b> → proses user ke admin sama
+          seperti Alur 1
+        </div>
+        <div class="note">
+          💡 <b>AI Agent kali ini</b> cek CS log → sudah ada jawaban dari admin
+          sebelumnya → dipakai langsung (tidak perlu internet)
+        </div>
+        <div class="note">
+          💡 <b>Count +1</b> menandakan berapa kali pertanyaan ini muncul →
+          membantu admin prioritaskan mana yang paling sering ditanya
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- TUJUAN AKHIR -->
+    <div class="goal-box">
+      <div class="goal-title">🎯 TUJUAN AKHIR SISTEM</div>
+      <div class="goal-flow">
+        <div class="gbox">📋 Tabel Tdk<br />Terjawab Penuh</div>
+        <div class="garr">→</div>
+        <div class="gbox">👨‍💼 Admin<br />Review & Kategorikan</div>
+        <div class="garr">→</div>
+        <div class="gbox">📚 Masuk<br />ke QnA</div>
+        <div class="garr">→</div>
+        <div class="gbox">🤖 Chatbot Bisa<br />Jawab Sendiri</div>
+        <div class="garr">→</div>
+        <div class="gbox">📈 Sistem<br />Terus Berkembang</div>
+      </div>
+    </div>
+  </body>
+</html>

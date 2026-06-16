@@ -10,8 +10,18 @@
             <label class="form-label">Pencarian</label>
             <input id="searchInput" type="text" class="form-control" placeholder="Cari Pertanyaan..." />
         </div>
+        <div class="col-md-12">
+            <button class="btn btn-outline-secondary btn-sm" onclick="toggleDiagram()">
+                <i class="bx bx-sitemap me-1"></i> Lihat Alur Sistem
+            </button>
+        </div>
     </div>
-
+    <div id="diagramBox" style="display:none; margin-bottom:20px;">
+        <div style="border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
+            <iframe src="{{ asset('diagram-chatbot.html') }}" style="width:100%; height:600px; border:none; display:block;">
+            </iframe>
+        </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover align-middle text-center">
             <thead>
@@ -158,6 +168,10 @@
             });
         }
 
+        function toggleDiagram() {
+            const box = document.getElementById('diagramBox');
+            box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        }
         // SEARCH
         document.getElementById("searchInput").addEventListener("keyup", function() {
             const keyword = this.value.toLowerCase();
