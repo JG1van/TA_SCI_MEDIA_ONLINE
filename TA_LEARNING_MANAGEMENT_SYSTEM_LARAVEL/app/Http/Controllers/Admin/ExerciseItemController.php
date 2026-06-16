@@ -38,7 +38,10 @@ class ExerciseItemController extends Controller
             $replace = fn($html) => str_replace(
                 [
                     'http://guru.tak-scimediaonline.my.id/storage/soal/',
-                    'http:\/\/guru.tak-scimediaonline.my.id\/storage\/soal\/',  // format JSON escaped
+                    'http:\/\/guru.tak-scimediaonline.my.id\/storage\/soal\/',
+                    'https://guru.tak-scimediaonline.my.id/storage/soal/',
+                    'https:\/\/guru.tak-scimediaonline.my.id\/storage\/soal\/',
+
                 ],
                 '/admin/proxy/soal/',
                 $html ?? ''
@@ -167,6 +170,9 @@ class ExerciseItemController extends Controller
             [
                 'http://guru.tak-scimediaonline.my.id/storage/soal/',
                 'http:\/\/guru.tak-scimediaonline.my.id\/storage\/soal\/',
+                'https://guru.tak-scimediaonline.my.id/storage/soal/',
+                'https:\/\/guru.tak-scimediaonline.my.id\/storage\/soal\/',
+
             ],
             '/admin/proxy/soal/',
             $html ?? ''
