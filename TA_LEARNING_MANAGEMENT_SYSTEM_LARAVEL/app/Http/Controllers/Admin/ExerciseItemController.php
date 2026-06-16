@@ -35,15 +35,21 @@ class ExerciseItemController extends Controller
 
         // ✅ Replace URL gambar guru → proxy admin
         $exerciseItems->transform(function ($item) {
-            $replace = fn($html) => preg_replace(
-                '#http://guru\.tak-scimediaonline\.my\.id/storage/soal/#',
+            $replace = fn($html) => str_replace(
+                [
+                    'http://guru.tak-scimediaonline.my.id/storage/soal/',
+                    'http:\/\/guru.tak-scimediaonline.my.id\/storage\/soal\/',  // format JSON escaped
+                ],
                 '/admin/proxy/soal/',
                 $html ?? ''
             );
+
             $item->question = $replace($item->question);
+
             if (is_string($item->selection)) {
                 $item->selection = $replace($item->selection);
             }
+
             return $item;
         });
 
