@@ -161,18 +161,34 @@ class ExerciseItemController extends Controller
         $competences = Competence::where('lesson_id', $lesson_id)->get();
         $models = ExerciseModel::all();
         $exerciseType = \App\Models\ExerciseType::find($exercise->exercise_type_id);
+
+        // ✅ Replace DULU sebelum json_decode
+        $replace = fn($html) => str_replace(
+            [
+                'http://guru.tak-scimediaonline.my.id/storage/soal/',
+                'http:\/\/guru.tak-scimediaonline.my.id\/storage\/soal\/',
+            ],
+            '/admin/proxy/soal/',
+            $html ?? ''
+        );
+
+        $item->question = $replace($item->question);
+
         if (is_string($item->selection) && $item->selection !== '') {
+            $item->selection = $replace($item->selection); // ✅ replace dulu
             $decoded = json_decode($item->selection, true);
             $item->selection = is_array($decoded) ? $decoded : [];
         } elseif (is_null($item->selection)) {
             $item->selection = [];
         }
+
         if (is_string($item->answer) && $item->answer !== '') {
             $decAns = json_decode($item->answer, true);
             $item->answer = is_array($decAns) ? $decAns : [$item->answer];
         } elseif (is_null($item->answer)) {
             $item->answer = [];
         }
+
         return view('admin.pelajaran.soal_edit', compact(
             'lesson',
             'exercise',
