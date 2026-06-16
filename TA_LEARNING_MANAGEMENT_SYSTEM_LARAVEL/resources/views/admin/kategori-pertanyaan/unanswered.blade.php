@@ -12,7 +12,7 @@
                 class="form-control" placeholder="Cari Pertanyaan...">
         </div>
         <div class="col-md-4 text-end">
-            <button class="btn btn-outline-secondary w-100" onclick="toggleDiagram()">
+            <button class="btn btn-secondary w-100" onclick="toggleDiagram()">
                 <i class="bx bx-sitemap me-1"></i> Ketentuan
             </button>
         </div>
