@@ -236,7 +236,7 @@
                         <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-2">
                                 {{-- Statistik selalu tampil untuk semua  --}}
-                                <button class="btn btn-sm btn-success d-none"
+                                <button class="btn btn-sm btn-success "
                                     onclick="lihatStatistik('{{ $admin->id }}', '{{ $admin->name }}', '{{ $admin->position ?? $admin->username }}', {{ $admin->role }})">
                                     Statistik
                                 </button>
