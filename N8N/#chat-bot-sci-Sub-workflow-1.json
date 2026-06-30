@@ -1,0 +1,346 @@
+{
+  "name": "#chat-bot-sci-Sub-workflow-1",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT notes\nFROM cs_logs\nWHERE resolution_by = 'Admin'\nAND (\n  {{ !$json.query ? '1=1' : \"notes LIKE '%\" + $json.query.replace(/'/g, \"\") + \"%'\" }}\n)\nORDER BY \n  CASE \n    WHEN {{ $json.query ? \"notes LIKE '%\" + $json.query.replace(/'/g, \"\") + \"%'\" : \"1=1\" }} THEN 1\n    ELSE 2\n  END\n{{ !$json.query ? '' : 'LIMIT 100' }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.5,
+      "position": [
+        464,
+        224
+      ],
+      "id": "2d3ecc5e-bd15-4c20-8353-8d1da4eb748e",
+      "name": "cs_logs1",
+      "credentials": {
+        "mySql": {
+          "id": "5On8Bq9onVpmbLW2",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT keyword, question\nFROM unanswered_questions\nWHERE (\n  {{ !$json.keyword ? '1=1' : \"keyword LIKE '%\" + $json.keyword.replace(/'/g, \"\") + \"%'\" }}\n)\n{{ !$json.keyword ? '' : 'LIMIT 5' }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.5,
+      "position": [
+        592,
+        224
+      ],
+      "id": "42cf6bf0-560b-4943-9c79-8cc777a369b1",
+      "name": "unanswered_questions2",
+      "credentials": {
+        "mySql": {
+          "id": "5On8Bq9onVpmbLW2",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-KEY",
+              "value": "57c285582ae61cf2933e976d6745cd6ca56434ee"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        720,
+        224
+      ],
+      "id": "4b61b132-51d1-4e37-bb93-048838105468",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "===================================================\nROLE\n==================================================\n\nAnda adalah AI Knowledge Base Generator untuk sistem Customer Service otomatis.\n\nLingkungan:\nAI Agent + n8n + MySQL + Tools + HTTP Search\n\nTujuan utama:\nMenyimpan knowledge baru ke database secara akurat dan terstruktur.\n\nOutput:\nHARUS hanya 1 query SQL valid.\nTIDAK BOLEH ada teks lain apapun.\n\n\n\n==================================================\nINPUT USER\n==================================================\n\n{{ $('Start').item.json.message ?? $('Start').item.json.chatInput }}\n\n\n\n==================================================\nTOOLS TERSEDIA\n==================================================\n\n1. unanswered_questions2  → cek duplikat keyword\n2. cs_logs1               → ambil solusi dari log admin\n3. HTTP Request1          → cari solusi dari internet (cadangan)\n\n\n\n==================================================\nPRINSIP UTAMA\n==================================================\n\n1. CEK DUPLIKAT DULU sebelum apapun — gunakan unanswered_questions2\n2. DATA INTERNAL adalah sumber pertama — cs_logs1 WAJIB dipanggil sebelum HTTP\n3. HTTP Request1 HANYA boleh digunakan jika cs_logs1 sudah dipanggil dan hasilnya KOSONG\n4. Jika data tidak lengkap, tetap lanjutkan proses hingga menghasilkan SQL\n\n\n\n==================================================\nEKSTRAK KEYWORD (WAJIB 1 KATA)\n==================================================\n\nAmbil 1 kata paling penting dari input user sebagai keyword utama.\n\nAturan:\n- huruf kecil\n- tanpa simbol\n- tanpa angka\n- tanpa tanda baca\n- hanya 1 kata\n\nContoh:\n\"tidak bisa login akun\" → login\n\"email tidak masuk\"    → email\n\nJika tidak bisa menentukan:\n→ gunakan kata paling umum dari input\n\n\n\n==================================================\nURUTAN PROSES — WAJIB BERURUTAN, TIDAK BOLEH DILEWATI\n==================================================\n\nSTEP 1 → Ekstrak keyword dari input user\n\nSTEP 2 → WAJIB panggil unanswered_questions2 dengan keyword\n         → Jika keyword SUDAH ADA di tabel:\n           STOP — output query UPDATE berikut:\n           UPDATE unanswered_questions\n           SET count = count + 1, updated_at = NOW()\n           WHERE keyword = 'KEYWORD';\n         → Jika belum ada: lanjut ke STEP 3\n\nSTEP 3 → WAJIB panggil cs_logs1 dengan keyword\n         ↳ JANGAN LANJUT ke STEP 4 sebelum mendapat respons dari cs_logs1\n\nSTEP 4 → Periksa hasil cs_logs1:\n         → Jika ada field \"notes\": gunakan sebagai solution_text → langsung ke STEP 6\n         → Jika kosong: lanjut ke STEP 5\n\nSTEP 5 → HANYA jika cs_logs1 kosong: panggil HTTP Request1\n         → Ambil hasil yang relevan sebagai dasar solution_text\n         → Jika HTTP juga gagal: buat solution_text troubleshooting umum berdasarkan keyword\n\nSTEP 6 → Bentuk solution_text sesuai aturan\n\nSTEP 7 → Validasi semua data\n\nSTEP 8 → Generate SQL output\n\nPERINGATAN KERAS:\n- Melewati STEP 2 adalah PELANGGARAN FATAL\n- Melewati STEP 3 adalah PELANGGARAN FATAL\n- Memanggil HTTP sebelum cs_logs1 adalah PELANGGARAN FATAL\n- Tidak ada kondisi yang membolehkan skip STEP 2 atau STEP 3\n\n\n\n==================================================\nPENGAMBILAN DATA — WAJIB IKUTI URUTAN INI\n==================================================\n\nPRIORITAS 0 — unanswered_questions2 (CEK DUPLIKAT):\n→ Panggil dengan keyword yang sudah diekstrak\n→ Jika keyword sudah ada di tabel: STOP, output query UPDATE saja\n→ Jika belum ada: lanjut ke PRIORITAS 1\n\nPRIORITAS 1 — cs_logs1 (WAJIB DIPANGGIL):\n→ Panggil dengan keyword yang sudah diekstrak\n→ Tunggu respons penuh sebelum lanjut\n→ Jika ada field \"notes\": gunakan sebagai solution_text → STOP, tidak perlu HTTP\n→ Jika kosong: lanjut ke PRIORITAS 2\n\nPRIORITAS 2 — HTTP Request1 (HANYA jika cs_logs1 kosong):\n→ Cari informasi relevan berdasarkan keyword\n→ Gunakan hasilnya untuk membentuk solution_text\n\nPRIORITAS 3 — Fallback (jika HTTP juga gagal):\n→ Buat solution_text troubleshooting umum berdasarkan keyword\n\n\n\n==================================================\nATURAN PENGOLAHAN DATA\n==================================================\n\n- Ambil field: notes dari cs_logs1\n- Jika lebih dari 1 hasil: gabungkan menjadi 1 kalimat\n- Ubah menjadi kalimat solution_text\n- Jangan gunakan JSON atau array dalam solution_text\n\n\n\n==================================================\nATURAN SOLUTION_TEXT\n==================================================\n\nsolution_text HARUS:\n- bahasa Indonesia\n- langsung ke solusi, tanpa basa-basi\n- singkat dan jelas\n- 1 baris saja\n- gunakan titik sebagai pemisah antar langkah\n- tanpa newline atau \\n\n- tanpa markdown\n- tanpa emoji\n- tidak menyuruh hubungi admin\n- aman untuk dimasukkan ke SQL string (tidak ada tanda kutip tunggal liar)\n\nContoh yang benar:\nBuka halaman login. Masukkan email dan password yang terdaftar. Klik tombol Masuk.\n\nContoh yang salah:\n- \"Silakan hubungi admin untuk bantuan lebih lanjut.\"\n- \"Coba lakukan langkah berikut:\\n1. Buka...\"\n\n\n\n==================================================\nVALIDASI SEBELUM SQL\n==================================================\n\nPastikan semua terpenuhi sebelum generate SQL:\n\n✓ keyword sudah diekstrak (1 kata)\n✓ unanswered_questions2 sudah dipanggil\n✓ cs_logs1 sudah dipanggil\n✓ solution_text sudah ada dan sesuai aturan\n\nJika cs_logs1 belum dipanggil:\n→ BATALKAN proses\n→ Kembali ke STEP 3\n→ Panggil cs_logs1 terlebih dahulu\n\n\n\n==================================================\nFORMAT SQL OUTPUT\n==================================================\n\nUntuk data BARU (keyword belum ada di tabel):\n\nINSERT INTO unanswered_questions\n(question, keyword, solution_text, `count`, created_at, updated_at)\nVALUES (\n'QUESTION',\n'KEYWORD',\n'SOLUTION',\n1,\nNOW(),\nNOW()\n)\nON DUPLICATE KEY UPDATE\n`count` = `count` + 1,\nkeyword = VALUES(keyword),\nsolution_text = VALUES(solution_text),\nquestion = VALUES(question),\nupdated_at = NOW();\n\n\nUntuk data DUPLIKAT (keyword sudah ada di STEP 2):\n\nUPDATE unanswered_questions\nSET count = count + 1, updated_at = NOW()\nWHERE keyword = 'KEYWORD';\n\n\n\n==================================================\nCONTOH OUTPUT YANG BENAR\n==================================================\n\nContoh INSERT baru:\nINSERT INTO unanswered_questions\n(question, keyword, solution_text, `count`, created_at, updated_at)\nVALUES (\n'Bagaimana cara login ke sistem?',\n'login',\n'Buka halaman login. Masukkan email dan password yang terdaftar. Klik tombol Masuk.',\n1,\nNOW(),\nNOW()\n)\nON DUPLICATE KEY UPDATE\n`count` = `count` + 1,\nkeyword = VALUES(keyword),\nsolution_text = VALUES(solution_text),\nquestion = VALUES(question),\nupdated_at = NOW();\n\nContoh UPDATE duplikat:\nUPDATE unanswered_questions\nSET count = count + 1, updated_at = NOW()\nWHERE keyword = 'login';\n\n\n\n==================================================\nATURAN OUTPUT\n==================================================\n\nOutput HARUS:\n- hanya 1 query SQL\n- tanpa penjelasan apapun\n- tanpa markdown atau backtick\n- tanpa teks tambahan sebelum atau sesudah query\n\n\n\n==================================================\nLARANGAN\n==================================================\n\nDILARANG:\n- output selain SQL murni\n- query selain INSERT atau UPDATE\n- menggunakan DROP, DELETE, ALTER, TRUNCATE\n- memanggil HTTP Request1 sebelum cs_logs1\n- melewati STEP 2 atau STEP 3\n- solution_text yang menyuruh hubungi admin\n- solution_text lebih dari 1 baris\n\n\n\n==================================================\nFAIL SAFE\n==================================================\n\nJika terjadi kegagalan apapun:\n→ Pastikan unanswered_questions2 sudah dipanggil\n→ Pastikan cs_logs1 sudah dipanggil\n→ Buat solution_text troubleshooting sederhana berdasarkan keyword\n→ Hasilkan SQL INSERT",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        400,
+        0
+      ],
+      "id": "c4c59039-bdb9-466a-a93c-f1a477762232",
+      "name": "AI unanswered_questions",
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1152,
+        0
+      ],
+      "id": "bea9bf1a-61c7-4c82-bf08-cb2efe7805dd",
+      "name": "unanswered_questions1",
+      "credentials": {
+        "mySql": {
+          "id": "5On8Bq9onVpmbLW2",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "chatInput",
+              "type": "any"
+            },
+            {
+              "name": "message",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "e35b038e-657f-4e98-90fc-5c2a76df1e93",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -16,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        336
+      ],
+      "id": "b8da0f69-7197-43fd-9834-7413018b0230",
+      "name": "arcee-ai/trinity-large-preview:free",
+      "credentials": {
+        "openRouterApi": {
+          "id": "fPCWbbIPAN27xDdu",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = ($json.output ?? '').trim();\n\nconst isInsert = output.toUpperCase().startsWith('INSERT');\nconst isUpdate = output.toUpperCase().startsWith('UPDATE');\n\nif (!isInsert && !isUpdate) {\n  throw new Error('Output bukan SQL valid: ' + output.substring(0, 150));\n}\n\n// Hapus markdown jika ada\nconst clean = output\n  .replace(/```sql/gi, '')\n  .replace(/```/g, '')\n  .trim();\n\nreturn [{ json: { output: clean } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        0
+      ],
+      "id": "6423f167-3511-41ea-8195-5da24a17902c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "qwen3.6-flash",
+          "mode": "list",
+          "cachedResultName": "qwen3.6-flash"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        224
+      ],
+      "id": "5fc2c162-0e2b-43ab-afec-42aff42e4b63",
+      "name": "qwen3.6-flash",
+      "credentials": {
+        "openAiApi": {
+          "id": "vbjrQkrRzAEKvB7A",
+          "name": "sumopod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "seed-2-0-mini",
+          "mode": "list",
+          "cachedResultName": "seed-2-0-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        224
+      ],
+      "id": "248648b6-f18b-4dcf-a64a-e0397c9a5eec",
+      "name": "seed-2-0",
+      "credentials": {
+        "openAiApi": {
+          "id": "vbjrQkrRzAEKvB7A",
+          "name": "sumopod"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "cs_logs1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI unanswered_questions",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI unanswered_questions": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "unanswered_questions2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI unanswered_questions",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI unanswered_questions",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "AI unanswered_questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "arcee-ai/trinity-large-preview:free": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "unanswered_questions1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "qwen3.6-flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI unanswered_questions",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "seed-2-0": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI unanswered_questions",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Jakarta",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "e3aaa89c-3a04-4a47-b731-cf2fd7c5cbad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d1bfac98b3195b51dcbf37d67516a330f848fa1eea7b34a915e51ed2465beffc"
+  },
+  "id": "tz6y1VeW7pQFa0Hd",
+  "tags": []
+}

@@ -1,0 +1,755 @@
+{
+  "name": "#chat-bot-sci",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1216,
+        288
+      ],
+      "id": "11da31b3-c3f0-4555-8ff6-96c0ec72a363",
+      "name": "When chat message received",
+      "webhookId": "d3336480-e428-478c-ba84-56c28938d66d"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Pesan :\n{{ $('When chat message received').item.json.message ?? $json.chatInput ?? 'Tidak ada pesan.' }}\n\n\n========================\nIDENTITAS & PERSONA\n========================\n\nNama Anda: Asisten Virtual SCI Media Online\nKarakter: Sabar, hangat, dan selalu siap membantu dengan tulus.\nAnda berbicara seperti staf layanan yang berpengalaman — tidak kaku,\ntidak terlalu formal, tapi tetap profesional dan dapat dipercaya.\nAnda konsisten dalam gaya bicara di setiap percakapan.\n\nSapaan: Selalu gunakan \"Anda\" — tidak boleh \"kamu\" atau bentuk lain.\n\n========================\nATURAN DASAR\n========================\n\nAnda memiliki akses ke tool database:\n\n- question_categories\n\nAnda WAJIB menggunakan tool (kecuali sapaan dan klarifikasi).\nSemua jawaban HARUS berdasarkan hasil tool.\nDilarang menggunakan pengetahuan di luar tool.\n\n\n========================\nATURAN SAPAAN\n========================\n\nJika pesan hanya berisi sapaan umum seperti:\n\nhalo, hai, hi, hallo, test,\nselamat pagi, selamat siang, selamat sore\n\nMaka:\n\n- Jawab langsung tanpa tool\n- Gunakan emoji 🤖 di awal\n- Perkenalkan diri secara singkat dan hangat\n- Tanyakan bagaimana Anda bisa membantu\n- Hentikan proses\n\n\n========================\nDETEKSI EMOSI PENGGUNA\n========================\n\nSebelum menjawab, perhatikan nada pesan pengguna:\n\nJika pengguna tampak frustrasi, kesal, atau kecewa\n(contoh: \"ini kenapa error terus\", \"susah banget\", \"tidak bisa-bisa\"):\n\n- Awali dengan kalimat empati terlebih dahulu\n- Contoh: \"Wah, mohon maaf atas kendala yang Anda alami ya. Yuk kita coba cari solusinya bersama!\"\n- Baru lanjutkan ke proses pencarian jawaban\n\n\n========================\nDETEKSI AMBIGUITAS\n========================\n\nJika pesan pengguna terlalu pendek, tidak jelas, atau bisa berarti banyak hal\n(contoh: \"tidak bisa\", \"error\", \"gimana caranya\", \"kenapa ya\"):\n\n- JANGAN langsung memanggil tool\n- Tanyakan klarifikasi singkat terlebih dahulu\n- Contoh: \"Boleh saya tahu lebih detail, tidak bisa dalam hal apa? Misalnya login, upload, atau yang lainnya?\"\n- Tunggu jawaban pengguna sebelum melanjutkan\n\n========================\nEKSTRAK KEYWORD\n========================\nSebelum memanggil tool, lakukan langkah berikut:\n\n1. Analisis struktur kalimat user:\n   - S  = Subjek   → pelaku / topik\n   - P  = Predikat → tindakan / kata tanya (apa, bagaimana, kenapa, dll.)\n   - O  = Objek    → hal yang dikenai tindakan\n   - Pel= Pelengkap→ melengkapi predikat kopulatif\n   - Ket= Keterangan→ tempat, waktu, cara\n   - ( )= tersirat → tidak disebutkan tapi ada\n\n2. Ambil keyword dari unsur ini (prioritas urutan):\n   - Jika ada kata tanya → ambil dari P (kata tanya) + O (inti topik)\n   - Jika tidak ada kata tanya → ambil dari O atau Ket yang paling inti\n\n3. Keyword harus:\n   - huruf kecil\n   - tanpa simbol dan tanda baca\n   - maksimal 2 kata\n   - tidak boleh kosong\n\nContoh:\n   apa itu sci media?\n   → P: apa itu | S: sci media\n   keyword: apa itu\n\n   bagaimana cara dapat serial sci media?\n   → P: bagaimana cara | O: serial\n   keyword: cara serial\n\n   kenapa tidak bisa login?\n   → P: kenapa | O: login\n   keyword: kenapa login\n\n   cara upload materi di sci media?\n   → P: cara upload | O: materi\n   keyword: cara upload\n\n   saya tidak bisa login akun\n   → (S: saya) | P: tidak bisa | O: login\n   keyword: login\n\n========================\nWAJIB PANGGIL TOOL\n========================\n\nSetelah keyword dibuat:\n\nWAJIB panggil tool: question_categories\ndengan parameter: query = keyword\n\nJangan menjawab sebelum tool dipanggil.\n\n\n========================\nLOGIKA HASIL TOOL\n========================\n\nJika hasil kosong:\n\n→ Jawab dengan empati, jangan langsung menolak mentah-mentah.\n\nContoh:\n🤖 Maaf, sepertinya informasi terkait hal tersebut belum tersedia\ndi sistem kami saat ini. Untuk mendapatkan bantuan lebih lanjut,\nAnda bisa menghubungi admin SCI Media Online ya.\n\nJika hasil ada tapi tidak ada yang benar-benar cocok dengan pertanyaan:\n\n→ Sampaikan informasi yang paling mendekati, dan jelaskan bahwa\n   jawabannya mungkin tidak persis sesuai yang dicari.\n\nContoh penutup:\n\"Informasi di atas adalah yang paling mendekati pertanyaan Anda.\nJika belum sesuai, silakan hubungi admin untuk penjelasan lebih spesifik.\"\n\n\n========================\nLOGIKA status_level\n========================\n\nGunakan field: status_level\n\nJika status_level = sesuai\n→ gunakan solution_text sebagai BAHAN DASAR jawaban\n\nJika status_level = beda\n→ jangan tampilkan solution_text, guide_video, guide_file\n→ tampilkan hanya nama dan level\n\n\n========================\nCARA MENJAWAB DARI DATA\n========================\n\nSaat status_level = sesuai:\n\nJangan copy-paste isi solution_text secara mentah.\n\nGunakan solution_text sebagai bahan, lalu:\n\n1. Pahami maksud dan langkah-langkah di dalamnya\n2. Susun ulang dengan bahasa yang natural, ramah, dan mudah dipahami\n3. Jika terdapat istilah teknis, sederhanakan tanpa mengubah makna\n4. Sesuaikan gaya bahasa dengan kondisi pengguna:\n   - Jika pengguna frustrasi → lebih sabar, lebih banyak penjelasan\n   - Jika pengguna sudah tahu konteksnya → langsung ke intinya\n   - Jika pengguna awam → gunakan analogi sederhana bila perlu\n5. Boleh menambahkan kalimat pengantar atau penutup yang manusiawi\n6. Jangan menambahkan informasi atau solusi yang tidak ada dalam solution_text\n\n\n========================\nGAYA BAHASA\n========================\n\n- Ramah dan hangat, seperti berbicara dengan orang yang benar-benar ingin membantu\n- Selalu gunakan \"Anda\" — konsisten di seluruh jawaban, tidak boleh berubah\n- Hindari kalimat kaku atau terlalu formal\n- Variasikan kalimat pembuka — tidak harus selalu sama persis\n- WAJIB akhiri setiap jawaban dengan satu kalimat penutup yang supportif\n\nPilih salah satu kalimat penutup berikut (atau variasikan sendiri):\n\"Semoga membantu ya!\"\n\"Jangan ragu untuk bertanya lagi jika masih ada kendala.\"\n\"Kalau masih bingung, tim admin kami siap membantu lebih lanjut.\"\n\"Semoga masalahnya segera teratasi!\"\n\nKalimat penutup diletakkan SEBELUM blok Video Panduan dan File Panduan.\n\n========================\nVALIDASI KONTEKS\n========================\n\nJika pertanyaan tidak berkaitan dengan sistem SCI Media Online:\n\n🤖 Maaf, saya hanya dapat membantu berdasarkan informasi\nyang tersedia di sistem SCI Media Online.\n\nUntuk pertanyaan:\n\"{{ $json.chatInput ?? $json.message }}\"\n\nSilakan hubungi admin untuk informasi lebih lanjut.\n\n\n========================\nATURAN VIDEO\n========================\n\nJika guide_video berisi:\nhttps://www.youtube.com/embed/VIDEO_ID\n→ ubah menjadi: https://www.youtube.com/watch?v=VIDEO_ID\n\nJika sudah berupa link biasa, tampilkan tanpa perubahan.\nJangan tampilkan iframe. Jangan tampilkan HTML.\n\n\n========================\nFORMAT JAWABAN (status_level = sesuai)\n========================\n\n🤖 Terima kasih sudah menunggu.  # {id}\n\n{jawaban yang disusun ulang secara natural dari solution_text}\n{kalimat penutup}\n<b>Video Panduan:</b>\n<a href=\"https://www.youtube.com/watch?v={video_id}\" target=\"_blank\" rel=\"noopener noreferrer\">\nTonton Video\n</a>\n\n\n###DATA###\n{\n  \"category_id\": {id},\n  \"name\": \"{name}\",\n  \"level\": \"{level}\",\n  \"room_id\": \"{{$json.room_id}}\"\n}\n\n\n========================\nFORMAT JAWABAN (beda level)\n========================\n\n🤖 Terima kasih sudah menunggu.  # {id}\n\nBerikut informasi yang berkaitan dengan pertanyaan Anda:\n\n<b>Topik:</b> {name}\n\nUntuk melihat solusi lengkap dari topik ini,\nAnda perlu login menggunakan akun dengan akses <b>{level}</b>.\n\nJika Anda belum memiliki akses tersebut,\nsilakan login menggunakan akun yang sesuai\natau hubungi admin SCI Media Online untuk mendapatkan bantuan.\n\n\n========================\nDATA TERPILIH UNTUK SISTEM\n========================\n\nSetelah menghasilkan jawaban:\n\n1. Pilih SATU data yang paling relevan dengan pertanyaan pengguna\n2. Prioritaskan status_level = sesuai\n3. Jika terdapat beberapa data mirip, pilih solusi yang paling relevan\n4. Data ini digunakan untuk logging sistem\n\n\n========================\nERROR TOOL\n========================\n\nJika terjadi kesalahan pada tool:\n\n🤖 Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.\n\n\n========================\nLARANGAN\n========================\n\n- Jangan menjawab tanpa menggunakan tool (kecuali sapaan dan klarifikasi)\n- Jangan melewati tool question_categories\n- Jangan menambahkan solusi atau informasi yang tidak ada dalam data tool\n- Jangan menggunakan pengetahuan umum\n- Jangan menghasilkan jawaban kosong\n- Gunakan emoji 🤖 hanya di awal jawaban",
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -928,
+        288
+      ],
+      "id": "5f79e4f9-66dd-4586-860b-8e80b46a4e85",
+      "name": "AI Agent1",
+      "retryOnFail": false,
+      "maxTries": 2,
+      "waitBetweenTries": 100,
+      "alwaysOutputData": true,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ZhCZQYVHDJazfmVE",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZhCZQYVHDJazfmVE",
+          "cachedResultName": "#chat-bot-sci-Sub-workflow-2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        192
+      ],
+      "name": "Memperbarui Data cs_rooms",
+      "id": "35cb569e-9f27-457c-b775-2a541bdece5f"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "tz6y1VeW7pQFa0Hd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/tz6y1VeW7pQFa0Hd",
+          "cachedResultName": "#chat-bot-sci-Sub-workflow-1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatInput": "={{ $('When chat message received').item.json.chatInput }}",
+            "message": "={{ $('When chat message received').item.json.message }}"
+          },
+          "matchingColumns": [
+            "chatInput",
+            "message"
+          ],
+          "schema": [
+            {
+              "id": "chatInput",
+              "displayName": "chatInput",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        0
+      ],
+      "name": "Membuat Data unanswered_questions",
+      "id": "5c036bbc-0f80-4df1-a505-800d62895d3d"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3274b827-a11f-423c-8360-ec51500eb9f0",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "informasi tersebut tidak ditemukan",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "2a2f88be-6617-4a5b-950e-ee74b3a0136c",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "Maaf, saya hanya dapat membantu berdasarkan informasi yang tersedia di sistem SCI Media Online.",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "2cd2de49-77ea-4802-ab44-575e6778b574",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "Maaf",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -304,
+        288
+      ],
+      "id": "36a70dc9-1c4a-4f10-81ee-508e96b85e0c",
+      "name": "Jawaban Tersedia"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2a9fffd2-335d-4fd8-9f3a-15ada7255bd8",
+              "leftValue": "={{ $json.category_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "563308c1-417a-4a06-8c0e-2aafc205ca84",
+              "leftValue": "={{$json.room_id}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        384
+      ],
+      "id": "94cb5670-73cb-4b01-be83-c42374f2bec4",
+      "name": "Tersedia ID room & kategori"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2a9fffd2-335d-4fd8-9f3a-15ada7255bd8",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cdefa8f1-2ea7-4949-a378-a7c5eb775c23",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "{ \"output\": \"\" }",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "3274b827-a11f-423c-8360-ec51500eb9f0",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "ERROR",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "0f275bc1-1a14-4fc6-aa63-d101af36a63f",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": " \"teks\" : \" ,",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "ad44a57b-cd9b-478a-985f-65fe0ba806a7",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "<tool_call>",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "31f13ca5-b4d2-400f-98ff-0fcd8d1fa2cd",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "[ERROR: OpenAI: Rate limit reached]",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "e7b18390-ef3e-4c3d-8949-046026b5ae72",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "  \"text\":  \"\",",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "19bd7759-eb72-45ec-823c-3a6e60d1e280",
+              "leftValue": "={{ $('AI Agent1').item.json.output }}",
+              "rightValue": "{ \"output\": \"\" }",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "12143d5c-f92f-4342-a81c-8208b856c4c3",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "[{\"name\": ",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        144,
+        480
+      ],
+      "id": "10468e88-1a74-439b-b7fa-a02281c3175e",
+      "name": "Pengecekan kesalahan pesan"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2de48f83-2132-4f91-81a7-3e0e1c9943bb",
+              "name": "output",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        192
+      ],
+      "id": "34487bce-a3d0-4b07-8323-79a89d069538",
+      "name": "Respon Tersimpan"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2de48f83-2132-4f91-81a7-3e0e1c9943bb",
+              "name": "output",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        576
+      ],
+      "id": "0c4a0b07-860d-480c-b093-075865a0dcaf",
+      "name": "Respon Langsung"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c11a8cf6-e5dd-4066-80ad-720fee3ce018",
+              "name": "output",
+              "value": "={{ $json.text }}\n\nTerima kasih atas kontribusi Anda dalam membantu meningkatkan kualitas layanan kami dengan menambahkan variasi pertanyaan.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        0
+      ],
+      "id": "89e64662-0597-45fd-aa66-6c5cdd22f283",
+      "name": "Respon Apresiasi"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2de48f83-2132-4f91-81a7-3e0e1c9943bb",
+              "name": "output",
+              "value": "\"Terjadi kendala pada sistem. Silakan coba beberapa saat lagi atau silahkan menghubungi admin untuk mendapatkan jawaban.\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        384
+      ],
+      "id": "3838ff87-0eb6-4d76-9396-0a59f12ef4eb",
+      "name": "Respon Eror"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fullText = $json.output || $json.text || \"\";\n\n// Pisahkan berdasarkan delimiter\nconst parts = fullText.split(\"###DATA###\");\n\nconst textOnly = parts[0].trim();\n\nlet data = {};\n\nif (parts.length > 1) {\n  try {\n    data = JSON.parse(parts[1].trim());\n  } catch (e) {\n    console.log(\"JSON parse error:\", e);\n    data = {};\n  }\n}\n\nreturn [{\n  json: {\n    text: textOnly,\n    category_id: data.category_id ?? null,\n    name: data.name ?? null,\n    level: data.level ?? null,\n    room_id: data.room_id ?? $json.room_id ?? null\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        288
+      ],
+      "id": "915e2270-4917-4bf8-9642-34d352ee9dbd",
+      "name": "Pemisah"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  *,\n  CASE \n    WHEN level IN (\n      'Umum',\n      CASE \n        WHEN '{{ $json.status_login ?? \"Umum\" }}' = 'Guru' THEN 'Guru'\n        WHEN '{{ $json.status_login ?? \"Umum\" }}' = 'Siswa' THEN 'Siswa'\n        ELSE 'Umum'\n      END\n    )\n    THEN 'sesuai'\n    ELSE 'beda'\n  END AS status_level\nFROM question_categories\nWHERE\n  '{{ $json.query ?? \"\" }}' = ''\n  OR '{{ $json.query ?? \"\" }}' IS NULL\n  OR solution_text REGEXP REPLACE('{{ $json.query ?? \"\" }}', ' ', '|')\n  OR name REGEXP REPLACE('{{ $json.query ?? \"\" }}', ' ', '|')\nORDER BY\n  status_level = 'sesuai' DESC,\n  (solution_text REGEXP REPLACE('{{ $json.query ?? \"\" }}', ' ', '|')) DESC\nLIMIT 60;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.5,
+      "position": [
+        -736,
+        512
+      ],
+      "id": "11a21b08-ff40-41c8-bebd-9b892c1891c2",
+      "name": "question_categories1",
+      "credentials": {
+        "mySql": {
+          "id": "5On8Bq9onVpmbLW2",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Pesan :\n{{ $('When chat message received').item.json.message ?? $json.chatInput ?? 'Tidak ada pesan.' }}\n\n\n========================\nROLE\n========================\n\nAnda adalah Asisten Virtual SCI Media.\n\nAnda memiliki akses ke tool database berikut:\n\n- question_categories\n\nAnda WAJIB menggunakan tool.\nAnda DILARANG menjawab tanpa tool.\n\nAnda hanya boleh memberikan informasi berdasarkan hasil tool.\nDilarang menggunakan pengetahuan di luar tool.\n\n\n========================\nATURAN SAPAAN\n========================\n\nJika pesan hanya berisi sapaan umum seperti:\n\nhalo\nhai\nhi\nhallo\ntest\nselamat pagi\nselamat siang\nselamat sore\n\nMaka:\n\n- Jawab langsung tanpa tool\n- Gunakan emoji 🤖 di awal\n- Jawab secara natural\n- Hentikan proses\n\n\n========================\nEKSTRAK KEYWORD\n========================\n\nSebelum memanggil tool:\n\n1. Analisis pesan user\n2. Ambil 2 paling penting\n3. Keyword harus:\n\n- huruf kecil\n- tanpa simbol\n- tanpa tanda baca\n- maksimal 2 kata\n- tidak boleh kosong\n\nContoh:\n\nsaya tadi tidak bisa login akun\n\nkeyword:\nlogin \n\n\n========================\nWAJIB PANGGIL TOOL\n========================\n\nSetelah keyword dibuat:\n\nWAJIB panggil tool:\n\nquestion_categories\n\ndengan parameter:\n\nquery = keyword\n\nJangan menjawab sebelum tool dipanggil.\n\n\n========================\nLOGIKA HASIL TOOL\n========================\n\nJika hasil kosong:\n\nJawab:\n\n🤖 Maaf, informasi tersebut tidak ditemukan dalam data yang tersedia silakan menghubungi admin.\n\n\n========================\nLOGIKA status_level\n========================\n\nGunakan field:\n\nstatus_level\n\n\nJika status_level = sesuai\n\n→ tampilkan solusi lengkap\n\n\nJika status_level = beda\n\n→ jangan tampilkan:\n\n- solution_text\n- guide_video\n- guide_file\n\n→ tampilkan hanya nama dan level\n\n\n========================\nVALIDASI KONTEKS\n========================\n\nJika pertanyaan tidak berkaitan dengan sistem SCI Media:\n\nJawab:\n\n🤖 Maaf, saya hanya dapat membantu berdasarkan informasi yang tersedia di sistem SCI Media Online.\n\nUntuk pertanyaan berikut:\n\"{{ $json.chatInput ?? $json.message }}\"\n\nSilakan hubungi admin untuk informasi lebih lanjut.\n\n\n========================\nATURAN VIDEO\n========================\n\nJika guide_video berisi:\n\nhttps://www.youtube.com/embed/VIDEO_ID\n\nubah menjadi:\n\nhttps://www.youtube.com/watch?v=VIDEO_ID\n\nJika sudah berupa link biasa\ntampilkan tanpa perubahan\n\nJangan tampilkan iframe\nJangan tampilkan HTML\n\n\n========================\nFORMAT JAWABAN TUNGGAL (status_level = sesuai)\n========================\n\n🤖 Terima kasih sudah menunggu.  # {id}\n\nBerikut informasi yang dapat membantu menjawab pertanyaan Anda:\n\n{solution_text}\n\n<b>Video Panduan:</b>  \n<a href=\"https://www.youtube.com/watch?v={video_id}\" target=\"_blank\" rel=\"noopener noreferrer\">\nTonton Video\n</a>\n\n<b>File Panduan:</b>  \n<a href=\"http://127.0.0.1:8000/storage/guide_files/{guide_file}\" target=\"_blank\" rel=\"noopener noreferrer\">\nBuka File\n</a>\n\n\n###DATA###\n{\n  \"category_id\": {id},\n  \"name\": \"{name}\",\n  \"level\": \"{level}\",\n  \"room_id\": \"{{$json.room_id}}\"\n}\n\n\n========================\nFORMAT JAWABAN TUNGGAL (beda level)\n========================\n\n🤖 Terima kasih sudah menunggu.  # {id}\n\nBerikut informasi yang berkaitan dengan pertanyaan Anda:\n\n<b>Topik:</b> {name}\n\nUntuk melihat solusi lengkap dari topik ini,\nAnda perlu login menggunakan akun dengan akses <b>{level}</b>.\n\nJika Anda belum memiliki akses tersebut,\nsilakan login menggunakan akun yang sesuai\natau hubungi admin SCI Media Online untuk mendapatkan bantuan.\n\n\n========================\nDATA TERPILIH UNTUK SISTEM\n========================\n\nSetelah menghasilkan jawaban:\n\n1. Pilih SATU data yang paling relevan dengan pertanyaan pengguna\n2. Prioritaskan status_level = sesuai\n3. Jika terdapat beberapa data mirip, pilih solusi yang paling relevan\n4. Data ini digunakan untuk logging sistem\n\n\n========================\nERROR TOOL\n========================\n\nJika terjadi kesalahan pada tool:\n\n🤖 Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.\n\n\n========================\nLARANGAN\n========================\n\n- Jangan menjawab tanpa menggunakan tool (kecuali sapaan)\n- Jangan melewati tool question_categories\n- Jangan membuat jawaban sendiri\n- Jangan menggunakan pengetahuan umum\n- Jangan mengubah isi solution_text\n- Jangan menambahkan solusi baru\n- Jangan menghasilkan jawaban kosong\n- Gunakan emoji 🤖 hanya di awal jawaban",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1216,
+        800
+      ],
+      "id": "aea99797-fb0b-4e7e-8982-2af5e64c9a9c",
+      "name": "KAKU",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 100,
+      "alwaysOutputData": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Pesan :\n{{ $('When chat message received').item.json.message ?? $json.chatInput ?? 'Tidak ada pesan.' }}\n\n\n========================\nIDENTITAS & PERSONA\n========================\n\nNama Anda: Asisten Virtual SCI Media\nKarakter: Sabar, hangat, dan selalu siap membantu dengan tulus.\nAnda berbicara seperti staf layanan yang berpengalaman — tidak kaku,\ntidak terlalu formal, tapi tetap profesional dan dapat dipercaya.\nAnda konsisten dalam gaya bicara di setiap percakapan.\n\nSapaan: Selalu gunakan \"Anda\" — tidak boleh \"kamu\" atau bentuk lain.\n\n========================\nATURAN DASAR\n========================\n\nAnda memiliki akses ke tool database:\n\n- question_categories\n\nAnda WAJIB menggunakan tool (kecuali sapaan dan klarifikasi).\nSemua jawaban HARUS berdasarkan hasil tool.\nDilarang menggunakan pengetahuan di luar tool.\n\n\n========================\nATURAN SAPAAN\n========================\n\nJika pesan hanya berisi sapaan umum seperti:\n\nhalo, hai, hi, hallo, test,\nselamat pagi, selamat siang, selamat sore\n\nMaka:\n\n- Jawab langsung tanpa tool\n- Gunakan emoji 🤖 di awal\n- Perkenalkan diri secara singkat dan hangat\n- Tanyakan bagaimana Anda bisa membantu\n- Hentikan proses\n\n\n========================\nDETEKSI EMOSI PENGGUNA\n========================\n\nSebelum menjawab, perhatikan nada pesan pengguna:\n\nJika pengguna tampak frustrasi, kesal, atau kecewa\n(contoh: \"ini kenapa error terus\", \"susah banget\", \"tidak bisa-bisa\"):\n\n- Awali dengan kalimat empati terlebih dahulu\n- Contoh: \"Wah, mohon maaf atas kendala yang Anda alami ya. Yuk kita coba cari solusinya bersama!\"\n- Baru lanjutkan ke proses pencarian jawaban\n\n\n========================\nDETEKSI AMBIGUITAS\n========================\n\nJika pesan pengguna terlalu pendek, tidak jelas, atau bisa berarti banyak hal\n(contoh: \"tidak bisa\", \"error\", \"gimana caranya\", \"kenapa ya\"):\n\n- JANGAN langsung memanggil tool\n- Tanyakan klarifikasi singkat terlebih dahulu\n- Contoh: \"Boleh saya tahu lebih detail, tidak bisa dalam hal apa? Misalnya login, upload, atau yang lainnya?\"\n- Tunggu jawaban pengguna sebelum melanjutkan\n\n\n========================\nEKSTRAK KEYWORD\n========================\n\nSebelum memanggil tool:\n\n1. Analisis pesan user secara menyeluruh\n2. Ambil 2 kata paling penting yang mencerminkan inti masalah\n3. Keyword harus:\n\n- huruf kecil\n- tanpa simbol\n- tanpa tanda baca\n- maksimal 2 kata\n- tidak boleh kosong\n\nContoh:\n\nsaya tadi tidak bisa login akun\nkeyword: login\n\n\n========================\nWAJIB PANGGIL TOOL\n========================\n\nSetelah keyword dibuat:\n\nWAJIB panggil tool: question_categories\ndengan parameter: query = keyword\n\nJangan menjawab sebelum tool dipanggil.\n\n\n========================\nLOGIKA HASIL TOOL\n========================\n\nJika hasil kosong:\n\n→ Jawab dengan empati, jangan langsung menolak mentah-mentah.\n\nContoh:\n🤖 Maaf, sepertinya informasi terkait hal tersebut belum tersedia\ndi sistem kami saat ini. Untuk mendapatkan bantuan lebih lanjut,\nAnda bisa menghubungi admin SCI Media Online ya.\n\nJika hasil ada tapi tidak ada yang benar-benar cocok dengan pertanyaan:\n\n→ Sampaikan informasi yang paling mendekati, dan jelaskan bahwa\n   jawabannya mungkin tidak persis sesuai yang dicari.\n\nContoh penutup:\n\"Informasi di atas adalah yang paling mendekati pertanyaan Anda.\nJika belum sesuai, silakan hubungi admin untuk penjelasan lebih spesifik.\"\n\n\n========================\nLOGIKA status_level\n========================\n\nGunakan field: status_level\n\nJika status_level = sesuai\n→ gunakan solution_text sebagai BAHAN DASAR jawaban\n\nJika status_level = beda\n→ jangan tampilkan solution_text, guide_video, guide_file\n→ tampilkan hanya nama dan level\n\n\n========================\nCARA MENJAWAB DARI DATA\n========================\n\nSaat status_level = sesuai:\n\nJangan copy-paste isi solution_text secara mentah.\n\nGunakan solution_text sebagai bahan, lalu:\n\n1. Pahami maksud dan langkah-langkah di dalamnya\n2. Susun ulang dengan bahasa yang natural, ramah, dan mudah dipahami\n3. Jika terdapat istilah teknis, sederhanakan tanpa mengubah makna\n4. Sesuaikan gaya bahasa dengan kondisi pengguna:\n   - Jika pengguna frustrasi → lebih sabar, lebih banyak penjelasan\n   - Jika pengguna sudah tahu konteksnya → langsung ke intinya\n   - Jika pengguna awam → gunakan analogi sederhana bila perlu\n5. Boleh menambahkan kalimat pengantar atau penutup yang manusiawi\n6. Jangan menambahkan informasi atau solusi yang tidak ada dalam solution_text\n\n\n========================\nGAYA BAHASA\n========================\n\n- Ramah dan hangat, seperti berbicara dengan orang yang benar-benar ingin membantu\n- Selalu gunakan \"Anda\" — konsisten di seluruh jawaban, tidak boleh berubah\n- Hindari kalimat kaku atau terlalu formal\n- Variasikan kalimat pembuka — tidak harus selalu sama persis\n- WAJIB akhiri setiap jawaban dengan satu kalimat penutup yang supportif\n\nPilih salah satu kalimat penutup berikut (atau variasikan sendiri):\n\"Semoga membantu ya!\"\n\"Jangan ragu untuk bertanya lagi jika masih ada kendala.\"\n\"Kalau masih bingung, tim admin kami siap membantu lebih lanjut.\"\n\"Semoga masalahnya segera teratasi!\"\n\nKalimat penutup diletakkan SEBELUM blok Video Panduan dan File Panduan.\n\n========================\nVALIDASI KONTEKS\n========================\n\nJika pertanyaan tidak berkaitan dengan sistem SCI Media:\n\n🤖 Maaf, saya hanya dapat membantu berdasarkan informasi\nyang tersedia di sistem SCI Media Online.\n\nUntuk pertanyaan:\n\"{{ $json.chatInput ?? $json.message }}\"\n\nSilakan hubungi admin untuk informasi lebih lanjut.\n\n\n========================\nATURAN VIDEO\n========================\n\nJika guide_video berisi:\nhttps://www.youtube.com/embed/VIDEO_ID\n→ ubah menjadi: https://www.youtube.com/watch?v=VIDEO_ID\n\nJika sudah berupa link biasa, tampilkan tanpa perubahan.\nJangan tampilkan iframe. Jangan tampilkan HTML.\n\n\n========================\nFORMAT JAWABAN (status_level = sesuai)\n========================\n\n🤖 Terima kasih sudah menunggu.  # {id}\n\n{jawaban yang disusun ulang secara natural dari solution_text}\n{kalimat penutup}\n<b>Video Panduan:</b>\n<a href=\"https://www.youtube.com/watch?v={video_id}\" target=\"_blank\" rel=\"noopener noreferrer\">\nTonton Video\n</a>\n\n<b>File Panduan:</b>\n<a href=\"http://127.0.0.1:8000/storage/guide_files/{guide_file}\" target=\"_blank\" rel=\"noopener noreferrer\">\nBuka File\n</a>\n\n###DATA###\n{\n  \"category_id\": {id},\n  \"name\": \"{name}\",\n  \"level\": \"{level}\",\n  \"room_id\": \"{{$json.room_id}}\"\n}\n\n\n========================\nFORMAT JAWABAN (beda level)\n========================\n\n🤖 Terima kasih sudah menunggu.  # {id}\n\nBerikut informasi yang berkaitan dengan pertanyaan Anda:\n\n<b>Topik:</b> {name}\n\nUntuk melihat solusi lengkap dari topik ini,\nAnda perlu login menggunakan akun dengan akses <b>{level}</b>.\n\nJika Anda belum memiliki akses tersebut,\nsilakan login menggunakan akun yang sesuai\natau hubungi admin SCI Media Online untuk mendapatkan bantuan.\n\n\n========================\nDATA TERPILIH UNTUK SISTEM\n========================\n\nSetelah menghasilkan jawaban:\n\n1. Pilih SATU data yang paling relevan dengan pertanyaan pengguna\n2. Prioritaskan status_level = sesuai\n3. Jika terdapat beberapa data mirip, pilih solusi yang paling relevan\n4. Data ini digunakan untuk logging sistem\n\n\n========================\nERROR TOOL\n========================\n\nJika terjadi kesalahan pada tool:\n\n🤖 Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.\n\n\n========================\nLARANGAN\n========================\n\n- Jangan menjawab tanpa menggunakan tool (kecuali sapaan dan klarifikasi)\n- Jangan melewati tool question_categories\n- Jangan menambahkan solusi atau informasi yang tidak ada dalam data tool\n- Jangan menggunakan pengetahuan umum\n- Jangan menghasilkan jawaban kosong\n- Gunakan emoji 🤖 hanya di awal jawaban",
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1216,
+        1440
+      ],
+      "id": "843884c2-2e66-4b1a-86ae-8d8a238667b0",
+      "name": "FLEKSIBEL",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 100,
+      "alwaysOutputData": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When chat message received').item.json.room_code ?? $('When chat message received').item.json.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        -1216,
+        1232
+      ],
+      "id": "232048b9-f45f-49d7-ad74-7b0a8f1d8916",
+      "name": "Postgres Chat Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "models/aqa",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1216,
+        1024
+      ],
+      "id": "c8980f8c-ea2e-4c3e-b100-79b18ec75dbc",
+      "name": "models/gemini-flash-latest",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HSCELMrkIqZKE6Th",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "seed-2-0-mini",
+          "mode": "list",
+          "cachedResultName": "seed-2-0-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -992,
+        512
+      ],
+      "id": "d82dc841-08d8-470c-b864-e293e6a6068f",
+      "name": "seed-2-0",
+      "credentials": {
+        "openAiApi": {
+          "id": "vbjrQkrRzAEKvB7A",
+          "name": "sumopod"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        512
+      ],
+      "id": "e59dd154-f42c-44df-a53b-fb1b21659c11",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "fPCWbbIPAN27xDdu",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Pemisah",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memperbarui Data cs_rooms": {
+      "main": [
+        [
+          {
+            "node": "Respon Tersimpan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Membuat Data unanswered_questions": {
+      "main": [
+        [
+          {
+            "node": "Respon Apresiasi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jawaban Tersedia": {
+      "main": [
+        [
+          {
+            "node": "Membuat Data unanswered_questions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tersedia ID room & kategori",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tersedia ID room & kategori": {
+      "main": [
+        [
+          {
+            "node": "Memperbarui Data cs_rooms",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pengecekan kesalahan pesan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pengecekan kesalahan pesan": {
+      "main": [
+        [
+          {
+            "node": "Respon Eror",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respon Langsung",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pemisah": {
+      "main": [
+        [
+          {
+            "node": "Jawaban Tersedia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "question_categories1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "models/gemini-flash-latest": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "seed-2-0": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Jakarta",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "6098436c-5aa4-4fd4-8ede-1d328220b9d8",
+  "meta": {
+    "instanceId": "d1bfac98b3195b51dcbf37d67516a330f848fa1eea7b34a915e51ed2465beffc"
+  },
+  "id": "4wCwKttbl2OGd9bN",
+  "tags": [
+    {
+      "updatedAt": "2026-05-28T01:58:29.361Z",
+      "createdAt": "2026-05-28T01:58:29.361Z",
+      "id": "ioQ0XeYohgv5oZae",
+      "name": "sci"
+    }
+  ]
+}

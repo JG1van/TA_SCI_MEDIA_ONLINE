@@ -1,0 +1,69 @@
+{
+  "name": "#chat-bot-sci-Sub-workflow-2",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE cs_rooms\nSET \nquestion_categories_id = {{ $json.category_id }},\nupdated_at = NOW()\nWHERE id = {{ $json.room_id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f0cf1ed0-2026-42e9-b915-b3e8624db585",
+      "name": "Update CS Room Category",
+      "credentials": {
+        "mySql": {
+          "id": "5On8Bq9onVpmbLW2",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "6b9cf0eb-3125-4d38-ab50-707be92c2aac",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Update CS Room Category",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Jakarta",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "b54c0801-2db5-4f39-956c-b7831b1ff3f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d1bfac98b3195b51dcbf37d67516a330f848fa1eea7b34a915e51ed2465beffc"
+  },
+  "id": "ZhCZQYVHDJazfmVE",
+  "tags": []
+}
