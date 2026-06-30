@@ -148,7 +148,7 @@
         </div>
 
         {{-- PERTANYAAN TIDAK TERJAWAB --}}
-        {{-- @php $btn = btnDisable($role, [1,2,5]); @endphp
+        @php $btn = btnDisable($role, [1,2,5]); @endphp
         <div class="col-md-4">
             <div class="card shadow text-center setting-card h-100" style="{{ $btn['style'] }}">
                 <div class="card-body d-flex flex-column justify-content-between">
@@ -166,8 +166,23 @@
                     </a>
                 </div>
             </div>
-        </div> --}}
+        </div>
+        {{-- RIWAYAT AKTIVITAS --}}
+        @php $btn = btnDisable($role, [1,2,3,4,5]); @endphp
+        <div class="col-md-4">
+            <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
+                <div class="card-body">
+                    <i class="fas fa-history fs-1 mb-3 text-secondary"></i>
+                    <h5 class="fw-bold">Riwayat Aktivitas</h5>
+                    <p class="text-muted mb-3">Lihat aktivitas admin terbaru</p>
 
+                    <button class="btn btn-primary w-100 {{ $btn['class'] }}" data-bs-toggle="modal"
+                        data-bs-target="#activityModal" {{ $btn['class'] ? 'disabled' : '' }}>
+                        Pilih
+                    </button>
+                </div>
+            </div>
+        </div>
         {{-- INFORMASI SERVER --}}
         @php $btn = btnDisable($role, [1,2,3,4,5]); @endphp
         <div class="col-md-4">
@@ -185,22 +200,7 @@
             </div>
         </div>
 
-        {{-- RIWAYAT AKTIVITAS --}}
-        {{-- @php $btn = btnDisable($role, [1,2,3,4,5]); @endphp
-        <div class="col-md-4">
-            <div class="card shadow text-center setting-card" style="{{ $btn['style'] }}">
-                <div class="card-body">
-                    <i class="fas fa-history fs-1 mb-3 text-secondary"></i>
-                    <h5 class="fw-bold">Riwayat Aktivitas</h5>
-                    <p class="text-muted mb-3">Lihat aktivitas admin terbaru</p>
 
-                    <button class="btn btn-primary w-100 {{ $btn['class'] }}" data-bs-toggle="modal"
-                        data-bs-target="#activityModal" {{ $btn['class'] ? 'disabled' : '' }}>
-                        Pilih
-                    </button>
-                </div>
-            </div>
-        </div> --}}
 
         {{-- BACKUP & RESTORE DATABASE --}}
         {{-- @php $btn = btnDisable($role, [1]); @endphp
@@ -251,7 +251,7 @@
             </div>
         </div>
         {{-- KELUAR --}}
-        {{-- <div class="col-md-12">
+        <div class="col-md-4">
             <div class="card shadow text-center setting-card border-danger">
                 <div class="card-body">
                     <i class="fas fa-sign-out-alt fs-1 mb-3 text-danger"></i>
@@ -266,7 +266,7 @@
                     </form>
                 </div>
             </div>
-        </div> --}}
+        </div>
     </div>
 
     {{-- MODAL RIWAYAT AKTIVITAS --}}
