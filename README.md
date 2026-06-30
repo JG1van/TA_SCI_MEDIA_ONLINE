@@ -56,6 +56,8 @@ Manajemen Serial
 Layanan Pelanggan
 <img width="1920" height="1080" alt="Screenshot (2648)" src="https://github.com/user-attachments/assets/2015c44d-2ab4-45b3-9220-59d5d2fd563f" />
 
+Manajemen Admin
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/824ed33d-eae4-4c5f-b3f6-1821497c19af" />
 
 ## Instalasi
 
