@@ -81,7 +81,7 @@ Manajemen Admin
    copy .env.example .env
    ```
 
-5. Konfigurasi file `.env` (koneksi database, Firebase, Brevo, Telegram Bot API).
+5. Konfigurasi file `.env` (koneksi database, Firebase, Brevo, Telegram Bot API) — lihat detail di bagian **Environment Variables** di bawah.
 
 6. Generate application key:
    ```bash
@@ -109,6 +109,70 @@ Manajemen Admin
     ```bash
     php artisan schedule:work
     ```
+
 ## Status Project
 
 Project ini dikembangkan sebagai Tugas Akhir Program Studi Sistem Informasi, Universitas Teknologi Yogyakarta.
+
+## Environment Variables
+
+Isi variable di bawah ini disesuaikan dengan environment kamu (local/VPS). Setiap key diberi keterangan cara mendapatkannya:
+
+```env
+APP_NAME=Laravel
+APP_ENV=                   # local kalau di komputer sendiri, production kalau di VPS
+APP_KEY=                    # generate pakai: php artisan key:generate
+APP_DEBUG=                  # true kalau local, false kalau production/VPS
+APP_URL=                    # local: http://localhost:8000 | VPS: https://domain-kamu.com
+APP_TIMEZONE=Asia/Jakarta
+
+LOG_CHANNEL=stack
+LOG_LEVEL=                  # debug kalau local, error/warning kalau production
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=                # local: nama database di laptop, misal laravel_db | VPS: nama database di server
+DB_USERNAME=                # local: biasanya root | VPS: user mysql khusus (cek: mysql -u root -p lalu SELECT user FROM mysql.user;)
+DB_PASSWORD=                # local: kosong/root kalau XAMPP | VPS: password user mysql (reset: ALTER USER 'user'@'localhost' IDENTIFIED BY 'password_baru';)
+
+DB_LOG_HOST=127.0.0.1
+DB_LOG_PORT=3306
+DB_LOG_DATABASE=            # sama seperti DB_DATABASE
+DB_LOG_USERNAME=            # sama seperti DB_USERNAME
+DB_LOG_PASSWORD=            # sama seperti DB_PASSWORD
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=database
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=database
+SESSION_LIFETIME=480
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp-relay.brevo.com
+MAIL_PORT=587
+MAIL_USERNAME=              # email pengirim yang didaftarkan di Brevo
+MAIL_PASSWORD=              # SMTP key dari Brevo: app.brevo.com > Settings > SMTP & API > SMTP
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=          # sama dengan MAIL_USERNAME
+MAIL_FROM_NAME=             # nama tampilan pengirim, misal: SCI Media Online
+
+FIREBASE_DATABASE_URL=      # console.firebase.google.com > Realtime Database > salin URL
+FIREBASE_API_KEY=           # Firebase Console > Project Settings > General > Your apps > apiKey
+FIREBASE_AUTH_DOMAIN=       # field authDomain, format: nama-project.firebaseapp.com
+FIREBASE_PROJECT_ID=        # field projectId
+FIREBASE_MESSAGING_SENDER_ID=  # field messagingSenderId
+FIREBASE_APP_ID=            # field appId
+FIREBASE_STORAGE_BUCKET=    # field storageBucket
+
+TELEGRAM_BOT_TOKEN=         # dari @BotFather di Telegram > /newbot atau /mybots
+TELEGRAM_CHAT_ID=           # tambahkan bot ke grup, kirim pesan, cek di: https://api.telegram.org/bot<TOKEN>/getUpdates
+
+BREVO_API_KEY=              # app.brevo.com > Settings > SMTP & API > API Keys > Generate a new API key
+
+ASSET_URL=                  # local: http://localhost:8000 | VPS: https://domain-kamu.com
+FORCE_HTTPS=                # false kalau local, true kalau VPS
+
+FIREBASE_CREDENTIALS=       # paste JSON service account jadi 1 baris; generate di Firebase Console > Project Settings > Service Accounts > Generate new private key
+```
